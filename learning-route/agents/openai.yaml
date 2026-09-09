@@ -1,0 +1,6 @@
+interface:
+  display_name: "Learning Route"
+  short_description: "Find the current learning stage and next owner"
+  default_prompt: "Use $learning-route to identify my current learning stage and recommend or execute the next appropriate learning skill."
+policy:
+  allow_implicit_invocation: false
