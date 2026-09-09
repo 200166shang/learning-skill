@@ -23,6 +23,8 @@ After selecting the branch, follow only that reference until its `Done when` con
 
 - Emit or preserve `record_type: note`; branch selection never changes the body into a fixed template.
 - Keep verified evidence, inference, and unresolved assumptions distinguishable.
+- When the supplied learning history explicitly says the current result grew from reading a concrete prior LearningRecord through a learner question, preserve that supported `derived-from` relation under the shared LearningRecord contract and render its `来源脉络`. Do not infer lineage from semantic similarity alone.
+- Relation metadata belongs to the child/current Record. Do not edit the parent Record merely to add a reciprocal backlink.
 - A request centered on tracing real files, functions, callers, runtime state, or repository data flow belongs to direct Codex source investigation, not this skill.
 - Revision of a source-backed or `code-walkthrough` Record also belongs to direct Codex under the shared LearningRecord revision contract.
 - Do not create or update Feishu, Obsidian, GitHub, or another external store.
