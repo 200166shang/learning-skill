@@ -21,9 +21,13 @@ Use for a vague topic or unconfirmed map. Discuss the desired outcome before exp
 
 Build the initial map around the confirmed question and the learning decisions already made. Do not infer a full module hierarchy from the materials. Record the working claim, exclusions, materials, and decisions in `learning.yaml`. Do not draft until the user confirms the Goal and initial map.
 
+Done when the Goal and initial map are confirmed and recorded, or the skill has stopped at one explicit confirmation request with the proposed Goal/map visible to the user. Do not create or update the mother document in this mode.
+
 ### Draft
 
 Require a confirmed map. Inventory how existing materials support its nodes, then create or update one publishable mother-document `LearningRecord`. Organize it around the central question, not source order or a list of technologies. Keep prerequisites minimal and distinguish evidence, inference, and unresolved gaps. Move the state to `filling`.
+
+Done when the mother document is independently readable, follows one coherent central thread over the currently selected map scope, uses available material for the claims it supports, and leaves unresolved gaps explicit rather than silently filling them.
 
 ### Capture gaps
 
@@ -34,6 +38,8 @@ Compile the accepted question into a delegation-ready ticket: a worker receiving
 For a `code` gap, first perform only lightweight reconnaissance: locate real entry files, direct dependencies, key symbols, and the paths that need evidence. Use that to write the body sections for work, scope, materials, required traces, questions to answer, and evidence; do not answer the source question during reconnaissance. The user's confirmed question controls scope. Related but separately valuable questions remain candidates, not hidden requirements in the ticket.
 
 If the user says to record, discuss, defer, or not start yet, stop after ticket creation; never invoke a producer automatically.
+
+Done when every accepted question in the current pass is represented by exactly one reusable existing record or independently executable ticket, the map/state references are updated, and no producer has been started unless the user separately asked to execute it.
 
 ### Integrate
 
@@ -46,9 +52,13 @@ Require a `resolved` ticket and its result. Add only the minimum explanation nee
 
 Do not copy the child record, expose workflow metadata in the body, or alter the child record. Update the map, related-record index, ticket to `integrated`, stage, and next action. Do not insert a second callout for an already integrated ticket.
 
+Done when the resolved result has been minimally incorporated into the mother document, exactly one related-record callout exists for that ticket, the ticket lifecycle is `integrated`, and synthesis state/map indexes are reconciled without changing the child record.
+
 ### Status / resume
 
 Read `learning.yaml`, the map, and referenced tickets. Treat each ticket file as authoritative for its lifecycle and reconcile the state index when it changed independently. Report the Goal, current stage, completed work, open/resolved/deferred tickets, inconsistencies, and one recommended next action. A status question is navigation only; execute the next action only when the user asks.
+
+Done when authoritative ticket state and `learning.yaml` are reconciled, the current stage and inconsistencies are reported, and exactly one recommended next action is returned without executing it.
 
 ## Map rules
 
@@ -65,4 +75,4 @@ At a natural stopping point, recommend at most three directly relevant candidate
 - Interview prompts, open gaps, material inventories, future enhancements, and next actions belong in the map, state, or tickets—not the mother-document body.
 - Validation and publication are outside this v1 workflow.
 
-Completion for the current pass means the mother document has a coherent central thread and every selected ticket is integrated, deferred, or cancelled. New gaps may reopen `filling` later.
+Project completion means the mother document has a coherent central thread and every selected ticket is integrated, deferred, or cancelled. Any individual invocation stops when its active mode's `Done when` condition is satisfied; new gaps may reopen `filling` later.
