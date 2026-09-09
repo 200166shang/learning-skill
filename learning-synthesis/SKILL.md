@@ -5,71 +5,53 @@ description: Own an explicitly selected or routed topic-centered learning workfl
 
 # Learning Synthesis
 
-Own one learning project's Goal, Learning Map, mother document, KnowledgeTickets, LearningRecords, and integration state. The Learning Map is a learning-decision map: it records questions the user asked or explicitly chose to pursue, not an AI-generated curriculum or a general knowledge graph.
+Own one topic workspace: its Goal, Learning Map, synthesis mother document, pending-work Tickets, durable LearningRecords, and topic decisions/indexes.
 
-Read [LearningSynthesisState](../_shared/learning-synthesis-state.md) before resolving or writing project state. Choose exactly one active mode, then read only that mode's reference and the shared contracts it requires.
+Read [LearningSynthesisState](../_shared/learning-synthesis-state.md) for persisted topic memory. Choose exactly one mode, load that mode's reference plus only the shared contracts it points to, and follow its `Done when` boundary.
 
-## Resolve the workspace
+## Workspace
 
-Use, in order: the directory containing a supplied `learning.yaml`; the directory containing a supplied mother document; an explicit workspace. If none is available, ask where to create the topic workspace before writing. Never publish, move existing notes, or scan unrelated knowledge stores implicitly.
+Resolve the workspace from, in order: the directory containing a supplied `learning.yaml`, the directory containing a supplied mother document, or an explicit workspace. Keep topic artifacts in that resolved workspace. If none is known, ask where the topic workspace belongs before writing.
 
-## Choose one mode
+## Modes
 
-| Mode | Use when | Instructions |
+| Mode | Use when | Reference |
 | --- | --- | --- |
-| `start` | The topic, Goal, or initial map is vague or unconfirmed. | [Start / frame](references/start.md) |
-| `draft` | The map is confirmed and the synthesis-owned mother document should be created, updated, or revised in place. | [Draft](references/draft.md) |
-| `capture gaps` | The user has identified, accepted, or surfaced one or more questions that must be reconciled before new learning work is formalized. | [Capture gaps](references/capture-gaps.md) |
-| `integrate` | A valid LearningRecord should be incorporated, or a previously integrated Record should be minimally reconciled after producer revision. | [Integrate](references/integrate.md) |
-| `lineage` | The learner explicitly wants to see or refresh how durable knowledge Records grew from one another. | [Knowledge lineage views](references/knowledge-lineage.md) |
-| `status` | The project state should be reconciled or the next action should be identified without executing it. | [Status / resume](references/status.md) |
+| `start` | Goal or initial Map is vague/unconfirmed. | [Start / frame](references/start.md) |
+| `draft` | Create/update/revise the synthesis-owned mother document. | [Draft](references/draft.md) |
+| `capture gaps` | Reconcile surfaced questions or formalize accepted pending learning work. | [Capture gaps](references/capture-gaps.md) |
+| `integrate` | Incorporate a valid LearningRecord or reconcile a prior integration after Record revision. | [Integrate](references/integrate.md) |
+| `lineage` | Show/refresh how durable Records grew from one another. | [Knowledge lineage views](references/knowledge-lineage.md) |
+| `status` | Reconcile artifacts and derive the current situation/next recommendation without executing it. | [Status / resume](references/status.md) |
 
-After selecting the mode, read that reference and follow it until its `Done when` condition is satisfied. `references/knowledge-lineage.md` is also the shared rendering contract that `integrate` may read when the active integration needs to reconcile a Map Record attachment or a derived lineage view. Do not load unrelated mode references.
+`integrate` may also read the lineage reference when it needs the shared Map-attachment/derived-view rendering rules.
 
-## Map rules
+## Cross-mode invariants
 
-The map is the single persistent human-readable learning-decision and question-lineage view for the topic, not merely the document table of contents, a per-article question index, a Record-to-Record knowledge graph, or a complete subject taxonomy. Formal nodes come only from a user question the user chooses to pursue or an explicit user acceptance of an AI candidate; use stable node identifiers in tickets.
+The Learning Map is the topic's human-readable **learning-decision/question-lineage** view. Formal nodes come only from questions the user asked or explicitly chose to pursue; it is not a generated curriculum or general knowledge graph.
 
-Use Map markers with checkable meanings:
+Map markers have stable meanings:
 
-- `[ ]` — confirmed learning question with no accepted partial result yet;
-- `[~]` — the user has accepted a known covered portion and a concrete residual gap is still identified; both must be explainable;
-- `[x]` — complete under the `map_completions` contract;
+- `[ ]` — confirmed question with no accepted partial result;
+- `[~]` — an accepted covered portion plus a concrete residual gap;
+- `[x]` — complete under the [state completion contract](../_shared/learning-synthesis-state.md#map-completion-contract);
 - `[-]` — explicitly excluded from the selected scope.
 
-Prior conversation or available material alone does not earn `[~]`; it can be offered as evidence for the user to accept. When a new formal question materially extends an existing confirmed question, place it under the closest relevant confirmed parent in the Map so recursive learning-decision lineage remains visible there. Do not create a second article-specific question tree merely to record where questions came from.
+Every trusted `[~]` can explain both what is covered and what remains. Every `[x]` has matching `map_completions` provenance. The mode references own how questions are proposed, reconciled, promoted, completed, attached to Records, or rendered as knowledge lineage.
 
-A formal Map node may show lightweight links to LearningRecords already associated with that node. These Record attachments are learner-facing view elements, not formal nodes: they carry no lifecycle marker, do not create completion provenance, and do not alter the Map's question hierarchy. Follow [Knowledge lineage views](references/knowledge-lineage.md) for attachment rendering and idempotency.
+Use one source of truth per durable concept:
 
-Use the [LearningSynthesisState](../_shared/learning-synthesis-state.md) map completion contract for every `[x]`. Never mark a node complete solely because conversation history, memory, available materials, or a Record attachment suggests prior understanding. A prior note, external document, integrated ticket result, standalone LearningRecord, or explicit user confirmation may satisfy the node only after its completion basis is recorded in `learning.yaml` with the node id and supporting provenance. Treat an `[x]` without completion provenance as an inconsistency, not as completed work.
+- [KnowledgeTicket](../_shared/knowledge-ticket.md) owns one accepted gap's worker contract and lifecycle;
+- [LearningRecord](../_shared/learning-record.md) owns durable knowledge, evidence obligations, revision identity, and canonical Record-to-Record lineage;
+- [LearningSynthesisState](../_shared/learning-synthesis-state.md) owns non-derivable topic decisions/indexes and Map completion provenance;
+- `knowledge-lineage.md` and Map Record links are derived learner-facing views under the [lineage reference](references/knowledge-lineage.md).
 
-A LearningRecord never creates a formal Map node by itself. When a standalone Record is integrated as supplemental knowledge, leave the Map unchanged unless the user explicitly associates it with an existing confirmed node. Only map it to completion when the user explicitly accepts it as sufficient evidence under the completion contract.
+## Ownership and phase boundaries
 
-At a natural stopping point, the model may recommend at most three directly relevant candidate questions. Keep those AI recommendations outside the formal tree and tickets, for example in `learning.yaml`'s `candidate_questions`; explain why each would help. The limit does not truncate questions the user independently surfaces while reading. Reconcile every user-surfaced question before promotion, and formalize only those the user chooses to pursue. Keep important scope decisions in the map; keep machine paths and lifecycle state in YAML.
+Synthesis owns topic structure, accepted-gap capture, mother-document drafting, integration, and derived topic views. It stops before producer work: conceptual Ticket execution belongs to `learning-note`; code Ticket execution belongs to direct Codex under the Ticket contract. A producer's valid LearningRecord is the handoff back into synthesis integration.
 
-## Knowledge-lineage separation
+The synthesis mother document is itself `record_type: synthesis`; its create/revise behavior is co-located in `draft`. Child LearningRecords remain owned by their producer class; synthesis only consumes/reconciles them through `integrate` and derived views.
 
-Knowledge lineage between durable Records is distinct from Learning Map question lineage and from workflow completion provenance.
+One invocation completes one selected mode and stops at that mode's `Done when` boundary. Validation and external publication are separate workflows.
 
-- Canonical Record-to-Record lineage lives only in the child LearningRecord's supported `relations` metadata under the shared [LearningRecord contract](../_shared/learning-record.md).
-- The workspace-root `knowledge-lineage.md` is a derived learner-facing view regenerated from those Record relations.
-- The Learning Map may display Record attachments for navigation, but it does not become the canonical knowledge graph.
-- `learning.yaml` does not duplicate canonical Record relation edges.
-
-Do not infer lineage from semantic similarity or from two Records satisfying nearby Map nodes.
-
-## Ownership boundaries
-
-- A conceptual ticket is resolved by reading and following `learning-note`.
-- A source execution ticket is resolved by a Codex agent directly investigating the listed repository material under its ticket contract.
-- Resolving a Ticket produces exactly one LearningRecord and may mark the Ticket `resolved`; it never integrates it.
-- A LearningRecord does not require a KnowledgeTicket. Already-resolved learning may be materialized directly into a durable Record and later integrated without creating a retroactive Ticket.
-- The mother document is the LearningRecord produced and owned by `learning-synthesis` (`record_type: synthesis`). When the user asks to revise that mother document, stay in `draft`, edit the same artifact in place under the shared LearningRecord revision contract, preserve still-correct synthesis content, and do not create a Ticket or duplicate Record merely for the edit.
-- Revision of any integrated child LearningRecord remains with that child Record's producer class. `learning-synthesis` does not rewrite integrated child Records; after producer revision, it only reconciles the topic's existing integration and derived views when the user asks.
-- Integration consumes a valid LearningRecord. Ticket lifecycle is updated only when that Record came from the supplied Ticket.
-- `learning-synthesis` may render or reconcile Map Record attachments and `knowledge-lineage.md`, but it never invents or writes canonical lineage edges into child Records during integration.
-- Prefer assigning a self-contained accepted ticket to a child agent when delegation is available and the work can proceed independently. For a code ticket, give that agent the ticket and its listed materials; it selects the investigation method from the question rather than following a fixed source-reading skill. The parent recovers the resulting LearningRecord and lifecycle change rather than the research transcript. Resolve inline only when delegation is unavailable or the task is too small to justify a handoff.
-- Interview prompts, open gaps, material inventories, future enhancements, and next actions belong in the map, state, or tickets—not the mother-document body.
-- Validation and publication are outside this workflow.
-
-Project completion means the mother document has a coherent central thread and every required confirmed map node is excluded or has valid completion provenance; Ticket lifecycle or knowledge-lineage rendering alone is not sufficient. Any individual invocation stops when its active mode's `Done when` condition is satisfied; new gaps may reopen `filling` later.
+The selected topic scope is complete when the mother document is coherent and every required confirmed Map node is either excluded or has valid completion provenance. Ticket lifecycle, Record count, or lineage rendering alone never establishes topic completion.
