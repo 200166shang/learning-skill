@@ -1,6 +1,6 @@
 ---
 name: learning-synthesis
-description: Use when starting, drafting, resuming, or evolving one topic-centered learning document from user-confirmed questions, materials, a learning map, or knowledge tickets.
+description: Own an explicitly selected or routed topic-centered learning workflow for framing, drafting, gap capture, integration, or resume from user-confirmed questions, materials, maps, and knowledge tickets.
 ---
 
 # Learning Synthesis
