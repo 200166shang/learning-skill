@@ -4,6 +4,14 @@ A `KnowledgeTicket` is a self-contained contract for one user-confirmed learning
 
 Store each ticket as Markdown with YAML frontmatter under the topic workspace's configured tickets directory. Frontmatter is an index: identity, lifecycle, topic mapping, gap type, and final result reference. The Markdown body is the worker-facing contract. `question` is user-owned; the remaining execution detail is compiled by `learning-synthesis` from the confirmed question, existing learning state, supplied materials, and—only for a code ticket—a lightweight reconnaissance.
 
+## Code evidence rule
+
+For every source-based conclusion in a `code` ticket result, use this sequence:
+
+`source location → minimal excerpt → explanation`
+
+The excerpt must be the smallest code needed to show the relevant control flow, data access, or configuration. A file path or line number alone is navigation, not evidence. Keep verified source facts, inference, and unconfirmed items distinguishable.
+
 ## Schema
 
 ```yaml
@@ -55,10 +63,8 @@ result: null
 
 ## 证据要求
 
+- 遵守 `Code evidence rule`。
 - 每个关键结论指向真实文件、符号或代码路径。
-- 任何基于源码作出的结论，都在该结论旁嵌入最小且足够理解它的代码片段，并在片段前标明来源文件和行号；文件路径和行号不可单独充当证据。
-- 让每个片段先展示实际控制流、数据读写或配置，再紧跟解释；不粘贴与结论无关的整段文件。
-- 区分源码证明、推断和未确认项。
 
 ## 交付与验收
 
@@ -88,8 +94,7 @@ Before issuing a code ticket, `learning-synthesis` may perform a lightweight rec
 - name the execution paths that must be traced;
 - turn the user's stated concern into answerable checks;
 - state adjacent work that belongs outside the ticket;
-- require code-backed conclusions and explicit uncertainty.
-- require a source excerpt beside every source-based claim, not merely a file/line citation.
+- require code-backed conclusions under the `Code evidence rule`.
 
 Do not add attractive but separate questions merely because they are related. Offer them later as candidate questions if needed.
 
