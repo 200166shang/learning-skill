@@ -93,12 +93,14 @@ decisions:
     reason: Workflow state is not reader-facing knowledge.
 ```
 
+`related_records` indexes durable knowledge referenced by the mother document. A related record may be Ticket-backed or standalone; the presence of a related record does not by itself create a Ticket or a Learning Map node.
+
 ## Map completion contract
 
 A Learning Map node may be marked `[x]` only when `map_completions` contains explicit completion provenance for that node. Completion may come from any of these paths:
 
 - `integrated-ticket`: a resolved KnowledgeTicket and its LearningRecord were integrated;
-- `accepted-existing-material`: an existing note, document, or LearningRecord was explicitly mapped to the node and accepted as sufficient;
+- `accepted-existing-material`: an existing note, document, or standalone LearningRecord was explicitly mapped to the node and accepted as sufficient;
 - `user-confirmed-prior-learning`: the user explicitly confirmed that prior learning already satisfies the node, and that decision was recorded with any available supporting references.
 
 Conversation history, remembered prior discussion, or merely having material available can suggest possible completion evidence, but cannot by itself create `[x]`. Do not fabricate a reference when prior learning has no artifact; record the explicit user confirmation and a concise note instead.
@@ -114,18 +116,18 @@ Use exactly one topic stage:
 | `framing` | Goal, central question, scope, or learning map is not confirmed. |
 | `drafting` | The map is confirmed and materials are being inventoried or the first draft is being written. |
 | `filling` | A mother document exists and gaps are being captured or resolved. |
-| `integrating` | At least one resolved ticket is ready to be integrated. |
+| `integrating` | At least one valid LearningRecord has been selected or accepted for integration, whether Ticket-backed or standalone. |
 | `complete` | The selected scope is coherent and every required confirmed map node is excluded or has valid completion provenance. |
 
-After every confirmed goal, map, draft, ticket, integration, completion-evidence decision, or next-action change owned by `learning-synthesis`, update `learning.yaml`. A ticket file is authoritative for its own lifecycle; after an independent producer marks it `resolved`, the next synthesis status or integration action reconciles the cached ticket entry in `learning.yaml`. Preserve prior decisions; do not rely on conversation history as workflow state.
+After every confirmed goal, map, draft, ticket, integration, completion-evidence decision, or next-action change owned by `learning-synthesis`, update `learning.yaml`. A ticket file is authoritative for its own lifecycle; after an independent producer marks it `resolved`, the next synthesis status or integration action reconciles the cached ticket entry in `learning.yaml`. Standalone LearningRecord integration does not create or mutate a Ticket entry. Preserve prior decisions; do not rely on conversation history as workflow state.
 
 `candidate_questions` is optional and is not a ticket index. It holds at most three directly relevant AI recommendations that the user has not accepted. Each entry records the question, the node that surfaced it, and why it may be worth pursuing. A candidate becomes a formal map node and may create a ticket only after explicit user acceptance; remove or archive it after that decision.
 
 ## Separation
 
-- `LearningRecord` is publishable knowledge.
+- `LearningRecord` is publishable knowledge and may exist with or without a KnowledgeTicket.
 - `LearningSynthesisState` is private workflow state.
 - `learning-map.md` is the human-readable map of user learning decisions.
-- A KnowledgeTicket is a self-contained contract for resolving one accepted gap. Code tickets carry the direct-Codex investigation scope when a child agent performs the work.
+- A KnowledgeTicket is a self-contained contract for resolving one accepted gap that still requires work. Code tickets carry the direct-Codex investigation scope when a child agent performs the work.
 
 Publishers consume only completed `LearningRecord` values. They do not consume this state file.
