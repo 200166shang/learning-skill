@@ -28,9 +28,16 @@ After selecting the mode, read that reference and follow it until its `Done when
 
 ## Map rules
 
-The map is the single persistent human-readable learning-decision and question-lineage view for the topic, not merely the document table of contents, a per-article question index, a Record-to-Record knowledge graph, or a complete subject taxonomy. Formal nodes come only from a user question the user chooses to pursue or an explicit user acceptance of an AI candidate; use stable node identifiers in tickets and mark nodes as unhandled `[ ]`, partial `[~]`, complete `[x]`, or excluded `[-]`.
+The map is the single persistent human-readable learning-decision and question-lineage view for the topic, not merely the document table of contents, a per-article question index, a Record-to-Record knowledge graph, or a complete subject taxonomy. Formal nodes come only from a user question the user chooses to pursue or an explicit user acceptance of an AI candidate; use stable node identifiers in tickets.
 
-When a new formal question materially extends an existing confirmed question, place it under the closest relevant confirmed parent in the Map so recursive learning-decision lineage remains visible there. Do not create a second article-specific question tree merely to record where questions came from.
+Use Map markers with checkable meanings:
+
+- `[ ]` — confirmed learning question with no accepted partial result yet;
+- `[~]` — the user has accepted a known covered portion and a concrete residual gap is still identified; both must be explainable;
+- `[x]` — complete under the `map_completions` contract;
+- `[-]` — explicitly excluded from the selected scope.
+
+Prior conversation or available material alone does not earn `[~]`; it can be offered as evidence for the user to accept. When a new formal question materially extends an existing confirmed question, place it under the closest relevant confirmed parent in the Map so recursive learning-decision lineage remains visible there. Do not create a second article-specific question tree merely to record where questions came from.
 
 A formal Map node may show lightweight links to LearningRecords already associated with that node. These Record attachments are learner-facing view elements, not formal nodes: they carry no lifecycle marker, do not create completion provenance, and do not alter the Map's question hierarchy. Follow [Knowledge lineage views](references/knowledge-lineage.md) for attachment rendering and idempotency.
 
