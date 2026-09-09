@@ -49,6 +49,7 @@ artifacts:
 materials: []
 tickets: []
 related_records: []
+map_completions: []
 candidate_questions: []
 decisions: []
 ```
@@ -72,6 +73,15 @@ related_records:
     path: records/PID源码导览.md
     role: code-walkthrough
 
+map_completions:
+  - node_id: control.pid
+    basis: integrated-ticket
+    refs:
+      - tickets/K-003.md
+      - records/PID源码导览.md
+    accepted_at: 2026-09-09
+    note: K-003 was resolved and integrated.
+
 candidate_questions:
   - question: 编码器脉冲如何转换成轮速？
     from_node: control-loop
@@ -83,6 +93,18 @@ decisions:
     reason: Workflow state is not reader-facing knowledge.
 ```
 
+## Map completion contract
+
+A Learning Map node may be marked `[x]` only when `map_completions` contains explicit completion provenance for that node. Completion may come from any of these paths:
+
+- `integrated-ticket`: a resolved KnowledgeTicket and its LearningRecord were integrated;
+- `accepted-existing-material`: an existing note, document, or LearningRecord was explicitly mapped to the node and accepted as sufficient;
+- `user-confirmed-prior-learning`: the user explicitly confirmed that prior learning already satisfies the node, and that decision was recorded with any available supporting references.
+
+Conversation history, remembered prior discussion, or merely having material available can suggest possible completion evidence, but cannot by itself create `[x]`. Do not fabricate a reference when prior learning has no artifact; record the explicit user confirmation and a concise note instead.
+
+Each `map_completions` entry must identify the stable `node_id`, the completion `basis`, supporting `refs` when available, and enough note/date context for a reader of the workspace to understand why the node is complete. A node without such an entry is not complete even if its map marker is accidentally `[x]`; treat that mismatch as an inconsistency until reconciled.
+
 ## Stages
 
 Use exactly one topic stage:
@@ -93,9 +115,9 @@ Use exactly one topic stage:
 | `drafting` | The map is confirmed and materials are being inventoried or the first draft is being written. |
 | `filling` | A mother document exists and gaps are being captured or resolved. |
 | `integrating` | At least one resolved ticket is ready to be integrated. |
-| `complete` | The selected scope is coherent and every selected ticket is integrated, deferred, or cancelled. |
+| `complete` | The selected scope is coherent and every required confirmed map node is excluded or has valid completion provenance. |
 
-After every confirmed goal, map, draft, ticket, integration, or next-action change owned by `learning-synthesis`, update `learning.yaml`. A ticket file is authoritative for its own lifecycle; after an independent producer marks it `resolved`, the next synthesis status or integration action reconciles the cached ticket entry in `learning.yaml`. Preserve prior decisions; do not rely on conversation history as workflow state.
+After every confirmed goal, map, draft, ticket, integration, completion-evidence decision, or next-action change owned by `learning-synthesis`, update `learning.yaml`. A ticket file is authoritative for its own lifecycle; after an independent producer marks it `resolved`, the next synthesis status or integration action reconciles the cached ticket entry in `learning.yaml`. Preserve prior decisions; do not rely on conversation history as workflow state.
 
 `candidate_questions` is optional and is not a ticket index. It holds at most three directly relevant AI recommendations that the user has not accepted. Each entry records the question, the node that surfaced it, and why it may be worth pursuing. A candidate becomes a formal map node and may create a ticket only after explicit user acceptance; remove or archive it after that decision.
 
