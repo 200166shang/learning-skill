@@ -5,7 +5,7 @@ description: Produce or revise a durable, reusable conceptual LearningRecord whe
 
 # Learning Note
 
-Turn conceptual learning into a self-contained explanation that can be reused later. A LearningRecord may come from unresolved work that this skill resolves, from learning the user already completed elsewhere, or from an existing conceptual Record the user wants revised. Do not require a KnowledgeTicket merely to justify an existing result or revision.
+Turn conceptual learning into a self-contained explanation that can be reused later. A LearningRecord may come from unresolved work that this skill resolves, from learning the user already completed elsewhere, from externally completed evidence work already tracked by an `evidence` KnowledgeTicket, or from an existing conceptual Record the user wants revised. Do not require a KnowledgeTicket merely to justify an existing result or revision.
 
 Before producing or revising the result, read the shared [LearningRecord contract](../_shared/learning-record.md). Emit standard Markdown with `record_type: note` in YAML frontmatter and the reader-facing body after the closing fence.
 
@@ -17,7 +17,9 @@ Use when a local `concept` KnowledgeTicket supplies work that is still pending. 
 
 ### Materialize
 
-Use when the user supplies an already-resolved learning result—such as a completed chat discussion, existing notes, or ad-hoc research—and explicitly wants it preserved as durable knowledge. Treat the supplied understanding as the result to organize, not as a new question to solve. Do not create a KnowledgeTicket, reopen the learning work, expand its scope, or start new research unless the user explicitly asks. If the supplied result is not sufficient to support a valid self-contained LearningRecord, report what is missing instead of silently researching or inventing it.
+Use when the user supplies an already-resolved learning result—such as a completed chat discussion, existing notes, ad-hoc research, or a completed experiment/research result—and explicitly wants it preserved as durable knowledge. Treat the supplied understanding as the result to organize, not as a new question to solve. Do not create a KnowledgeTicket, reopen the learning work, expand its scope, or start new research unless the user explicitly asks. If the supplied result is not sufficient to support a valid self-contained LearningRecord, report what is missing instead of silently researching or inventing it.
+
+Materialize may also consume one already-existing unresolved `evidence` KnowledgeTicket when the user supplies the completed external result that Ticket was waiting for. In that case, read [KnowledgeTicket](../_shared/knowledge-ticket.md), use its question/body only to preserve the accepted scope and body-stated result destination, materialize exactly one completed LearningRecord there, then set only that Ticket's status to `resolved` and its `result` reference. Do not perform the experiment/research itself, create another Ticket, or mutate Map, synthesis state, or mother-document integration.
 
 ### Revise
 
@@ -27,13 +29,13 @@ If the requested revision exposes genuinely new unresolved learning work that th
 
 ## Workflow
 
-1. Identify the concrete question, observed behavior, insight, or revision request and preserve project, environment, and version boundaries that affect the conclusion.
-2. Organize the supplied evidence—commands, outputs, experiments, links, observations, prior explanation, or the existing Record—beside the claims it supports. In `Resolve`, verify unstable or uncertain facts from primary sources when needed. In `Materialize`, preserve the supplied result and its evidence boundaries unless the user explicitly requests further research. In `Revise`, preserve still-valid evidence and change only what the requested revision requires.
+1. Identify the concrete question, observed behavior, insight, completed external evidence result, or revision request and preserve project, environment, and version boundaries that affect the conclusion.
+2. Organize the supplied evidence—commands, outputs, experiments, links, observations, prior explanation, the existing Record, or a supplied evidence Ticket—beside the claims it supports. In `Resolve`, verify unstable or uncertain facts from primary sources when needed. In `Materialize`, preserve the supplied result and its evidence boundaries unless the user explicitly requests further research; an evidence Ticket constrains scope but does not authorize executing the pending experiment/research. In `Revise`, preserve still-valid evidence and change only what the requested revision requires.
 3. Explain or revise the mechanism along its natural conceptual or operational path. Separate verified facts, inference, and open questions.
-4. Write a publication-ready Markdown file: metadata in one YAML frontmatter block, followed by the reader-facing body. In `Revise`, update the existing file rather than creating a replacement artifact. Use headings, lists, tables, code, or Mermaid only when they make the specific material easier to understand; do not force a fixed article template.
-5. Return a valid LearningRecord and stop. In `Resolve`, also return the KnowledgeTicket resolution identifier. In `Materialize`, do not mutate ticket lifecycle because no Ticket is required. In `Revise`, do not mutate Ticket, Map, or synthesis integration state; those owners reconcile only if the changed Record materially affects them.
+4. Write a publication-ready Markdown file: metadata in one YAML frontmatter block, followed by the reader-facing body. In `Revise`, update the existing file rather than creating a replacement artifact. In Ticket-backed `Resolve` or evidence-backed `Materialize`, use the Ticket's body-stated workspace-relative result destination. Use headings, lists, tables, code, or Mermaid only when they make the specific material easier to understand; do not force a fixed article template.
+5. Return a valid LearningRecord and stop. In `Resolve`, also return the concept KnowledgeTicket resolution identifier. In standalone `Materialize`, do not mutate ticket lifecycle because no Ticket is required. In evidence-backed `Materialize`, set only the supplied evidence Ticket to `resolved` with its `result` reference. In `Revise`, do not mutate Ticket, Map, or synthesis integration state; those owners reconcile only if the changed Record materially affects them.
 
-Completion criterion: the body independently explains the supplied learning result, its evidence, conclusion, and applicability; every required LearningRecord field is present. `Resolve` additionally completes exactly one supplied concept Ticket; `Materialize` produces the durable record without creating or resolving a Ticket; `Revise` leaves one contract-valid updated Record at the same path without creating a duplicate or unrelated work item.
+Completion criterion: the body independently explains the supplied learning result, its evidence, conclusion, and applicability; every required LearningRecord field is present. `Resolve` additionally completes exactly one supplied concept Ticket; standalone `Materialize` produces the durable record without creating or resolving a Ticket; evidence-backed `Materialize` produces exactly one durable Record at the supplied Ticket destination and resolves only that existing evidence Ticket; `Revise` leaves one contract-valid updated Record at the same path without creating a duplicate or unrelated work item.
 
 ## Boundary
 
