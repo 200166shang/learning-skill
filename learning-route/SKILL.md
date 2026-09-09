@@ -24,12 +24,13 @@ Use this as the authoritative intent-to-owner mapping:
 | Start, draft, resume, integrate, or evolve one topic-centered learning document; organize scattered materials; capture a user-confirmed gap | [`learning-synthesis`](../learning-synthesis/SKILL.md) in `start`, `draft`, `capture gaps`, `integrate`, or `status` mode |
 | Resolve a supplied `concept` KnowledgeTicket | [`learning-note`](../learning-note/SKILL.md) under the [KnowledgeTicket](../_shared/knowledge-ticket.md) contract |
 | Resolve a supplied `code` KnowledgeTicket | Direct Codex source investigation under the [KnowledgeTicket](../_shared/knowledge-ticket.md) contract |
-| Resolve a supplied `structure` KnowledgeTicket | [`learning-synthesis`](../learning-synthesis/SKILL.md) under the [KnowledgeTicket](../_shared/knowledge-ticket.md) contract |
 | Handle a supplied `evidence` KnowledgeTicket | Record the experiment/research need under the [KnowledgeTicket](../_shared/knowledge-ticket.md) contract and stop; do not execute it automatically |
 | Turn a standalone conceptual observation, question, experiment, or reference into durable learning content | [`learning-note`](../learning-note/SKILL.md) |
 | Explain real files, callers, runtime state, execution paths, or repository data flow | Direct Codex source investigation |
 
 If conceptual and repository material are mixed, choose the owner by the question being answered. Repository evidence supporting a broader conceptual explanation does not by itself make the request a code walkthrough. When source investigation should become part of the topic-centered durable workflow, `learning-synthesis` first compiles a user-confirmed code ticket.
+
+Structure-oriented work on the Learning Map, mother-document organization, or synthesis flow belongs directly to `learning-synthesis`; it is not routed through a separate KnowledgeTicket type.
 
 ## Handoffs
 
