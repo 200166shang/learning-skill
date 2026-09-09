@@ -20,7 +20,7 @@ Use, in order: the directory containing a supplied `learning.yaml`; the director
 | `start` | The topic, Goal, or initial map is vague or unconfirmed. | [Start / frame](references/start.md) |
 | `draft` | The map is confirmed and the mother document should be created or updated. | [Draft](references/draft.md) |
 | `capture gaps` | The user has identified or accepted a gap that should become a reusable record or ticket. | [Capture gaps](references/capture-gaps.md) |
-| `integrate` | A valid LearningRecord, whether Ticket-backed or standalone, should be minimally incorporated into the mother document. | [Integrate](references/integrate.md) |
+| `integrate` | A valid LearningRecord should be incorporated, or a previously integrated Record should be minimally reconciled after producer revision. | [Integrate](references/integrate.md) |
 | `status` | The project state should be reconciled or the next action should be identified without executing it. | [Status / resume](references/status.md) |
 
 After selecting the mode, read that reference and follow it until its `Done when` condition is satisfied. Do not load another mode's reference unless the user explicitly starts a separate operation.
@@ -41,6 +41,7 @@ At a natural stopping point, recommend at most three directly relevant candidate
 - A source execution ticket is resolved by a Codex agent directly investigating the listed repository material under its ticket contract.
 - Resolving a Ticket produces exactly one LearningRecord and may mark the Ticket `resolved`; it never integrates it.
 - A LearningRecord does not require a KnowledgeTicket. Already-resolved learning may be materialized directly into a durable Record and later integrated without creating a retroactive Ticket.
+- Revision belongs to the producer class that owns the LearningRecord's content and evidence. `learning-synthesis` does not rewrite the Record; after producer revision, it only reconciles the topic's existing integration when the user asks.
 - Integration consumes a valid LearningRecord. Ticket lifecycle is updated only when that Record came from the supplied Ticket.
 - Prefer assigning a self-contained accepted ticket to a child agent when delegation is available and the work can proceed independently. For a code ticket, give that agent the ticket and its listed materials; it selects the investigation method from the question rather than following a fixed source-reading skill. The parent recovers the resulting LearningRecord and lifecycle change rather than the research transcript. Resolve inline only when delegation is unavailable or the task is too small to justify a handoff.
 - Interview prompts, open gaps, material inventories, future enhancements, and next actions belong in the map, state, or tickets—not the mother-document body.
