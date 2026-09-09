@@ -37,14 +37,14 @@ candidate_questions: []
 decisions: []
 ```
 
-Collection roles:
+Collection entry shapes:
 
-- `materials`: stable references relevant to this topic.
-- `tickets`: Ticket id/path index; each Ticket file owns its lifecycle.
-- `related_records`: durable Records represented by the topic workflow.
-- `map_completions`: canonical completion provenance for formal Map nodes.
-- `candidate_questions`: at most three currently relevant **AI-recommended** questions awaiting user acceptance.
-- `decisions`: durable scope/workflow choices future sessions still need and cannot infer from artifacts.
+- `materials`: `id`, `type`, `ref`, `role`.
+- `tickets`: `id`, `path`; the Ticket file owns lifecycle.
+- `related_records`: `title`, `path`, plus useful role/relation metadata.
+- `map_completions`: `node_id`, `basis`, available `refs`, `accepted_at`, and audit `note`.
+- `candidate_questions`: `question`, optional/known `from_node`, and `reason`.
+- `decisions`: `date`, `decision`, `reason`.
 
 `progress.map_confirmed` is persisted because Map confirmation is a user decision rather than a file-existence fact.
 
