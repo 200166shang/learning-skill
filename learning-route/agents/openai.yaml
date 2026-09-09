@@ -1,6 +1,6 @@
 interface:
   display_name: "Learning Route"
-  short_description: "Advise what to do next in plain learning language"
-  default_prompt: "Use $learning-route like an Ask-Matt advisor: tell me what I should do next in plain learning language, why it fits, and give me one natural-language prompt I can copy into the next turn. Do not execute the downstream learning workflow unless I leave this skill and ask separately."
+  short_description: "Ask what to do next in the learning workflow"
+  default_prompt: "Use $learning-route like Ask Matt: tell me in plain learning language what I should do next and why, then give me one natural-language prompt I can copy into the next turn. Stop at the advice boundary."
 policy:
   allow_implicit_invocation: false
