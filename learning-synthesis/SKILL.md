@@ -7,7 +7,7 @@ description: Use when starting, drafting, resuming, or evolving one topic-center
 
 Own one learning project's Goal, Learning Map, mother document, KnowledgeTickets, and integration state. The Learning Map is a learning-decision map: it records questions the user asked or explicitly chose to pursue, not an AI-generated curriculum.
 
-Read [LearningSynthesisState v1](../_shared/learning-synthesis-state-v1.md) before resolving or writing project state. Load [KnowledgeTicket v2](../_shared/knowledge-ticket-v2.md) and [LearningRecord v2](../_shared/learning-record-v2.md) only in the active mode that needs them, as specified below.
+Read [LearningSynthesisState](../_shared/learning-synthesis-state.md) before resolving or writing project state. Load [KnowledgeTicket](../_shared/knowledge-ticket.md) and [LearningRecord](../_shared/learning-record.md) only in the active mode that needs them, as specified below.
 
 ## Resolve the workspace
 
@@ -17,7 +17,7 @@ Use, in order: the directory containing a supplied `learning.yaml`; the director
 
 ### Start / frame
 
-Use only [LearningSynthesisState v1](../_shared/learning-synthesis-state-v1.md) as the workflow contract for this mode.
+Use only [LearningSynthesisState](../_shared/learning-synthesis-state.md) as the workflow contract for this mode.
 
 Use for a vague topic or unconfirmed map. Discuss the desired outcome before expanding scope: identify the user's current question, desired understanding, and exclusions; inspect only relevant supplied materials. Propose candidate central questions only when the user has not supplied one, then wait for confirmation.
 
@@ -27,7 +27,7 @@ Done when the Goal and initial map are confirmed and recorded, or the skill has 
 
 ### Draft
 
-Before drafting, read [LearningRecord v2](../_shared/learning-record-v2.md). Use [LearningSynthesisState v1](../_shared/learning-synthesis-state-v1.md) for project state; do not load the KnowledgeTicket contract unless a separate ticket operation is requested.
+Before drafting, read [LearningRecord](../_shared/learning-record.md). Use [LearningSynthesisState](../_shared/learning-synthesis-state.md) for project state; do not load the KnowledgeTicket contract unless a separate ticket operation is requested.
 
 Require a confirmed map. Inventory how existing materials support its nodes, then create or update one publishable mother-document `LearningRecord`. Organize it around the central question, not source order or a list of technologies. Keep prerequisites minimal and distinguish evidence, inference, and unresolved gaps. Move the state to `filling`.
 
@@ -35,7 +35,7 @@ Done when the mother document is independently readable, follows one coherent ce
 
 ### Capture gaps
 
-Before creating or reusing a ticket, read [KnowledgeTicket v2](../_shared/knowledge-ticket-v2.md). Read [LearningRecord v2](../_shared/learning-record-v2.md) only when an existing record must be inspected to determine whether it already resolves the accepted question.
+Before creating or reusing a ticket, read [KnowledgeTicket](../_shared/knowledge-ticket.md). Read [LearningRecord](../_shared/learning-record.md) only when an existing record must be inspected to determine whether it already resolves the accepted question.
 
 Create a gap only when the user identifies it or explicitly accepts a previously suggested candidate question. First reuse an equivalent ticket or existing record when possible. For every accepted question, create one independently resolvable ticket, promote it to a formal map node, and give it a workspace-relative result destination.
 
@@ -49,7 +49,7 @@ Done when every accepted question in the current pass is represented by exactly 
 
 ### Integrate
 
-Before integrating, read [KnowledgeTicket v2](../_shared/knowledge-ticket-v2.md) and [LearningRecord v2](../_shared/learning-record-v2.md).
+Before integrating, read [KnowledgeTicket](../_shared/knowledge-ticket.md) and [LearningRecord](../_shared/learning-record.md).
 
 Require a `resolved` ticket and its result. Add only the minimum explanation needed by the mother document, followed by one idempotent callout:
 
@@ -64,7 +64,7 @@ Done when the resolved result has been minimally incorporated into the mother do
 
 ### Status / resume
 
-Use [LearningSynthesisState v1](../_shared/learning-synthesis-state-v1.md) and inspect referenced ticket files directly. Read [KnowledgeTicket v2](../_shared/knowledge-ticket-v2.md) only when contract semantics are needed to validate or reconcile lifecycle state. Read [LearningRecord v2](../_shared/learning-record-v2.md) only when status requires inspecting a referenced result.
+Use [LearningSynthesisState](../_shared/learning-synthesis-state.md) and inspect referenced ticket files directly. Read [KnowledgeTicket](../_shared/knowledge-ticket.md) only when contract semantics are needed to validate or reconcile lifecycle state. Read [LearningRecord](../_shared/learning-record.md) only when status requires inspecting a referenced result.
 
 Read `learning.yaml`, the map, and referenced tickets. Treat each ticket file as authoritative for its lifecycle and reconcile the state index when it changed independently. Report the Goal, current stage, completed work, open/resolved/deferred tickets, inconsistencies, and one recommended next action. A status question is navigation only; execute the next action only when the user asks.
 
