@@ -82,7 +82,7 @@ result: null
 
 All YAML fields shown above are required. The body must contain, in natural Markdown, the work to perform, scope, materials, evidence standard, delivery location, acceptance, and integration target. For `gap_type: code`, it also names the execution paths to trace and the questions to answer. Resolve the body-stated result destination relative to the topic workspace and keep it inside that workspace.
 
-Use one `gap_type`: `concept`, `code`, `evidence`, or `structure`.
+Use one `gap_type`: `concept`, `code`, or `evidence`.
 
 `question` records the user's confirmed learning decision. The body defines execution boundaries; it must clarify that question rather than silently add a separate learning objective.
 
@@ -108,7 +108,8 @@ open → in-progress → resolved → integrated
 
 - `concept` tickets are resolved with `learning-note`.
 - `code` tickets are resolved by a Codex agent directly reading the repository under this contract. A child agent is preferred when it can work independently; give it the ticket and listed materials, not a prescribed source-reading skill.
-- `structure` returns to `learning-synthesis`.
 - `evidence` records an experiment or research need and is not automatically executed.
+
+Structure-oriented work on the Learning Map, mother-document organization, or synthesis flow remains owned directly by `learning-synthesis`; do not encode it as a separate KnowledgeTicket type.
 
 The code worker writes one LearningRecord v2 at the body-stated destination, changes only the ticket lifecycle and result reference, and returns the result rather than its research transcript. Resolving never edits the mother document; integration is a separate `learning-synthesis` action.
