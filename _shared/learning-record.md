@@ -53,6 +53,18 @@ Common `sources[].type` values are `repository`, `url`, `document`, `experiment`
 - Finish the body before handing the file to a publisher or integrator.
 - For `record_type: code-walkthrough`, pair every source-based conclusion with a nearby minimal code excerpt and its source location. A location link alone is navigation, not an explanation.
 
+## Revision contract
+
+When the user asks to adjust an existing LearningRecord, revise that durable artifact in place instead of creating a duplicate Record or a KnowledgeTicket merely for the edit.
+
+- Preserve the Record's existing file/path, `version`, producer-defined `record_type`, and `created_at` unless the user explicitly requests a semantic replacement rather than a revision.
+- Use the user's requested change as the revision scope. Preserve still-correct content and evidence; do not broaden the edit into unrelated learning or research.
+- The producer class that owns the Record's content and evidence revises it. A source-backed `code-walkthrough` remains subject to the code-evidence obligation above after every revision.
+- If the requested change requires evidence or understanding that the current Record does not support, report the missing or newly exposed learning work instead of silently inventing it. Do not create a Ticket unless that gap is separately accepted into the learning workflow.
+- Revalidate the complete Record after editing: all required frontmatter remains valid, the body remains self-contained, and every producer-specific evidence obligation still holds.
+
+Revision alone does not mutate KnowledgeTicket lifecycle, Learning Map completion, or synthesis integration state. Those states are reconciled by their owning workflow only when the revised Record materially affects them.
+
 ## Consumer obligations
 
 - Validate the required frontmatter and confirm that a non-empty Markdown body follows the closing fence.
