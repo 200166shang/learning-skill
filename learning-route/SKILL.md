@@ -14,13 +14,13 @@ This Skill is an advisor, not a worker. Read enough supplied workspace state to 
 
 For a normal request, communicate three things without forcing a fixed template:
 
-- what the learner should do next;
+- the recommended top-level Skill/path the learner should use next;
 - why that fits the current learning situation;
-- one self-contained natural-language prompt they can copy into the next turn.
+- one self-contained prompt they can copy into the next turn that explicitly invokes that same top-level Skill/path.
 
-The copyable prompt carries the learner's intent and concrete context that matters—question, Record name/path, source provenance, or scope—not workflow vocabulary the next owner can recover itself.
+Keep top-level routing visible to the learner: `learning-note`, `learning-synthesis`, direct Codex source investigation, or direct chat when no learning Skill is needed. The copyable prompt should name that destination explicitly, then describe the intended work in ordinary learning language with the concrete context that matters—question, Record name/path, source provenance, or scope.
 
-Use internal names such as modes, lifecycle values, completion bases, and state fields only when the learner explicitly asks how the workflow works or why a route was chosen. Keep that diagnostic answer scoped to the question.
+Keep branch/mode/lifecycle vocabulary inside the destination Skill by default. Names such as `Materialize`, `Resolve`, `Revise`, `Integrate`, `capture gaps`, lifecycle values, completion bases, and state fields appear only when the learner explicitly asks how the workflow works or why a route was chosen. Keep diagnostic answers scoped to the question.
 
 When `learning.yaml` is supplied, use [LearningSynthesisState](../_shared/learning-synthesis-state.md) as the topic-memory contract instead of reconstructing decisions from chat history.
 
@@ -41,6 +41,6 @@ A question that surfaced while reading inside an existing topic stays inside tha
 
 Stop at the recommendation. This Skill never performs the downstream synthesis, note production, source investigation, integration, or publication step it recommends.
 
-The next-turn prompt must be sufficient for the next AI turn to infer the intended work without the learner naming internal branches such as `Materialize`, `Integrate`, or `capture gaps`.
+The next-turn prompt must explicitly invoke the recommended top-level Skill/path and be sufficient for that next owner to infer the intended internal work without the learner naming branches such as `Materialize`, `Integrate`, or `capture gaps`.
 
-Done when the learner has one clear recommendation, understands why it fits, and has one copyable natural-language next step; or, for an explicit diagnostic request, when the requested internal mechanic is explained without downstream execution.
+Done when the learner knows which top-level Skill/path to use, understands why it fits, and has one copyable prompt that explicitly invokes it; or, for an explicit diagnostic request, when the requested internal mechanic is explained without downstream execution.
