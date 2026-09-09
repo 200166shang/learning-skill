@@ -7,9 +7,9 @@ description: Turn rough technical observations, questions, experiments, or refer
 
 Turn fragmented technical input into a self-contained explanation that answers the user's real question and can be reused later.
 
-Before producing the result, read the shared [LearningRecord v2 contract](../_shared/learning-record-v2.md). Emit standard Markdown with `record_type: note` in YAML frontmatter and the reader-facing body after the closing fence.
+Before producing the result, read the shared [LearningRecord contract](../_shared/learning-record.md). Emit standard Markdown with `record_type: note` in YAML frontmatter and the reader-facing body after the closing fence.
 
-When the input is a local KnowledgeTicket, also read [KnowledgeTicket v2](../_shared/knowledge-ticket-v2.md). Use its question and Markdown body as the scope and work contract; write the completed record to the body-stated workspace-relative destination. Then set only that ticket's status to `resolved` and its `result` reference. Do not edit the Learning Map, synthesis state, or mother document; integration belongs to `learning-synthesis`.
+When the input is a local KnowledgeTicket, also read [KnowledgeTicket](../_shared/knowledge-ticket.md). Use its question and Markdown body as the scope and work contract; write the completed record to the body-stated workspace-relative destination. Then set only that ticket's status to `resolved` and its `result` reference. Do not edit the Learning Map, synthesis state, or mother document; integration belongs to `learning-synthesis`.
 
 ## Workflow
 
