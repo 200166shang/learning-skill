@@ -13,7 +13,6 @@ created_at: 2026-09-09
 tags:
   - UART
   - STM32
-status: resolved
 sources:
   - type: repository
     ref: src/base_control/src/base_control.cpp
@@ -40,11 +39,12 @@ The Markdown body after the frontmatter is required. It must be complete and pub
 | Field | Contract |
 | --- | --- |
 | `tags` | Short, stable retrieval terms. Omit when no useful tags are known. |
-| `status` | Producer's understanding state. Prefer `open`, `in-progress`, or `resolved`; preserve another explicit user value. |
 | `sources` | Evidence references. Each entry has a `type` and `ref`; it may include `note` when the reference needs qualification. |
 | `relations` | Supported durable knowledge-lineage edges from this Record to another LearningRecord. Omit when no supported lineage is known. |
 
 Common `sources[].type` values are `repository`, `url`, `document`, `experiment`, and `conversation`. They are an open vocabulary, not an exhaustive enum.
+
+Legacy v2 Records may contain a `status` field from earlier versions of this contract. Consumers tolerate it but never use it to decide whether the artifact is ready: producer branch completion plus this contract's required frontmatter/body/evidence rules define handoff readiness. New Records omit `status`. A revision preserves an existing legacy value unless the user explicitly asks for metadata cleanup.
 
 ## Knowledge lineage relation
 
@@ -85,7 +85,7 @@ Example reader-facing rendering:
 - Keep evidence, inference, and unresolved assumptions distinguishable in the body.
 - Include only metadata supported by the work.
 - If a supported `derived-from` relation is present, keep its reader-facing `来源脉络` rendering consistent with the canonical frontmatter edge.
-- Finish the body before handing the file to a publisher or integrator.
+- Finish the body before handing the file to a publisher or integrator; readiness comes from the producer completion criterion and this contract, not a Record lifecycle field.
 
 ### `code-walkthrough` evidence contract
 
@@ -102,6 +102,7 @@ This obligation belongs to the durable LearningRecord, regardless of whether the
 When the user asks to adjust an existing LearningRecord, revise that durable artifact in place instead of creating a duplicate Record or a KnowledgeTicket merely for the edit.
 
 - Preserve the Record's existing file/path, `version`, producer-defined `record_type`, and `created_at` unless the user explicitly requests a semantic replacement rather than a revision.
+- Preserve a legacy `status` value when one already exists unless the requested revision includes metadata cleanup; never introduce `status` into a Record that does not already have it.
 - Use the user's requested change as the revision scope. Preserve still-correct content and evidence; do not broaden the edit into unrelated learning or research.
 - Preserve still-supported `relations` and their reader-facing lineage rendering. Change or remove a relation only when the user explicitly corrects the lineage or the supplied evidence/context no longer supports it; do not infer a replacement relation from topic similarity.
 - The producer class that owns the Record's content and evidence revises it. A source-backed `code-walkthrough` remains subject to the code-walkthrough evidence contract above after every revision.
@@ -114,6 +115,7 @@ Revision alone does not mutate KnowledgeTicket lifecycle, Learning Map completio
 
 - Validate the required frontmatter and confirm that a non-empty Markdown body follows the closing fence.
 - Validate any supported `relations` and treat their frontmatter entries as canonical lineage facts.
+- Treat a legacy `status` field as inert compatibility metadata, never as a readiness gate.
 - Treat the body as opaque completed Markdown: preserve its meaning and structure.
 - Map metadata to the destination without inventing producer-specific rules.
 - Return destination identifiers or links separately; they are publication results, not mutations to the source record.
