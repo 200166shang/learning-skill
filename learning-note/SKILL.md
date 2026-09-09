@@ -1,6 +1,6 @@
 ---
 name: learning-note
-description: Turn rough technical observations, questions, experiments, or references into a durable Markdown learning record. Use for knowledge synthesis that does not require a source-code execution walkthrough; publishing is handled separately.
+description: Produce a durable, reusable conceptual LearningRecord when the user explicitly wants preserved learning content or when a concept KnowledgeTicket routes work here.
 ---
 
 # Learning Note
