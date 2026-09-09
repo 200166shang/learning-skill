@@ -13,7 +13,7 @@ Distinguish a navigation request such as “what should I do?” or “where am 
 
 For navigation, return the current stage, recommended skill/mode, reason, required input, and exactly one next action; do not execute it. For execution, read and follow the selected owner until that owner's completion criterion is satisfied, then stop at the next ownership boundary.
 
-When a `learning.yaml` is supplied, read [LearningSynthesisState v1](../_shared/learning-synthesis-state-v1.md) to recover state rather than relying on conversation history. Treat formal map nodes and tickets as user-confirmed learning decisions; `candidate_questions` remain recommendations until the user accepts one.
+When a `learning.yaml` is supplied, read [LearningSynthesisState](../_shared/learning-synthesis-state.md) to recover state rather than relying on conversation history. Treat formal map nodes and tickets as user-confirmed learning decisions; `candidate_questions` remain recommendations until the user accepts one.
 
 ## Route
 
@@ -22,10 +22,10 @@ Use this as the authoritative intent-to-owner mapping:
 | Primary intent | Owner |
 | --- | --- |
 | Start, draft, resume, integrate, or evolve one topic-centered learning document; organize scattered materials; capture a user-confirmed gap | [`learning-synthesis`](../learning-synthesis/SKILL.md) in `start`, `draft`, `capture gaps`, `integrate`, or `status` mode |
-| Resolve a supplied `concept` KnowledgeTicket | [`learning-note`](../learning-note/SKILL.md) under the [KnowledgeTicket v2](../_shared/knowledge-ticket-v2.md) contract |
-| Resolve a supplied `code` KnowledgeTicket | Direct Codex source investigation under the [KnowledgeTicket v2](../_shared/knowledge-ticket-v2.md) contract |
-| Resolve a supplied `structure` KnowledgeTicket | [`learning-synthesis`](../learning-synthesis/SKILL.md) under the [KnowledgeTicket v2](../_shared/knowledge-ticket-v2.md) contract |
-| Handle a supplied `evidence` KnowledgeTicket | Record the experiment/research need under the [KnowledgeTicket v2](../_shared/knowledge-ticket-v2.md) contract and stop; do not execute it automatically |
+| Resolve a supplied `concept` KnowledgeTicket | [`learning-note`](../learning-note/SKILL.md) under the [KnowledgeTicket](../_shared/knowledge-ticket.md) contract |
+| Resolve a supplied `code` KnowledgeTicket | Direct Codex source investigation under the [KnowledgeTicket](../_shared/knowledge-ticket.md) contract |
+| Resolve a supplied `structure` KnowledgeTicket | [`learning-synthesis`](../learning-synthesis/SKILL.md) under the [KnowledgeTicket](../_shared/knowledge-ticket.md) contract |
+| Handle a supplied `evidence` KnowledgeTicket | Record the experiment/research need under the [KnowledgeTicket](../_shared/knowledge-ticket.md) contract and stop; do not execute it automatically |
 | Turn a standalone conceptual observation, question, experiment, or reference into durable learning content | [`learning-note`](../learning-note/SKILL.md) |
 | Explain real files, callers, runtime state, execution paths, or repository data flow | Direct Codex source investigation |
 
@@ -35,7 +35,7 @@ If conceptual and repository material are mixed, choose the owner by the questio
 
 Treat a producer's valid `LearningRecord` as a phase boundary. Resolving a KnowledgeTicket stops at `resolved`; only `learning-synthesis` integrates a resolved result into a mother document.
 
-A chat-only direct Codex source investigation may return an explanation without creating a durable record. When the user asks to save, export, publish, sync, archive, or otherwise preserve the result, first materialize a valid completed [LearningRecord v2](../_shared/learning-record-v2.md); source investigations normally use `record_type: code-walkthrough`. Do not cross a persistence or publication boundary with only an in-chat explanation.
+A chat-only direct Codex source investigation may return an explanation without creating a durable record. When the user asks to save, export, publish, sync, archive, or otherwise preserve the result, first materialize a valid completed [LearningRecord](../_shared/learning-record.md); source investigations normally use `record_type: code-walkthrough`. Do not cross a persistence or publication boundary with only an in-chat explanation.
 
 This repository currently installs no external publisher skills. Do not invoke or claim Feishu, Obsidian, or another external publication path. If the user requests an unavailable external destination, finish and preserve the completed `LearningRecord`, return it locally, and report that external publication is outside the installed workflow. A later publisher can consume that completed record without rerunning or rewriting the producer.
 
