@@ -6,11 +6,7 @@ Store each ticket as Markdown with YAML frontmatter under the topic workspace's 
 
 ## Code evidence rule
 
-For every source-based conclusion in a `code` ticket result, use this sequence:
-
-`source location → minimal excerpt → explanation`
-
-The excerpt must be the smallest code needed to show the relevant control flow, data access, or configuration. A file path or line number alone is navigation, not evidence. Keep verified source facts, inference, and unconfirmed items distinguishable.
+A `code` Ticket must produce a `record_type: code-walkthrough` LearningRecord and satisfy the canonical [`LearningRecord` code-walkthrough evidence contract](learning-record.md#code-walkthrough-evidence-contract). The Ticket may identify the files, symbols, paths, and source-backed checks needed for this question, but it must not redefine the artifact's evidence rule.
 
 ## Schema
 
@@ -63,15 +59,15 @@ result: null
 
 ## 证据要求
 
-- 遵守 `Code evidence rule`。
-- 每个关键结论指向真实文件、符号或代码路径。
+- 产出满足 LearningRecord `code-walkthrough` evidence contract 的结果。
+- 每个关键结论指向回答当前问题所需的真实文件、符号或代码路径。
 
 ## 交付与验收
 
-直接用 Codex 调查源码；适合独立执行时优先委派子 agent。产出 `code-walkthrough` LearningRecord 到 `records/PID源码导览.md`，独立说明实际调用链、状态变化与结论边界。
+直接用 Codex 调查源码；适合独立执行时优先委派子 agent。产出 `record_type: code-walkthrough` LearningRecord 到 `records/PID源码导览.md`，独立说明实际调用链、状态变化与结论边界。
 
 - 回答本 Ticket 的问题，并覆盖范围、追踪路径和需要回答项。
-- 结果满足证据要求。
+- 结果满足 LearningRecord 的 code-walkthrough evidence contract。
 
 ## 后续整合
 
@@ -94,7 +90,7 @@ Before issuing a code ticket, `learning-synthesis` may perform a lightweight rec
 - name the execution paths that must be traced;
 - turn the user's stated concern into answerable checks;
 - state adjacent work that belongs outside the ticket;
-- require code-backed conclusions under the `Code evidence rule`.
+- require the result to satisfy the LearningRecord `code-walkthrough` evidence contract.
 
 Do not add attractive but separate questions merely because they are related. Offer them later as candidate questions if needed.
 
