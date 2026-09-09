@@ -13,7 +13,7 @@ Distinguish a navigation request such as “what should I do?” or “where am 
 
 For navigation, return the current stage, recommended skill/mode, reason, required input, and exactly one next action; do not execute it. For execution, read and follow the selected owner until that owner's completion criterion is satisfied, then stop at the next ownership boundary.
 
-When a `learning.yaml` is supplied, read [LearningSynthesisState](../_shared/learning-synthesis-state.md) to recover state rather than relying on conversation history. Treat formal map nodes and tickets as user-confirmed learning decisions; `candidate_questions` remain recommendations until the user accepts one.
+When a `learning.yaml` is supplied, read [LearningSynthesisState](../_shared/learning-synthesis-state.md) to recover state rather than relying on conversation history. Treat formal map nodes and tickets as user-confirmed learning decisions; `candidate_questions` are AI recommendations until the user accepts one.
 
 ## Route
 
@@ -22,6 +22,7 @@ Use this as the authoritative intent-to-owner mapping:
 | Primary intent | Owner |
 | --- | --- |
 | Start, draft, resume, integrate, or evolve one topic-centered learning document; organize scattered materials; capture a user-confirmed gap | [`learning-synthesis`](../learning-synthesis/SKILL.md) in `start`, `draft`, `capture gaps`, `integrate`, or `status` mode |
+| Handle one or many questions surfaced while reading a LearningRecord or mother document inside an existing topic workflow | [`learning-synthesis`](../learning-synthesis/SKILL.md) `capture gaps`; it reconciles and classifies the questions before any new Map node or Ticket is created |
 | Resolve a supplied `concept` KnowledgeTicket | [`learning-note`](../learning-note/SKILL.md) `Resolve` under the [KnowledgeTicket](../_shared/knowledge-ticket.md) contract |
 | Resolve a supplied `code` KnowledgeTicket | Direct Codex source investigation under the [KnowledgeTicket](../_shared/knowledge-ticket.md) contract |
 | Handle a supplied pending `evidence` KnowledgeTicket whose experiment/research is not yet complete | Record the experiment/research need under the [KnowledgeTicket](../_shared/knowledge-ticket.md) contract and stop; do not execute it automatically |
@@ -31,7 +32,7 @@ Use this as the authoritative intent-to-owner mapping:
 | Explain real files, callers, runtime state, execution paths, or repository data flow | Direct Codex source investigation |
 | Answer a brand-new standalone conceptual question when the user has not asked to preserve it or enter the durable topic workflow | Direct chat response; no learning skill is required |
 
-A brand-new unresolved conceptual question is not a `learning-note` branch by itself. If the user later asks to preserve the completed chat result, route that result to `learning-note: Materialize`. If the user wants the unresolved question tracked inside a topic-centered durable workflow, route first to `learning-synthesis` so the user-confirmed gap can be represented in the Map/Ticket workflow before `learning-note: Resolve` is invoked.
+A question surfaced while reading inside an existing topic workflow is not automatically a new standalone question or a new gap. Route it to `learning-synthesis: capture gaps` so the current Map, Tickets, AI candidates, and Records can be reconciled first. A brand-new unresolved conceptual question outside a topic workflow is not a `learning-note` branch by itself. If the user later asks to preserve that completed chat result, route it to `learning-note: Materialize`. If the user wants the unresolved question tracked inside a topic-centered durable workflow, route first to `learning-synthesis` so the user-confirmed gap can be represented in the Map/Ticket workflow before `learning-note: Resolve` is invoked.
 
 If conceptual and repository material are mixed, choose the owner by the question being answered. Repository evidence supporting a broader conceptual explanation does not by itself make the request a code walkthrough. When source investigation should become part of the topic-centered durable workflow, `learning-synthesis` first compiles a user-confirmed code ticket.
 
