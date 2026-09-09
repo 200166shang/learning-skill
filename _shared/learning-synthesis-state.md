@@ -121,13 +121,15 @@ Use exactly one topic stage:
 
 After every confirmed goal, map, draft, ticket, integration, completion-evidence decision, or next-action change owned by `learning-synthesis`, update `learning.yaml`. A ticket file is authoritative for its own lifecycle; after an independent producer marks it `resolved`, the next synthesis status or integration action reconciles the cached ticket entry in `learning.yaml`. Standalone LearningRecord integration does not create or mutate a Ticket entry. Preserve prior decisions; do not rely on conversation history as workflow state.
 
-`candidate_questions` is optional and is not a ticket index. It holds at most three directly relevant AI recommendations that the user has not accepted. Each entry records the question, the node that surfaced it, and why it may be worth pursuing. A candidate becomes a formal map node and may create a ticket only after explicit user acceptance; remove or archive it after that decision.
+`candidate_questions` is optional and is not a general inbox for every question the user asks. It holds at most three directly relevant **AI-recommended** questions that the user has not accepted. Each entry records the question, the confirmed Map node that motivated the recommendation when one exists, and why it may be worth pursuing. User-surfaced questions are not truncated to three and do not need to be persisted here merely because they were asked: reconcile them against the current Map, Tickets, candidates, and Records first. If the user chooses to pursue a genuinely new question, represent that decision in the human-readable Map under the closest relevant confirmed parent and create or reuse pending work as needed. Remove or archive an AI candidate after the user accepts or rejects it.
+
+The Learning Map is the persistent question-lineage view. Do not create a second per-Record question tree or duplicate lineage collection in `learning.yaml` unless a later observed workflow failure requires it.
 
 ## Separation
 
 - `LearningRecord` is publishable knowledge and may exist with or without a KnowledgeTicket.
 - `LearningSynthesisState` is private workflow state.
-- `learning-map.md` is the human-readable map of user learning decisions.
+- `learning-map.md` is the human-readable map of user learning decisions and their question lineage.
 - A KnowledgeTicket is a self-contained contract for resolving one accepted gap that still requires work. Code tickets carry the direct-Codex investigation scope when a child agent performs the work.
 
 Publishers consume only completed `LearningRecord` values. They do not consume this state file.
