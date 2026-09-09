@@ -40,6 +40,8 @@ Optional metadata:
 | `sources` | Evidence references with `type` + `ref`, optionally `note`. |
 | `relations` | Supported durable Record-to-Record lineage. |
 
+`sources[].type` is open vocabulary; common values are `repository`, `url`, `document`, `experiment`, and `conversation`.
+
 Legacy v2 `status` is tolerated as inert compatibility metadata. New Records omit it; producer completion plus this contract determines readiness. Revision preserves an existing legacy value unless metadata cleanup is explicitly requested.
 
 ## Knowledge lineage
@@ -100,7 +102,10 @@ Revision changes only the Record. Ticket lifecycle, Map completion, synthesis in
 
 ## Consumer obligations
 
-Validate required frontmatter, non-empty body, producer-specific evidence obligations, and any supported relation. Treat the body as completed Markdown and canonical lineage as producer-owned fact. Legacy `status` never gates readiness.
+- Validate required frontmatter, non-empty body, producer-specific evidence obligations, and supported relations.
+- Preserve the completed body's meaning/structure and treat canonical lineage as producer-owned fact.
+- Map metadata to a destination without inventing producer-specific semantics; return destination identifiers/links as publication results rather than source mutations.
+- Legacy `status` never gates readiness.
 
 ## Migration from v1
 
