@@ -18,7 +18,7 @@ Use, in order: the directory containing a supplied `learning.yaml`; the director
 | Mode | Use when | Instructions |
 | --- | --- | --- |
 | `start` | The topic, Goal, or initial map is vague or unconfirmed. | [Start / frame](references/start.md) |
-| `draft` | The map is confirmed and the mother document should be created or updated. | [Draft](references/draft.md) |
+| `draft` | The map is confirmed and the synthesis-owned mother document should be created, updated, or revised in place. | [Draft](references/draft.md) |
 | `capture gaps` | The user has identified or accepted a gap that should become a reusable record or ticket. | [Capture gaps](references/capture-gaps.md) |
 | `integrate` | A valid LearningRecord should be incorporated, or a previously integrated Record should be minimally reconciled after producer revision. | [Integrate](references/integrate.md) |
 | `status` | The project state should be reconciled or the next action should be identified without executing it. | [Status / resume](references/status.md) |
@@ -41,7 +41,8 @@ At a natural stopping point, recommend at most three directly relevant candidate
 - A source execution ticket is resolved by a Codex agent directly investigating the listed repository material under its ticket contract.
 - Resolving a Ticket produces exactly one LearningRecord and may mark the Ticket `resolved`; it never integrates it.
 - A LearningRecord does not require a KnowledgeTicket. Already-resolved learning may be materialized directly into a durable Record and later integrated without creating a retroactive Ticket.
-- Revision belongs to the producer class that owns the LearningRecord's content and evidence. `learning-synthesis` does not rewrite the Record; after producer revision, it only reconciles the topic's existing integration when the user asks.
+- The mother document is the LearningRecord produced and owned by `learning-synthesis` (`record_type: synthesis`). When the user asks to revise that mother document, stay in `draft`, edit the same artifact in place under the shared LearningRecord revision contract, preserve still-correct synthesis content, and do not create a Ticket or duplicate Record merely for the edit.
+- Revision of any integrated child LearningRecord remains with that child Record's producer class. `learning-synthesis` does not rewrite integrated child Records; after producer revision, it only reconciles the topic's existing integration when the user asks.
 - Integration consumes a valid LearningRecord. Ticket lifecycle is updated only when that Record came from the supplied Ticket.
 - Prefer assigning a self-contained accepted ticket to a child agent when delegation is available and the work can proceed independently. For a code ticket, give that agent the ticket and its listed materials; it selects the investigation method from the question rather than following a fixed source-reading skill. The parent recovers the resulting LearningRecord and lifecycle change rather than the research transcript. Resolve inline only when delegation is unavailable or the task is too small to justify a handoff.
 - Interview prompts, open gaps, material inventories, future enhancements, and next actions belong in the map, state, or tickets—not the mother-document body.
