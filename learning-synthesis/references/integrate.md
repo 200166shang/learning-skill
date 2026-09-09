@@ -1,6 +1,6 @@
 # Integrate
 
-Before integrating, read [LearningRecord](../../_shared/learning-record.md) and [LearningSynthesisState](../../_shared/learning-synthesis-state.md). Read [KnowledgeTicket](../../_shared/knowledge-ticket.md) only when the LearningRecord is the result of a supplied Ticket.
+Before integrating, read [LearningRecord](../../_shared/learning-record.md) and [LearningSynthesisState](../../_shared/learning-synthesis-state.md). Read [KnowledgeTicket](../../_shared/knowledge-ticket.md) only when the LearningRecord is the result of a supplied Ticket. When the active integration needs to display an associated Record in the Map or the supplied Record contains supported knowledge-lineage relations, also read [Knowledge lineage views](knowledge-lineage.md).
 
 Use this mode either to integrate a valid completed LearningRecord for the first time or to reconcile a previously integrated Record after its producer revised it. Integration consumes the LearningRecord, not the Ticket that may have produced it.
 
@@ -21,8 +21,16 @@ For an initial Ticket-backed integration, update the Ticket from `resolved` to `
 
 For an initial standalone LearningRecord integration, do not mutate any Ticket lifecycle. Only when the user explicitly identifies an existing confirmed Map node that this Record satisfies, add or reconcile `map_completions` for that node with `basis: accepted-existing-material` and the LearningRecord reference, then mark that existing node `[x]`. If the Record is only supplemental knowledge, integrate the callout and related-record index without creating, completing, or otherwise changing a Map node.
 
+## Learner-facing Record views
+
+When this integration already associates the Record with an existing formal Map node, reconcile exactly one lightweight Record attachment under that node using [Knowledge lineage views](knowledge-lineage.md). The attachment is navigation only: it does not create a formal node or completion evidence and must not be added to an unrelated node merely because the topics look similar.
+
+If the supplied Record contains one or more supported `derived-from` relations, reconcile the workspace-root `knowledge-lineage.md` from canonical Record relation metadata after the integration state is otherwise valid. Rebuild the derived graph/index from supported relations in the current topic `records/` directory; do not write reciprocal metadata into parent Records or duplicate relation edges into `learning.yaml`.
+
+If an already integrated Record is revised and its still-supported lineage metadata changes, the producer owns that metadata change. During reconciliation, update only stale Map attachment title/path text and regenerate the derived lineage view from the Records. Do not invent a new lineage edge during integration.
+
 Revision reconciliation does not by itself reopen or downgrade an existing Map completion. If the revised Record appears no longer sufficient to support a `map_completions` entry that references it, report that completion inconsistency for user confirmation and leave the completion state unchanged; do not silently change `[x]`, delete provenance, or create a new Ticket.
 
-Then reconcile the stage and next action. Do not duplicate callouts, related-record entries, or completion provenance.
+Then reconcile the stage and next action. Do not duplicate callouts, related-record entries, Map Record attachments, completion provenance, or lineage edges.
 
-Done when the selected LearningRecord is represented by exactly one accurate mother-document callout/index entry and synthesis state is reconciled without changing the Record. A first Ticket-backed integration additionally leaves the Ticket `integrated` and its existing map node with `integrated-ticket` provenance when applicable. A first standalone integration leaves Ticket state untouched and changes the Map only when the user explicitly accepted the Record as completion evidence for an existing confirmed node. Revision reconciliation changes only stale integrated summary/index metadata when necessary and otherwise leaves already-correct integration, Ticket lifecycle, and Map completion untouched.
+Done when the selected LearningRecord is represented by exactly one accurate mother-document callout/index entry and synthesis state is reconciled without changing the Record. When the Record is associated with an existing Map node, that node has at most one accurate lightweight attachment for the Record. When supported Record lineage exists in the workspace, `knowledge-lineage.md` accurately derives its rendered edges from child-Record metadata without becoming a second source of truth. A first Ticket-backed integration additionally leaves the Ticket `integrated` and its existing map node with `integrated-ticket` provenance when applicable. A first standalone integration leaves Ticket state untouched and changes formal Map completion only when the user explicitly accepted the Record as completion evidence for an existing confirmed node. Revision reconciliation changes only stale integrated summary/index/view metadata when necessary and otherwise leaves already-correct integration, Ticket lifecycle, and Map completion untouched.
