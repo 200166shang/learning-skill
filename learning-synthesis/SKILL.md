@@ -27,7 +27,9 @@ After selecting the mode, read that reference and follow it until its `Done when
 
 ## Map rules
 
-The map is a human-readable learning-decision tree, not merely the document table of contents or a complete subject taxonomy. Formal nodes come only from a user question or an explicit user acceptance of a candidate; use stable node identifiers in tickets and mark nodes as unhandled `[ ]`, partial `[~]`, integrated `[x]`, or excluded `[-]`.
+The map is a human-readable learning-decision tree, not merely the document table of contents or a complete subject taxonomy. Formal nodes come only from a user question or an explicit user acceptance of a candidate; use stable node identifiers in tickets and mark nodes as unhandled `[ ]`, partial `[~]`, complete `[x]`, or excluded `[-]`.
+
+Use the [LearningSynthesisState](../_shared/learning-synthesis-state.md) map completion contract for every `[x]`. Never mark a node complete solely because conversation history, memory, or available materials suggest prior understanding. A prior note, external document, integrated ticket result, or explicit user confirmation may satisfy the node only after its completion basis is recorded in `learning.yaml` with the node id and supporting provenance. Treat an `[x]` without completion provenance as an inconsistency, not as completed work.
 
 At a natural stopping point, recommend at most three directly relevant candidate questions. Keep them outside the formal tree and tickets, for example in `learning.yaml`'s `candidate_questions`; explain why each would help. Promote one only after the user chooses it. Keep important scope decisions in the map; keep machine paths and lifecycle state in YAML.
 
@@ -40,4 +42,4 @@ At a natural stopping point, recommend at most three directly relevant candidate
 - Interview prompts, open gaps, material inventories, future enhancements, and next actions belong in the map, state, or tickets—not the mother-document body.
 - Validation and publication are outside this workflow.
 
-Project completion means the mother document has a coherent central thread and every selected ticket is integrated, deferred, or cancelled. Any individual invocation stops when its active mode's `Done when` condition is satisfied; new gaps may reopen `filling` later.
+Project completion means the mother document has a coherent central thread and every required confirmed map node is excluded or has valid completion provenance; ticket lifecycle alone is not sufficient. Any individual invocation stops when its active mode's `Done when` condition is satisfied; new gaps may reopen `filling` later.
