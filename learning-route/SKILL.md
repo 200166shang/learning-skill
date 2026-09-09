@@ -35,7 +35,7 @@ If conceptual and repository material are mixed, choose the owner by the questio
 
 Treat a producer's valid `LearningRecord` as a phase boundary. Resolving a KnowledgeTicket stops at `resolved`; only `learning-synthesis` integrates a resolved result into a mother document.
 
-A chat-only direct Codex source investigation may return an explanation without creating a durable record. When the user asks to save, export, publish, sync, archive, or otherwise preserve the result, first materialize a valid completed [LearningRecord](../_shared/learning-record.md); source investigations normally use `record_type: code-walkthrough`. Do not cross a persistence or publication boundary with only an in-chat explanation.
+A chat-only direct Codex source investigation may return an explanation without creating a durable record. When the user asks to save, export, publish, sync, archive, or otherwise preserve the result, first materialize a valid completed [LearningRecord](../_shared/learning-record.md). Do not cross a persistence or publication boundary with only an in-chat explanation.
 
 This repository currently installs no external publisher skills. Do not invoke or claim Feishu, Obsidian, or another external publication path. If the user requests an unavailable external destination, finish and preserve the completed `LearningRecord`, return it locally, and report that external publication is outside the installed workflow. A later publisher can consume that completed record without rerunning or rewriting the producer.
 
