@@ -1,33 +1,27 @@
 ---
 name: learning-note
-description: Produce or revise a durable, reusable conceptual LearningRecord when the user explicitly wants preserved learning content, supplies an existing conceptual Record for adjustment, or a concept/evidence KnowledgeTicket routes completed work here.
+description: Produce or revise a durable conceptual LearningRecord when the learner wants preserved knowledge, supplies an existing conceptual Record for adjustment, or a concept/evidence Ticket routes completed work here.
 ---
 
 # Learning Note
 
-Own conceptual `record_type: note` LearningRecords. This skill may resolve a pending concept Ticket, materialize learning that is already complete, or revise an existing conceptual Record. Do not require a KnowledgeTicket merely to justify an existing result or revision.
+Own conceptual `record_type: note` LearningRecords. Read the shared [LearningRecord contract](../_shared/learning-record.md), choose one branch, then load only that branch reference.
 
-Before producing or revising a result, read the shared [LearningRecord contract](../_shared/learning-record.md). Choose exactly one branch, then read only that branch reference and the shared contracts it requires.
-
-## Choose one branch
-
-| Branch | Use when | Instructions |
+| Branch | Use when | Reference |
 | --- | --- | --- |
 | `Resolve` | A supplied `concept` KnowledgeTicket still represents pending conceptual work. | [Resolve](references/resolve.md) |
-| `Materialize` | The learning result is already complete and should be preserved, either standalone or as the completed external result of one existing unresolved `evidence` Ticket. | [Materialize](references/materialize.md) |
-| `Revise` | An existing `record_type: note` LearningRecord should be adjusted in place. | [Revise](references/revise.md) |
+| `Materialize` | The learning result already exists and should become durable knowledge, standalone or as the completed result of one `evidence` Ticket. | [Materialize](references/materialize.md) |
+| `Revise` | An existing conceptual LearningRecord should be adjusted in place. | [Revise](references/revise.md) |
 
-After selecting the branch, follow only that reference until its `Done when` condition is satisfied. Do not load another branch reference unless the user explicitly starts a separate operation.
+## Cross-branch boundaries
 
-## Common ownership boundaries
-
-- Emit or preserve `record_type: note`; branch selection never changes the body into a fixed template.
+- Produce/preserve exactly one `record_type: note` artifact under the shared LearningRecord contract.
 - Keep verified evidence, inference, and unresolved assumptions distinguishable.
-- When the supplied learning history explicitly says the current result grew from reading a concrete prior LearningRecord through a learner question, preserve that supported `derived-from` relation under the shared LearningRecord contract and render its `来源脉络`. Do not infer lineage from semantic similarity alone.
-- Relation metadata belongs to the child/current Record. Do not edit the parent Record merely to add a reciprocal backlink.
-- A request centered on tracing real files, functions, callers, runtime state, or repository data flow belongs to direct Codex source investigation, not this skill.
-- Revision of a source-backed or `code-walkthrough` Record also belongs to direct Codex under the shared LearningRecord revision contract.
-- Do not create or update Feishu, Obsidian, GitHub, or another external store.
-- Do not integrate a produced Record into a mother document; integration belongs to `learning-synthesis`.
+- Create `derived-from` only from explicit/supported learner provenance; the shared Record contract owns the canonical relation and reader-facing lineage rules.
+- Real file/function/caller/runtime/data-flow tracing and revision of source-backed `code-walkthrough` Records belong to direct Codex.
+- External publication belongs to its destination workflow.
+- Mother-document integration belongs to `learning-synthesis`.
 
-Completion criterion: the selected branch reaches its own `Done when` condition and returns exactly one contract-valid conceptual LearningRecord without crossing another ownership boundary.
+A Ticket is required only when pending work actually exists; Materialize and Revise operate directly on already-existing knowledge/artifacts.
+
+Done when the selected branch reaches its own completion gate and returns exactly one contract-valid conceptual LearningRecord at its ownership boundary.

@@ -1,32 +1,42 @@
 # Capture gaps
 
-Before creating or reusing pending work, read [KnowledgeTicket](../../_shared/knowledge-ticket.md) and treat it as the authoritative schema and worker contract for every ticket. Read [LearningRecord](../../_shared/learning-record.md) only when an existing record must be inspected to determine whether it already resolves a question or whether a surfaced question belongs to that record's promised scope.
+Read [KnowledgeTicket](../../_shared/knowledge-ticket.md) before creating/reusing pending work. Read [LearningRecord](../../_shared/learning-record.md) only when an existing Record must be inspected for scope or prior resolution.
 
-## Surface, reconcile, classify, promote
+## Surface → Reconcile → Classify → Promote
 
-When one or many questions surface while the user reads a topic LearningRecord or mother document, do not turn them directly into candidates, Map nodes, or Tickets. Handle every surfaced question through this bounded sequence:
+Handle every question surfaced while reading a topic Record/mother document through this sequence:
 
-1. **Surface** — preserve the user's actual question. User-surfaced questions are authoritative inputs and may be handled in any number; the `at most three` limit applies only to AI-recommended candidate questions.
-2. **Reconcile** — compare the question against the current topic's known state, in this order: formal Learning Map nodes, existing KnowledgeTickets, `candidate_questions`, then existing or related LearningRecords. Reuse a semantically equivalent decision, work item, recommendation, or result instead of creating a duplicate. Keep this lookup bounded to the current topic workspace and supplied materials; do not implicitly scan unrelated projects, full chat history, or external knowledge stores.
-3. **Classify** — if the question is missing explanation that the current Record already promised to provide, route back to that Record's producer for revision and do not create a gap. If it is only a small prerequisite needed to read the current Record, keep it as local/minimal context rather than creating a formal Map node. If reconciliation found an existing learning objective, return to that existing Map/Ticket/Record path. Only a question whose answer would materially expand the current learning objective is a new learning objective eligible for promotion.
-4. **Promote** — persist a genuinely new learning objective only when the user chooses to pursue it; an explicit request to track, resolve, or continue that question counts, while merely listing or expressing curiosity does not. Attach the new formal node under the closest relevant confirmed parent question in the human-readable Learning Map so that Map structure preserves question lineage. Do not create a per-Record question document or duplicate lineage artifact.
+1. **Surface** — preserve the learner's actual question. The three-candidate limit applies only to AI recommendations, never to learner-surfaced questions.
+2. **Reconcile** — compare against the current topic in order: formal Map nodes → Tickets → AI candidates → existing/related Records. Reuse semantic equivalents. Keep lookup bounded to the topic workspace and supplied materials.
+3. **Classify** —
+   - missing explanation inside the current Record's promised scope → return to that Record's producer for revision;
+   - tiny prerequisite needed only to read the current Record → keep as local context;
+   - existing objective/work/result → reuse that path;
+   - materially broader learning objective → eligible for promotion.
+4. **Promote** — formalize a genuinely new objective only when the learner chooses to pursue it. Place it under the closest relevant confirmed parent in the Map.
 
-If reconciliation finds a completed existing Map node, use its completion provenance to point back to the existing result; do not create another node or Ticket. If it finds an unresolved existing node, reuse its pending Ticket when present, otherwise create pending work only if the user is choosing to pursue that existing node.
+A completed existing Map node points back to its completion evidence. An unresolved existing node reuses its Ticket when present; create pending work only when the learner is pursuing that unresolved objective.
 
 ## Capture accepted work
 
-Create a gap only for a user-confirmed learning objective that still requires work. First determine whether the accepted question is already resolved. If an equivalent completed LearningRecord already resolves it, reuse that Record and do not create a retroactive Ticket merely to justify existing knowledge. If unresolved work still exists, reuse an equivalent pending Ticket when one exists; otherwise create one independently resolvable Ticket. Promote a newly accepted AI candidate to a formal map node only after user acceptance, regardless of whether its result is existing or still pending.
+A formal gap represents user-confirmed work that is still unresolved.
 
-If existing material/Records cover only a named portion and the user accepts that partial result, mark the formal node `[~]`, make the covered portion and concrete residual gap understandable, and scope any new Ticket only to the residual work. Material that has merely been discussed or found, without accepted partial coverage, leaves the unresolved node `[ ]`.
+- Equivalent completed Record → reuse it; pending work is unnecessary.
+- Equivalent pending Ticket → reuse it.
+- New unresolved objective → create one independently executable Ticket.
+- Accepted partial coverage → `[~]` only when both the covered portion and concrete residual gap are explainable; scope new work to the residual gap.
+- Historical material without accepted partial coverage → keep `[ ]`.
 
-When an existing LearningRecord already resolves the accepted question, keep this mode focused on gap capture: record the formal map/state relationship needed for the accepted question and stop. Do not integrate the Record or mark the node complete unless the user separately asks for integration or explicitly accepts that Record as completion evidence under the map completion contract.
+When a completed Record already resolves the accepted question, record only the Map/state relationship needed by this capture pass and stop at the capture boundary. Integration/completion evidence belongs to the separate integration action.
 
-When unresolved work requires a new Ticket, give it a workspace-relative result destination. Compile the accepted question into a delegation-ready ticket in memory before writing it: a worker receiving only the ticket must be able to resolve it without the parent conversation. Use the KnowledgeTicket contract's required frontmatter and body requirements exactly; do not substitute a reduced ticket shape. Keep lifecycle and routing identifiers in YAML frontmatter; put the actual work contract in the Markdown body: scope, exclusions, materials, evidence requirements, acceptance, delivery, and integration target. Compile every `code` ticket under the KnowledgeTicket code-result evidence requirement.
+## Compile pending work
 
-Before persisting a new ticket, validate the complete candidate against every required KnowledgeTicket frontmatter field and worker-facing body requirement, including a concrete workspace-relative result destination, acceptance criteria, and integration target. Persist the ticket and update its map/state references only after validation passes. If required contract information cannot be compiled, do not write a partial ticket or count the capture as complete; report what is missing and stop at this mode's boundary.
+Before persistence, compile the full Ticket in memory and validate it against the canonical [KnowledgeTicket contract](../../_shared/knowledge-ticket.md). The Ticket must carry a concrete workspace-relative result destination, acceptance criteria, and integration target; its body must be sufficient for a worker without parent-chat context.
 
-For a `code` gap, first perform only lightweight reconnaissance: locate real entry files, direct dependencies, key symbols, and the paths that need evidence. Use that to write the body sections for work, scope, materials, required traces, questions to answer, and evidence; do not answer the source question during reconnaissance. The user's confirmed question controls scope. Related but separately valuable questions remain AI candidates only when recommended by the model; never hide them as requirements in the ticket.
+For `code`, perform only lightweight reconnaissance needed to locate entry files, direct dependencies, key symbols, and evidence paths. **Reconnaissance stops at task location.** The learner's confirmed question controls scope; separately useful questions remain candidates rather than hidden requirements.
 
-If the user says to record, discuss, defer, or not start yet, stop after the requested capture action; never invoke a producer automatically.
+Persist the Ticket only after the complete candidate passes the contract, then reconcile its Map/state references. If required contract information is missing, report the missing input at this boundary.
 
-Done when every surfaced question in the current pass has been reconciled and classified, every learning objective the user chose to pursue is represented by exactly one reusable completed Record or one pending Ticket, newly accepted questions have the required formal Map relationship, every `[~]` created or retained in this pass has an accepted covered portion plus concrete residual gap, every newly persisted Ticket has passed the KnowledgeTicket contract validation gate, and no producer or integration action has been started unless the user separately asked for it.
+**Capture boundary:** recording/reconciling pending work does not start the producer or integration step. A learner request to defer/record only stays at this boundary.
+
+Done when every surfaced question in this pass is reconciled/classified, each pursued objective maps to exactly one reusable completed Record or pending Ticket, new Map relationships are correct, every trusted `[~]` has covered+residual meaning, and every new Ticket is contract-valid.
