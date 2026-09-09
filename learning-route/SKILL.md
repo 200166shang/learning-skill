@@ -22,12 +22,15 @@ Use this as the authoritative intent-to-owner mapping:
 | Primary intent | Owner |
 | --- | --- |
 | Start, draft, resume, integrate, or evolve one topic-centered learning document; organize scattered materials; capture a user-confirmed gap | [`learning-synthesis`](../learning-synthesis/SKILL.md) in `start`, `draft`, `capture gaps`, `integrate`, or `status` mode |
-| Resolve a supplied `concept` KnowledgeTicket | [`learning-note`](../learning-note/SKILL.md) under the [KnowledgeTicket](../_shared/knowledge-ticket.md) contract |
+| Resolve a supplied `concept` KnowledgeTicket | [`learning-note`](../learning-note/SKILL.md) `Resolve` under the [KnowledgeTicket](../_shared/knowledge-ticket.md) contract |
 | Resolve a supplied `code` KnowledgeTicket | Direct Codex source investigation under the [KnowledgeTicket](../_shared/knowledge-ticket.md) contract |
 | Handle a supplied `evidence` KnowledgeTicket | Record the experiment/research need under the [KnowledgeTicket](../_shared/knowledge-ticket.md) contract and stop; do not execute it automatically |
-| Turn a standalone conceptual observation, question, experiment, or reference into durable learning content | [`learning-note`](../learning-note/SKILL.md) |
+| Preserve an already-resolved standalone conceptual result such as a completed discussion, observation, experiment result, reference synthesis, or existing note | [`learning-note`](../learning-note/SKILL.md) `Materialize` |
 | Revise an existing LearningRecord | Route back to the producer class that owns its content and evidence: conceptual `note` → [`learning-note`](../learning-note/SKILL.md) `Revise`; source-backed or `code-walkthrough` → direct Codex under the [LearningRecord](../_shared/learning-record.md) revision contract |
 | Explain real files, callers, runtime state, execution paths, or repository data flow | Direct Codex source investigation |
+| Answer a brand-new standalone conceptual question when the user has not asked to preserve it or enter the durable topic workflow | Direct chat response; no learning skill is required |
+
+A brand-new unresolved conceptual question is not a `learning-note` branch by itself. If the user later asks to preserve the completed chat result, route that result to `learning-note: Materialize`. If the user wants the unresolved question tracked inside a topic-centered durable workflow, route first to `learning-synthesis` so the user-confirmed gap can be represented in the Map/Ticket workflow before `learning-note: Resolve` is invoked.
 
 If conceptual and repository material are mixed, choose the owner by the question being answered. Repository evidence supporting a broader conceptual explanation does not by itself make the request a code walkthrough. When source investigation should become part of the topic-centered durable workflow, `learning-synthesis` first compiles a user-confirmed code ticket.
 
