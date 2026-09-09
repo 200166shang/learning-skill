@@ -35,8 +35,10 @@ If conceptual and repository material are mixed, choose the owner by the questio
 
 Treat a producer's valid `LearningRecord` as a phase boundary. Resolving a KnowledgeTicket stops at `resolved`; only `learning-synthesis` integrates a resolved result into a mother document.
 
-When the same request explicitly asks to save, publish, sync, archive, or update a completed result, hand the completed `LearningRecord` to the requested publisher: [`learning-publish-feishu`](../learning-publish-feishu/SKILL.md) for Feishu or [`learning-publish-obsidian`](../learning-publish-obsidian/SKILL.md) for local Obsidian. Otherwise, return the completed record locally and stop.
+A chat-only direct Codex source investigation may return an explanation without creating a durable record. When the user asks to save, export, publish, sync, archive, or otherwise preserve the result, first materialize a valid completed [LearningRecord v2](../_shared/learning-record-v2.md); source investigations normally use `record_type: code-walkthrough`. Do not cross a persistence or publication boundary with only an in-chat explanation.
 
-External publication starts only after the producer's completion criterion is satisfied. A publisher failure preserves the completed `LearningRecord` and reports the publication problem without rerunning or rewriting the producer. `learning-synthesis` never enters validation or publication automatically.
+This repository currently installs no external publisher skills. Do not invoke or claim Feishu, Obsidian, or another external publication path. If the user requests an unavailable external destination, finish and preserve the completed `LearningRecord`, return it locally, and report that external publication is outside the installed workflow. A later publisher can consume that completed record without rerunning or rewriting the producer.
+
+`learning-synthesis` never enters validation or publication automatically.
 
 Completion criterion: navigation returns one unambiguous next action, or execution reaches the selected owner's completion criterion without crossing another ownership boundary.
