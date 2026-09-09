@@ -4,7 +4,7 @@ Personal learning workflow skills for Codex.
 
 Included skills:
 
-- `learning-flow`: route a learning request to the right stage.
+- `learning-route`: route a learning request to the right stage and owner.
 - `learning-note`: turn observations, questions, experiments, or references into a learning record.
 - `learning-synthesis`: manage a topic-centered learning document and its integration state.
 
