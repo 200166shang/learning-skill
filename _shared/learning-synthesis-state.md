@@ -1,10 +1,10 @@
-# LearningSynthesisState v1
+# LearningSynthesisState v2
 
-`LearningSynthesisState` is the machine-readable compass for one topic-centered learning project. It preserves workflow state across conversations; it is not reader-facing content and must never be published as part of a LearningRecord's Markdown body.
+`LearningSynthesisState` is the machine-readable memory for one topic-centered learning project. Persist decisions and indexes that future sessions cannot cheaply derive from the workspace; derive transient workflow situation from the current artifacts when needed.
 
 ## Storage
 
-Store it as `learning.yaml` in the topic workspace. Resolve the workspace from an existing `learning.yaml`, an existing mother document, or an explicit user path. If none is known, ask where to create the workspace before writing files. Adapt to an existing layout instead of moving user files.
+Store it as `learning.yaml` in the topic workspace. Resolve the workspace from an existing `learning.yaml`, an existing mother document, or an explicit user path. Adapt to the existing layout.
 
 The usual layout is:
 
@@ -20,13 +20,12 @@ topic-workspace/
 ## Schema
 
 ```yaml
-version: 1
+version: 2
 
 topic:
   id: xiaomo-mcu
   title: 小沫机器人 MCU 模块
   workspace: /absolute/path/to/topic-workspace
-  status: active
 
 goal:
   desired_outcome: []
@@ -35,10 +34,7 @@ goal:
   out_of_scope: []
 
 progress:
-  stage: framing
   map_confirmed: false
-  draft_created: false
-  next_action: Confirm the central question and learning map.
 
 artifacts:
   map: learning-map.md
@@ -66,7 +62,6 @@ materials:
 tickets:
   - id: K-001
     path: tickets/K-001-example.md
-    status: open
 
 related_records:
   - title: PID 源码导览
@@ -93,43 +88,55 @@ decisions:
     reason: Workflow state is not reader-facing knowledge.
 ```
 
-`related_records` indexes durable knowledge referenced by the mother document. A related record may be Ticket-backed or standalone; the presence of a related record does not by itself create a Ticket or a Learning Map node.
+`progress.map_confirmed` is persisted because confirmation is a user decision that file existence cannot prove. A ticket file is authoritative for its own lifecycle; `tickets` only indexes its stable id/path. `related_records` indexes durable knowledge represented by the topic workflow without creating a Ticket or Map node by itself.
+
+## Derived situation
+
+Compute workflow situation on demand from canonical artifacts instead of persisting a stage or next-action cache:
+
+- `map_confirmed: false` means framing/Map confirmation work remains;
+- a confirmed Map with no mother document means drafting work remains;
+- confirmed questions without sufficient results/completion evidence, or pending ticket files, mean filling work remains;
+- a selected valid LearningRecord can be integrated when the user asks;
+- the selected scope is complete when the mother document is coherent and every required confirmed Map node is excluded or has valid completion provenance.
+
+Artifact existence answers whether the mother document was created. The current user request plus workspace facts determine the next recommendation. These derived facts are not persisted as `stage`, `draft_created`, `next_action`, or topic lifecycle status.
 
 ## Map completion contract
 
-A Learning Map node may be marked `[x]` only when `map_completions` contains explicit completion provenance for that node. Completion may come from any of these paths:
+A Learning Map node is complete only when `map_completions` contains explicit completion provenance for that stable node id. Supported completion bases are:
 
 - `integrated-ticket`: a resolved KnowledgeTicket and its LearningRecord were integrated;
 - `accepted-existing-material`: an existing note, document, or standalone LearningRecord was explicitly mapped to the node and accepted as sufficient;
-- `user-confirmed-prior-learning`: the user explicitly confirmed that prior learning already satisfies the node, and that decision was recorded with any available supporting references.
+- `user-confirmed-prior-learning`: the user explicitly confirmed prior learning satisfies the node, with available references and a concise note.
 
-Conversation history, remembered prior discussion, or merely having material available can suggest possible completion evidence, but cannot by itself create `[x]`. Do not fabricate a reference when prior learning has no artifact; record the explicit user confirmation and a concise note instead.
+Conversation history or merely available material can suggest evidence but cannot establish completion. Each entry records the node id, basis, supporting refs when available, and enough note/date context to audit the decision. A Map `[x]` without matching provenance is an inconsistency and does not count as complete.
 
-Each `map_completions` entry must identify the stable `node_id`, the completion `basis`, supporting `refs` when available, and enough note/date context for a reader of the workspace to understand why the node is complete. A node without such an entry is not complete even if its map marker is accidentally `[x]`; treat that mismatch as an inconsistency until reconciled.
+## Candidates and decisions
 
-## Stages
+`candidate_questions` holds at most three directly relevant **AI-recommended** questions that the user has not accepted. User-surfaced questions are reconciled against the current Map, Tickets, candidates, and Records rather than being stored here automatically. Once the user accepts a genuinely new question, represent that learning decision in the human-readable Map and create or reuse pending work as needed.
 
-Use exactly one topic stage:
+`decisions` stores durable scope/workflow choices that future sessions still need and cannot infer from current artifacts. It is not an execution history or next-action log.
 
-| Stage | Meaning |
-| --- | --- |
-| `framing` | Goal, central question, scope, or learning map is not confirmed. |
-| `drafting` | The map is confirmed and materials are being inventoried or the first draft is being written. |
-| `filling` | A mother document exists and gaps are being captured or resolved. |
-| `integrating` | At least one valid LearningRecord has been selected or accepted for integration, whether Ticket-backed or standalone. |
-| `complete` | The selected scope is coherent and every required confirmed map node is excluded or has valid completion provenance. |
+## Writes and authority
 
-After every confirmed goal, map, draft, ticket, integration, completion-evidence decision, or next-action change owned by `learning-synthesis`, update `learning.yaml`. A ticket file is authoritative for its own lifecycle; after an independent producer marks it `resolved`, the next synthesis status or integration action reconciles the cached ticket entry in `learning.yaml`. Standalone LearningRecord integration does not create or mutate a Ticket entry. Preserve prior decisions; do not rely on conversation history as workflow state.
+When `learning-synthesis` changes a goal/scope decision, Map confirmation, material/index reference, completion evidence, AI candidate, or durable decision, update `learning.yaml`. Read ticket lifecycle from the ticket file and Record content/lineage from the Record itself. Keep publishable knowledge out of this machine state.
 
-`candidate_questions` is optional and is not a general inbox for every question the user asks. It holds at most three directly relevant **AI-recommended** questions that the user has not accepted. Each entry records the question, the confirmed Map node that motivated the recommendation when one exists, and why it may be worth pursuing. User-surfaced questions are not truncated to three and do not need to be persisted here merely because they were asked: reconcile them against the current Map, Tickets, candidates, and Records first. If the user chooses to pursue a genuinely new question, represent that decision in the human-readable Map under the closest relevant confirmed parent and create or reuse pending work as needed. Remove or archive an AI candidate after the user accepts or rejects it.
+## Migration from v1
 
-The Learning Map is the persistent question-lineage view. Do not create a second per-Record question tree or duplicate lineage collection in `learning.yaml` unless a later observed workflow failure requires it.
+A v1 workspace remains readable. On the next synthesis-owned state write:
+
+- carry forward `topic.id/title/workspace`, `goal`, `progress.map_confirmed`, artifact paths, materials, ticket id/path indexes, related records, completion provenance, candidates, and durable decisions;
+- write `version: 2`;
+- omit legacy cache fields `topic.status`, `progress.stage`, `progress.draft_created`, `progress.next_action`, and cached `tickets[].status`.
+
+Migration changes storage shape only; it does not alter Map decisions, Ticket lifecycle, LearningRecord content/lineage, or completion provenance.
 
 ## Separation
 
 - `LearningRecord` is publishable knowledge and may exist with or without a KnowledgeTicket.
-- `LearningSynthesisState` is private workflow state.
-- `learning-map.md` is the human-readable map of user learning decisions and their question lineage.
-- A KnowledgeTicket is a self-contained contract for resolving one accepted gap that still requires work. Code tickets carry the direct-Codex investigation scope when a child agent performs the work.
+- `learning.yaml` preserves non-derivable topic decisions and indexes.
+- `learning-map.md` is the human-readable map of user learning decisions and question lineage.
+- a KnowledgeTicket is the authoritative pending-work/lifecycle contract for one accepted gap.
 
-Publishers consume only completed `LearningRecord` values. They do not consume this state file.
+Publishers consume completed LearningRecords, not `learning.yaml`.
