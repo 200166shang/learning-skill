@@ -14,14 +14,14 @@ The learner must have explicitly asked for/accepted integration in this topic.
 
 ## Mother document and indexes
 
-For first integration, add only the minimum explanatory text needed by the mother document plus one idempotent callout:
+For first integration, add only the minimum reader-facing explanation needed by the mother document plus one idempotent callout:
 
 ```markdown
 > [!NOTE] 关联知识：<title>
 > [<record title>](<ref>)概括解决的问题、贡献和何时值得深入阅读。
 ```
 
-Maintain exactly one related-record index entry for the Record.
+Workflow metadata stays in state/Tickets rather than the mother-document body. Maintain exactly one related-record index entry for the Record.
 
 For an already-integrated revised Record, compare only the existing summary/callout/index/view metadata. Keep accurate content unchanged; update only stale text/metadata. The child Record remains producer-owned.
 
