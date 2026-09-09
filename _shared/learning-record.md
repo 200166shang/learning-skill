@@ -30,7 +30,7 @@ sources:
 | --- | --- |
 | `version` | Integer `2`. |
 | `title` | A specific title describing the question or understanding. |
-| `record_type` | Stable producer-defined classification, such as `note` or `code-walkthrough`. It never controls the body format. |
+| `record_type` | Stable producer-defined classification. Canonical producer types in this workflow are conceptual `note`, direct source-investigation `code-walkthrough`, and synthesis-owned mother-document `synthesis`. It never controls the body format. |
 | `created_at` | Record creation date in `YYYY-MM-DD`. |
 
 The Markdown body after the frontmatter is required. It must be complete and publication-ready; it is never stored as a frontmatter field.
@@ -51,7 +51,16 @@ Common `sources[].type` values are `repository`, `url`, `document`, `experiment`
 - Keep evidence, inference, and unresolved assumptions distinguishable in the body.
 - Include only metadata supported by the work.
 - Finish the body before handing the file to a publisher or integrator.
-- For `record_type: code-walkthrough`, pair every source-based conclusion with a nearby minimal code excerpt and its source location. A location link alone is navigation, not an explanation.
+
+### `code-walkthrough` evidence contract
+
+For every source-based conclusion in a `record_type: code-walkthrough` Record, use this sequence:
+
+`source location → minimal excerpt → explanation`
+
+The excerpt must be the smallest code needed to show the relevant control flow, data access, or configuration. A file path or line number alone is navigation, not evidence. Keep verified source facts, inference, and unconfirmed items distinguishable.
+
+This obligation belongs to the durable LearningRecord, regardless of whether the Record came from a KnowledgeTicket, a standalone direct Codex investigation, or a later revision.
 
 ## Revision contract
 
@@ -59,7 +68,7 @@ When the user asks to adjust an existing LearningRecord, revise that durable art
 
 - Preserve the Record's existing file/path, `version`, producer-defined `record_type`, and `created_at` unless the user explicitly requests a semantic replacement rather than a revision.
 - Use the user's requested change as the revision scope. Preserve still-correct content and evidence; do not broaden the edit into unrelated learning or research.
-- The producer class that owns the Record's content and evidence revises it. A source-backed `code-walkthrough` remains subject to the code-evidence obligation above after every revision.
+- The producer class that owns the Record's content and evidence revises it. A source-backed `code-walkthrough` remains subject to the code-walkthrough evidence contract above after every revision.
 - If the requested change requires evidence or understanding that the current Record does not support, report the missing or newly exposed learning work instead of silently inventing it. Do not create a Ticket unless that gap is separately accepted into the learning workflow.
 - Revalidate the complete Record after editing: all required frontmatter remains valid, the body remains self-contained, and every producer-specific evidence obligation still holds.
 
