@@ -1,6 +1,0 @@
-interface:
-  display_name: "Learning Flow"
-  short_description: "Find the current learning stage and next skill"
-  default_prompt: "Use $learning-flow to identify my current learning stage and recommend or execute the next appropriate learning skill."
-policy:
-  allow_implicit_invocation: false
