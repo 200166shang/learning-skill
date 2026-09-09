@@ -1,6 +1,6 @@
 # KnowledgeTicket v2
 
-A `KnowledgeTicket` is a self-contained contract for one user-confirmed learning gap. Creating one records work; it does not start work or authorize changes outside its stated scope.
+A `KnowledgeTicket` is a self-contained contract for one user-confirmed learning gap that still requires work. Creating one records pending work; it does not start work or authorize changes outside its stated scope. Do not create a Ticket retroactively merely to justify learning that has already been resolved and materialized as a LearningRecord.
 
 Store each ticket as Markdown with YAML frontmatter under the topic workspace's configured tickets directory. Frontmatter is an index: identity, lifecycle, topic mapping, gap type, and final result reference. The Markdown body is the worker-facing contract. `question` is user-owned; the remaining execution detail is compiled by `learning-synthesis` from the confirmed question, existing learning state, supplied materials, and—only for a code ticket—a lightweight reconnaissance.
 
@@ -112,4 +112,4 @@ open → in-progress → resolved → integrated
 
 Structure-oriented work on the Learning Map, mother-document organization, or synthesis flow remains owned directly by `learning-synthesis`; do not encode it as a separate KnowledgeTicket type.
 
-The code worker writes one LearningRecord v2 at the body-stated destination, changes only the ticket lifecycle and result reference, and returns the result rather than its research transcript. Resolving never edits the mother document; integration is a separate `learning-synthesis` action.
+Every Ticket that reaches `resolved` must reference exactly one completed LearningRecord. Resolving never edits the mother document; integration is a separate `learning-synthesis` action. A LearningRecord may also exist without any Ticket when the learning work was already completed outside this workflow.
