@@ -7,7 +7,7 @@ description: Use when starting, drafting, resuming, or evolving one topic-center
 
 Own one learning project's Goal, Learning Map, mother document, KnowledgeTickets, and integration state. The Learning Map is a learning-decision map: it records questions the user asked or explicitly chose to pursue, not an AI-generated curriculum.
 
-Read [LearningSynthesisState](../_shared/learning-synthesis-state.md) before resolving or writing project state. Load [KnowledgeTicket](../_shared/knowledge-ticket.md) and [LearningRecord](../_shared/learning-record.md) only in the active mode that needs them, as specified below.
+Read [LearningSynthesisState](../_shared/learning-synthesis-state.md) before resolving or writing project state. Choose exactly one active mode, then read only that mode's reference and the shared contracts it requires.
 
 ## Resolve the workspace
 
@@ -15,60 +15,15 @@ Use, in order: the directory containing a supplied `learning.yaml`; the director
 
 ## Choose one mode
 
-### Start / frame
+| Mode | Use when | Instructions |
+| --- | --- | --- |
+| `start` | The topic, Goal, or initial map is vague or unconfirmed. | [Start / frame](references/start.md) |
+| `draft` | The map is confirmed and the mother document should be created or updated. | [Draft](references/draft.md) |
+| `capture gaps` | The user has identified or accepted a gap that should become a reusable record or ticket. | [Capture gaps](references/capture-gaps.md) |
+| `integrate` | A resolved ticket result should be minimally incorporated into the mother document. | [Integrate](references/integrate.md) |
+| `status` | The project state should be reconciled or the next action should be identified without executing it. | [Status / resume](references/status.md) |
 
-Use only [LearningSynthesisState](../_shared/learning-synthesis-state.md) as the workflow contract for this mode.
-
-Use for a vague topic or unconfirmed map. Discuss the desired outcome before expanding scope: identify the user's current question, desired understanding, and exclusions; inspect only relevant supplied materials. Propose candidate central questions only when the user has not supplied one, then wait for confirmation.
-
-Build the initial map around the confirmed question and the learning decisions already made. Do not infer a full module hierarchy from the materials. Record the working claim, exclusions, materials, and decisions in `learning.yaml`. Do not draft until the user confirms the Goal and initial map.
-
-Done when the Goal and initial map are confirmed and recorded, or the skill has stopped at one explicit confirmation request with the proposed Goal/map visible to the user. Do not create or update the mother document in this mode.
-
-### Draft
-
-Before drafting, read [LearningRecord](../_shared/learning-record.md). Use [LearningSynthesisState](../_shared/learning-synthesis-state.md) for project state; do not load the KnowledgeTicket contract unless a separate ticket operation is requested.
-
-Require a confirmed map. Inventory how existing materials support its nodes, then create or update one publishable mother-document `LearningRecord`. Organize it around the central question, not source order or a list of technologies. Keep prerequisites minimal and distinguish evidence, inference, and unresolved gaps. Move the state to `filling`.
-
-Done when the mother document is independently readable, follows one coherent central thread over the currently selected map scope, uses available material for the claims it supports, and leaves unresolved gaps explicit rather than silently filling them.
-
-### Capture gaps
-
-Before creating or reusing a ticket, read [KnowledgeTicket](../_shared/knowledge-ticket.md). Read [LearningRecord](../_shared/learning-record.md) only when an existing record must be inspected to determine whether it already resolves the accepted question.
-
-Create a gap only when the user identifies it or explicitly accepts a previously suggested candidate question. First reuse an equivalent ticket or existing record when possible. For every accepted question, create one independently resolvable ticket, promote it to a formal map node, and give it a workspace-relative result destination.
-
-Compile the accepted question into a delegation-ready ticket: a worker receiving only the ticket must be able to resolve it without the parent conversation. Keep lifecycle and routing identifiers in YAML frontmatter; put the actual work contract in the Markdown body: scope, exclusions, materials, evidence requirements, acceptance, delivery, and integration target. For a code ticket, require every source-based explanation in the resulting document to use the sequence “source location → minimal code excerpt → explanation”; a bare file/line citation is not sufficient evidence.
-
-For a `code` gap, first perform only lightweight reconnaissance: locate real entry files, direct dependencies, key symbols, and the paths that need evidence. Use that to write the body sections for work, scope, materials, required traces, questions to answer, and evidence; do not answer the source question during reconnaissance. The user's confirmed question controls scope. Related but separately valuable questions remain candidates, not hidden requirements in the ticket.
-
-If the user says to record, discuss, defer, or not start yet, stop after ticket creation; never invoke a producer automatically.
-
-Done when every accepted question in the current pass is represented by exactly one reusable existing record or independently executable ticket, the map/state references are updated, and no producer has been started unless the user separately asked to execute it.
-
-### Integrate
-
-Before integrating, read [KnowledgeTicket](../_shared/knowledge-ticket.md) and [LearningRecord](../_shared/learning-record.md).
-
-Require a `resolved` ticket and its result. Add only the minimum explanation needed by the mother document, followed by one idempotent callout:
-
-```markdown
-> [!NOTE] 关联知识：<title>
-> [<record title>](<ref>)概括解决的问题、贡献和何时值得深入阅读。
-```
-
-Do not copy the child record, expose workflow metadata in the body, or alter the child record. Update the map, related-record index, ticket to `integrated`, stage, and next action. Do not insert a second callout for an already integrated ticket.
-
-Done when the resolved result has been minimally incorporated into the mother document, exactly one related-record callout exists for that ticket, the ticket lifecycle is `integrated`, and synthesis state/map indexes are reconciled without changing the child record.
-
-### Status / resume
-
-Use [LearningSynthesisState](../_shared/learning-synthesis-state.md) and inspect referenced ticket files directly. Read [KnowledgeTicket](../_shared/knowledge-ticket.md) only when contract semantics are needed to validate or reconcile lifecycle state. Read [LearningRecord](../_shared/learning-record.md) only when status requires inspecting a referenced result.
-
-Read `learning.yaml`, the map, and referenced tickets. Treat each ticket file as authoritative for its lifecycle and reconcile the state index when it changed independently. Report the Goal, current stage, completed work, open/resolved/deferred tickets, inconsistencies, and one recommended next action. A status question is navigation only; execute the next action only when the user asks.
-
-Done when authoritative ticket state and `learning.yaml` are reconciled, the current stage and inconsistencies are reported, and exactly one recommended next action is returned without executing it.
+After selecting the mode, read that reference and follow it until its `Done when` condition is satisfied. Do not load another mode's reference unless the user explicitly starts a separate operation.
 
 ## Map rules
 
@@ -83,6 +38,6 @@ At a natural stopping point, recommend at most three directly relevant candidate
 - Resolving a ticket produces one LearningRecord and may mark the ticket `resolved`; it never integrates it.
 - Prefer assigning a self-contained accepted ticket to a child agent when delegation is available and the work can proceed independently. For a code ticket, give that agent the ticket and its listed materials; it selects the investigation method from the question rather than following a fixed source-reading skill. The parent recovers the resulting LearningRecord and lifecycle change rather than the research transcript. Resolve inline only when delegation is unavailable or the task is too small to justify a handoff.
 - Interview prompts, open gaps, material inventories, future enhancements, and next actions belong in the map, state, or tickets—not the mother-document body.
-- Validation and publication are outside this v1 workflow.
+- Validation and publication are outside this workflow.
 
 Project completion means the mother document has a coherent central thread and every selected ticket is integrated, deferred, or cancelled. Any individual invocation stops when its active mode's `Done when` condition is satisfied; new gaps may reopen `filling` later.
