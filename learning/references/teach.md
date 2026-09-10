@@ -1,11 +1,9 @@
-# Teach
+# Teaching tactics
 
-Answer the current question with the smallest causal explanation that repairs its needed connection. Separate evidence, inference, and uncertainty.
-
-Use concept gates at important transitions: invite a teach-back, relationship explanation, application, or what-breaks-if check. Do not turn every conversational turn into a quiz.
+Use a concept gate at an important transition when it would reveal whether the causal connection held: invite a teach-back, relationship explanation, application, or what-breaks-if check. Do not turn every conversational turn into a quiz.
 
 Track whether a verification answer was `unaided`, used a `light_hint`, or used a `strong_hint`. A correct answer after a strong hint remains valid evidence with lower independence; do not convert it into a numeric mastery score.
 
 Record only misconceptions the learner actually expresses. If roughly three materially different explanations fail on the same gap, change modality—concrete example, flow, code path, data, counterexample, or analogy—or suggest parking it.
 
-When durable knowledge helps, follow [persistence](persistence.md). Explanation, note creation, and demonstrated understanding are separate events.
+Explanation, note creation, and demonstrated understanding are separate events.

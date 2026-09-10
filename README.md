@@ -28,6 +28,8 @@ OVERVIEW.md        optional whole-picture projection
 
 Only questions the learner asks or accepts are durable. A question closes only with passing verification evidence. A root pass closes the Episode and returns the workspace to IDLE. OVERVIEW may describe knowledge boundaries but cannot start or route learning.
 
+`_shared/knowledge-note.md` is the single current KnowledgeNote contract. Journey owns learning provenance, Evidence owns demonstrated understanding, and notes never prove mastery or route the next question.
+
 V7 intentionally has no Web observer, generated learning map, database, automatic review scheduler, or numeric mastery model.
 
 ## Commands

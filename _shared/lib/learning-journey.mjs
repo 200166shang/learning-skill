@@ -21,7 +21,27 @@ export function readLearningJourney(workspace){const target=path.join(path.resol
 const next=(items,prefix)=>{const used=new Set(items.map(x=>x.id));let n=Math.max(0,...[...used].filter(x=>new RegExp(`^${prefix}\\d+$`).test(x)).map(x=>Number(x.slice(1))));do n++;while(used.has(`${prefix}${String(n).padStart(3,"0")}`));return `${prefix}${String(n).padStart(3,"0")}`;};
 export const nextJourneyQuestionId=j=>next(j.questions,"q"); export const nextEpisodeId=j=>next(j.episodes,"e");
 export function startEpisode(j,{id,rootQuestionId,question,startedAt}){if(j.episodes.some(e=>e.status==="active"))throw new Error("an active episode already exists");const n={version:2,episodes:[...j.episodes,{id,rootQuestionId,status:"active",startedAt,closedAt:null}],questions:[...j.questions,{id:rootQuestionId,episodeId:id,parentId:null,question,whyNeeded:null,resumeCheckpoint:null,status:"open",openedAt:startedAt,closedAt:null,noteRefs:[]}]};const w=validateLearningJourney(n);if(w.length)throw new Error(w.join("; "));return n;}
-export function appendJourneyQuestion(j,q){const n={...j,questions:[...j.questions,{...q,status:q.status||"open",closedAt:q.closedAt||null,noteRefs:[...new Set(q.noteRefs||[])]}]};const w=validateLearningJourney(n);if(w.length)throw new Error(w.join("; "));return n;}
+export function appendJourneyQuestion(j, q) {
+  if (!q.parentId) throw new Error("appendJourneyQuestion requires a parent; start a new Episode for a root question");
+  if (!text(q.whyNeeded) || !text(q.resumeCheckpoint)) throw new Error("a child requires why_needed and resume_checkpoint");
+  const parent = j.questions.find((question) => question.id === q.parentId);
+  if (!parent || parent.status !== "open") throw new Error("a new child requires an open parent question");
+  const episode = j.episodes.find((candidate) => candidate.id === parent.episodeId);
+  if (!episode || episode.status !== "active") throw new Error("a new child requires an active Episode");
+  if (q.episodeId !== episode.id) throw new Error("child and parent must belong to the same active Episode");
+  const next = {
+    ...j,
+    questions: [...j.questions, {
+      ...q,
+      status: q.status || "open",
+      closedAt: q.closedAt || null,
+      noteRefs: [...new Set(q.noteRefs || [])],
+    }],
+  };
+  const warnings = validateLearningJourney(next);
+  if (warnings.length) throw new Error(warnings.join("; "));
+  return next;
+}
 export const closeJourneyQuestion=(j,id,at)=>({...j,questions:j.questions.map(q=>q.id===id?{...q,status:"closed",closedAt:at}:q)});
 export const closeEpisode=(j,id,at)=>({...j,episodes:j.episodes.map(e=>e.id===id?{...e,status:"closed",closedAt:at}:e)});
 export function setJourneyQuestionNoteRefs(j,id,refs){if(!j.questions.some(q=>q.id===id))throw new Error(`question not found: ${id}`);return{...j,questions:j.questions.map(q=>q.id===id?{...q,noteRefs:[...new Set(refs.map(text).filter(Boolean))]}:q)};}

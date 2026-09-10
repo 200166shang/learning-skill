@@ -1,5 +1,7 @@
 # Persistence
 
+Follow the canonical [KnowledgeNote contract](../../_shared/knowledge-note.md).
+
 Before writing, search `notes/**/*.md` by concept, mechanism, tags, and vocabulary. Choose:
 
 - **Reuse** an existing note and attach its path to the question.
