@@ -24,6 +24,8 @@ If a legacy `learning.yaml` must be updated, preserve its identity and existing 
 
 ## Ownership
 
-- `learning-teach` owns the recursive teaching loop, note creation/revision, and explicit follow-up provenance.
+- `learning-route` owns the recursive focus stack, real-gap classification, backtracking, and root closure.
+- `learning-teach` owns one-question teaching, note creation/revision, and explicit follow-up provenance.
+- `learning-verify` owns local connection checks and root teach-back checks.
 - `learning-synthesis` owns only the whole-picture explanation assembled from existing notes.
 - `KnowledgeTicket` owns only an explicitly created independent delegation task.

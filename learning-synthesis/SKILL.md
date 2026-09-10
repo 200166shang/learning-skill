@@ -5,7 +5,7 @@ description: Own an explicitly selected or routed topic-centered learning workfl
 
 # Learning Synthesis
 
-Synthesis is the final connective activity in the learning loop. It does not manage the loop. Read the topic's Mission, human-readable Map, and existing KnowledgeNotes, then reorganize what is already known into a coherent explanation.
+Synthesis is the final connective activity in the recursive learning loop. It does not manage the loop. Read the topic's Mission, human-readable Map, and existing KnowledgeNotes, then reorganize DFS learning order into a coherent dependency and causal explanation.
 
 ## Inputs
 
@@ -21,17 +21,19 @@ Older workspaces may use `learning.yaml`, `records/`, or a synthesis `LearningRe
 
 ## Work
 
-1. Identify the learner's desired whole-picture question from the Mission or request.
+1. Identify the learner's desired whole-picture question from the Mission or request, including the causal chain it must make continuous.
 2. Inventory the notes that answer parts of it and the explicit gaps they leave.
 3. Arrange the explanation by dependency and causal flow, not by file creation order.
 4. Preserve uncertainty and distinguish established explanation from inference or missing evidence.
 5. Write or revise one synthesis document at a stable workspace path, normally `SYNTHESIS.md` or the existing synthesis path.
 
-The synthesis may link to source KnowledgeNotes. It must not silently invent missing notes, claim mastery, or turn every unresolved detail into a Ticket.
+The synthesis may link to source KnowledgeNotes. It must not silently invent missing notes, claim mastery, or turn every unresolved detail into a Ticket. Preserve explicitly known blocking gaps so the learner can return to them rather than presenting a false whole.
 
 ## Boundaries
 
-- `learning-teach` owns teaching, note creation, note revision, and follow-up questions.
+- `learning-route` owns focus-stack transitions, gap classification, backtracking, and root closure.
+- `learning-teach` owns one-question teaching, note creation/revision, and observed-gap proposals.
+- `learning-verify` owns local connection checks and root teach-back checks.
 - Direct Codex/research owns repository or external evidence collection when needed.
 - A Ticket is optional delegation infrastructure and is not a normal synthesis input requirement.
 - The Map records learner-chosen questions and links to notes; it is not a completion state machine.
@@ -39,6 +41,6 @@ The synthesis may link to source KnowledgeNotes. It must not silently invent mis
 
 ## Result
 
-Return the synthesis path and a concise account of the explanatory thread, unresolved gaps, and the most useful next question. If the source notes are insufficient, say exactly what is missing; do not start a hidden capture/integrate workflow.
+Return the synthesis path and a concise account of the explanatory thread, unresolved gaps, and the most useful next question. If the source notes are insufficient, say exactly what broken arrow remains; do not start a hidden capture/integrate workflow.
 
 Done when one coherent synthesis document exists or has been revised in place, with links to the relevant notes and explicit remaining gaps.

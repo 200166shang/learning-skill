@@ -1,73 +1,55 @@
 ---
 name: learning-teach
-description: Teach one concrete learning question, follow the learner's intent, and save the resulting explanation as a durable KnowledgeNote. Use for starting or continuing a topic, answering a follow-up question, revising an unclear note, or materializing a completed explanation.
+description: Teach one concrete learning question and optionally save or revise its durable KnowledgeNote. Use as the teaching worker inside a learning workflow.
 ---
 
 # Learning Teach
 
-This is the primary worker for recursive learning. The learner expresses an intention in ordinary language; infer the smallest useful teaching action from the request and the available workspace context. Do not ask the learner to name internal modes, stages, completion bases, or Ticket states.
+Answer one coherent question. This skill is a worker: it explains, records evidence, and surfaces possible gaps, but it does not choose the learning path, push or pop a focus stack, or declare a topic complete.
 
-## The learning loop
+## Inputs and result
+
+Use the supplied question plus only relevant context: the parent question and why this answer is needed, sources or research results, and an existing note when revising.
+
+Return:
+
+1. a small, causal explanation that answers the question;
+2. an optional saved or revised KnowledgeNote when requested or clearly useful;
+3. observed prerequisite or evidence gaps, labelled with why they may matter and whether they appear blocking, inline-sized, or optional.
+
+Observed gaps are proposals for `learning-route`; never create a question tree, mutate learning state, or automatically continue into them.
+
+## Teaching standard
+
+Prefer the smallest explanation that restores the causal connection the learner needs. Make the mechanism explicit, distinguish verified facts from inference and unresolved assumptions, and cite sources beside source-based claims. A brief analogy or example is useful only when it clarifies the mechanism.
+
+An answer can be locally sufficient without being exhaustive. Do not equate a good explanation or a saved note with learner mastery.
+
+## Workspace and KnowledgeNotes
+
+When a workspace is supplied, read only the relevant mission, map, note, and supplied sources. The conventional layout is:
 
 ```text
-question / confusion / desire to continue
-        ↓
-teach one concrete point
-        ↓
-save or revise one KnowledgeNote
-        ↓
-invite or handle a follow-up question
-        ↺
+MISSION.md
+learning-map.md
+notes/
 ```
 
-One invocation should answer one coherent question. Prefer a small, causal explanation over a survey of the whole topic. Keep prerequisites minimal and say when a prerequisite deserves its own follow-up.
+Use the shared [LearningRecord contract](../_shared/learning-record.md); the reader-facing name for `record_type: note` is KnowledgeNote. New notes normally live under `notes/` and each answers one independently readable, specific question.
 
-## Workspace and artifacts
+For a saved note:
 
-When a topic workspace is supplied, use it. Otherwise answer in chat and ask before creating a new workspace or files. The conventional layout is:
+- preserve explicit `derived-from` provenance only when the parent and learner follow-up are known;
+- keep a matching reader-facing lineage section when a canonical relation exists;
+- revise an existing note in place when asked, preserving correct metadata, evidence, and scope;
+- update `learning-map.md` only for a learner-expressed or learner-accepted question. Never add merely suggested gaps.
 
-```text
-MISSION.md                 # why this topic matters and what success means
-learning-map.md            # questions the learner chose to understand
-notes/                      # one KnowledgeNote per concrete question
-knowledge-lineage.md       # optional derived reading view
-```
+Existing v2 LearningRecords with `record_type: note` remain KnowledgeNotes. Do not require or extend legacy `learning.yaml`.
 
-Read only the relevant mission, map, current note, and supplied sources. Do not require `learning.yaml` for ordinary teaching. If an existing v2 LearningRecord is supplied, treat `record_type: note` as a KnowledgeNote and preserve its path/metadata when revising.
+## Boundaries
 
-## Intent handling
+If source reading, an experiment, or external research is needed, state the evidence gap clearly and let the orchestrator arrange the investigation. Do not make every conceptual question a Ticket.
 
-- “我想学/继续学这个” — explain the smallest concrete question implied by the request; if the question is genuinely ambiguous, ask one focused question.
-- “这里没看懂/这篇文章不清楚” — explain the missing mechanism; revise the existing note when the gap is inside its scope.
-- “读完又想到……” — teach the follow-up as a child note and record explicit `derived-from` provenance when the parent is known.
-- “把刚才讲的记下来/保存下来” — materialize the completed explanation as one KnowledgeNote.
-- “帮我改清楚一点” — revise the same note in place, preserving correct evidence and scope.
-- “需要读源码/实验才能回答” — create an optional self-contained research/delegation task only when the context boundary is real; do not turn every conceptual question into a Ticket.
-- “我现在学到哪了/还有什么没懂” — summarize the Map and note tree in plain language; do not expose internal lifecycle unless asked.
+Do not draft a synthesis, manage map completion, ask the learner to operate workflow states, or offer a broad generated curriculum. Stop after the one explanation, its requested note operation, and any clearly labelled observations.
 
-## KnowledgeNote contract
-
-Each saved note answers one concrete question and is independently readable. Use the shared [LearningRecord contract](../_shared/learning-record.md) with `record_type: note`; the reader-facing name is KnowledgeNote. Store new notes under the workspace `notes/` directory unless the workspace already has an established records directory.
-
-Required qualities:
-
-- specific question title and a self-contained Markdown body;
-- causal/mechanical explanation, not merely a list of terms;
-- verified facts, inference, and unresolved assumptions distinguishable;
-- source references beside claims when sources were used;
-- explicit `derived-from` relation only when the learner's follow-up provenance is known;
-- no claim that the learner has mastered the topic merely because a note exists.
-
-## Map and lineage
-
-Update `learning-map.md` only when the learner has expressed or accepted a question as part of the topic. Keep it human-readable: an unresolved question can say `→ 待继续学习`; an explained question links to its note. Do not add status matrices, completion provenance, candidate queues, or Ticket metadata to the Map.
-
-If a child note grew from a parent note, preserve that fact in the child note's canonical relation and optionally refresh `knowledge-lineage.md`. Never infer a relation merely because two notes discuss related concepts.
-
-## Handoff and stopping rules
-
-The normal result is one explanation and, when requested or clearly useful, one saved KnowledgeNote. Stop after that result. Do not automatically draft a mother document, integrate every note, create a Ticket, or ask the learner to run another internal branch.
-
-Ask the learner only for a real decision or missing fact, such as which of two materially different questions to pursue, where a new workspace belongs, or whether an out-of-scope branch is worth studying. Otherwise execute the obvious next action.
-
-Done when the learner has a clear answer, and any requested note is saved or revised at one stable path with valid metadata and explicit provenance.
+Done when the concrete question has a clear answer and any requested note is valid at a stable path.
