@@ -1,6 +1,6 @@
 interface:
   display_name: "Learning"
-  short_description: "Learn, review, and curate a durable knowledge workspace"
-  default_prompt: "Use $learning to help me understand this recursively, preserve the real learning journey, and reconcile reusable KnowledgeNotes."
+  short_description: "Close learner-chosen questions with durable evidence"
+  default_prompt: "Use $learning to help me recursively understand and verify this question, then stop when the learning episode is closed."
 policy:
   allow_implicit_invocation: false

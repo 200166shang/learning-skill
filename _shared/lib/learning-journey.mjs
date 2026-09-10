@@ -1,109 +1,28 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import YAML from "yaml";
-
-const text = (value) => typeof value === "string" ? value.trim() : "";
-const questionIdPattern = /^q\d+$/;
-
+const text = (v) => typeof v === "string" ? v.trim() : "";
+const valid = { episode: new Set(["active", "closed", "abandoned"]), question: new Set(["open", "closed"]) };
 export function normalizeLearningJourney(input) {
-  const warnings = [];
-  const source = input && typeof input === "object" ? input : {};
-  const candidates = Array.isArray(source.questions) ? source.questions : [];
-  if (source.questions != null && !Array.isArray(source.questions)) warnings.push("questions must be an array");
-  const questions = candidates.flatMap((candidate, index) => {
-    if (!candidate || typeof candidate !== "object") {
-      warnings.push(`questions[${index}] must be an object`);
-      return [];
-    }
-    const id = text(candidate.id);
-    const question = text(candidate.question);
-    if (!id || !question) {
-      warnings.push(`questions[${index}] is missing id or question`);
-      return [];
-    }
-    const refs = Array.isArray(candidate.note_refs) ? candidate.note_refs : [];
-    if (candidate.note_refs != null && !Array.isArray(candidate.note_refs)) warnings.push(`question ${id} note_refs must be an array`);
-    return [{
-      id,
-      question,
-      parentId: text(candidate.parent_id) || null,
-      whyNeeded: text(candidate.why_needed) || null,
-      resumeCheckpoint: text(candidate.resume_checkpoint) || null,
-      noteRefs: [...new Set(refs.map(text).filter(Boolean))],
-    }];
-  });
-  return { journey: { version: Number(source.version) || 1, rootId: text(source.root_id) || questions.find((item) => !item.parentId)?.id || null, questions }, warnings };
+  const warnings=[]; const s=input&&typeof input==="object"?input:{};
+  if(s.episodes!=null&&!Array.isArray(s.episodes)) warnings.push("episodes must be an array");
+  if(s.questions!=null&&!Array.isArray(s.questions)) warnings.push("questions must be an array");
+  const episodes=(Array.isArray(s.episodes)?s.episodes:[]).flatMap((x,i)=>!x||!text(x.id)||!text(x.root_question_id)?(warnings.push(`episodes[${i}] is missing id or root_question_id`),[]):[{id:text(x.id),rootQuestionId:text(x.root_question_id),status:text(x.status)||"active",startedAt:x.started_at?String(x.started_at):null,closedAt:x.closed_at?String(x.closed_at):null}]);
+  const questions=(Array.isArray(s.questions)?s.questions:[]).flatMap((x,i)=>{if(!x||!text(x.id)||!text(x.question)){warnings.push(`questions[${i}] is missing id or question`);return [];} const refs=Array.isArray(x.note_refs)?x.note_refs:[];return [{id:text(x.id),episodeId:text(x.episode_id)||null,parentId:text(x.parent_id)||null,question:text(x.question),whyNeeded:text(x.why_needed)||null,resumeCheckpoint:text(x.resume_checkpoint)||null,status:text(x.status)||"open",openedAt:x.opened_at?String(x.opened_at):null,closedAt:x.closed_at?String(x.closed_at):null,noteRefs:[...new Set(refs.map(text).filter(Boolean))]}];});
+  return {journey:{version:Number(s.version)||2,episodes,questions},warnings};
 }
-
-export function validateLearningJourney(journey) {
-  const warnings = [];
-  const ids = new Set();
-  for (const question of journey.questions) {
-    if (ids.has(question.id)) warnings.push(`duplicate journey question id: ${question.id}`);
-    ids.add(question.id);
-    if (!questionIdPattern.test(question.id)) warnings.push(`non-standard journey question id: ${question.id}`);
-  }
-  if (journey.rootId && !ids.has(journey.rootId)) warnings.push(`journey root not found: ${journey.rootId}`);
-  for (const question of journey.questions) if (question.parentId && !ids.has(question.parentId)) warnings.push(`journey parent not found: ${question.id} -> ${question.parentId}`);
-
-  const byId = new Map(journey.questions.map((item) => [item.id, item]));
-  for (const question of journey.questions) {
-    const seen = new Set([question.id]);
-    let cursor = question;
-    while (cursor?.parentId && byId.has(cursor.parentId)) {
-      if (seen.has(cursor.parentId)) {
-        warnings.push(`journey cycle detected at: ${question.id}`);
-        break;
-      }
-      seen.add(cursor.parentId);
-      cursor = byId.get(cursor.parentId);
-    }
-  }
-  return [...new Set(warnings)];
+export function validateLearningJourney(j) {
+  const w=[]; const es=new Set(),qs=new Set(); const byId=new Map(j.questions.map(q=>[q.id,q]));
+  for(const e of j.episodes){if(es.has(e.id))w.push(`duplicate episode id: ${e.id}`);es.add(e.id);if(!/^e\d+$/.test(e.id))w.push(`non-standard episode id: ${e.id}`);if(!valid.episode.has(e.status))w.push(`invalid episode status: ${e.id}`);const root=byId.get(e.rootQuestionId);if(!root)w.push(`episode root not found: ${e.id}`);else if(root.parentId||root.episodeId!==e.id)w.push(`invalid episode root: ${e.id}`);if(e.status==="closed"&&!e.closedAt)w.push(`closed episode is missing closed_at: ${e.id}`);}
+  for(const q of j.questions){if(qs.has(q.id))w.push(`duplicate question id: ${q.id}`);qs.add(q.id);if(!/^q\d+$/.test(q.id))w.push(`non-standard question id: ${q.id}`);if(!es.has(q.episodeId))w.push(`question episode not found: ${q.id}`);if(!valid.question.has(q.status))w.push(`invalid question status: ${q.id}`);if(q.status==="closed"&&!q.closedAt)w.push(`closed question is missing closed_at: ${q.id}`);const p=q.parentId?byId.get(q.parentId):null;if(q.parentId&&!p)w.push(`question parent not found: ${q.id}`);if(p&&p.episodeId!==q.episodeId)w.push(`cross-episode parent: ${q.id}`);const seen=new Set([q.id]);let c=q;while(c?.parentId&&byId.has(c.parentId)){if(seen.has(c.parentId)){w.push(`question cycle detected at: ${q.id}`);break;}seen.add(c.parentId);c=byId.get(c.parentId);}}
+  if(j.episodes.filter(e=>e.status==="active").length>1)w.push("multiple active episodes");return [...new Set(w)];
 }
-
-export function readLearningJourney(workspace) {
-  const journeyPath = path.join(path.resolve(workspace), ".learning", "journey.yaml");
-  if (!existsSync(journeyPath)) return { ...normalizeLearningJourney({}), exists: false, path: journeyPath };
-  try {
-    const normalized = normalizeLearningJourney(YAML.parse(readFileSync(journeyPath, "utf8"), { prettyErrors: true }));
-    return { ...normalized, exists: true, warnings: [...normalized.warnings, ...validateLearningJourney(normalized.journey)], path: journeyPath };
-  } catch (error) {
-    return { ...normalizeLearningJourney({}), exists: true, warnings: [`malformed journey.yaml: ${error.message}`], path: journeyPath };
-  }
-}
-
-export function nextJourneyQuestionId(journey) {
-  const used = new Set(journey.questions.map((item) => item.id));
-  let number = Math.max(0, ...[...used].filter((id) => questionIdPattern.test(id)).map((id) => Number(id.slice(1))));
-  do number += 1; while (used.has(`q${String(number).padStart(3, "0")}`));
-  return `q${String(number).padStart(3, "0")}`;
-}
-
-export function appendJourneyQuestion(journey, question) {
-  if (journey.questions.some((item) => item.id === question.id)) throw new Error(`journey question id already exists: ${question.id}`);
-  const next = { ...journey, rootId: journey.rootId || question.id, questions: [...journey.questions, { ...question, noteRefs: [...new Set(question.noteRefs || [])] }] };
-  const warnings = validateLearningJourney(next);
-  if (warnings.some((warning) => warning.startsWith("journey parent not found") || warning.startsWith("journey cycle"))) throw new Error(warnings.join("; "));
-  return next;
-}
-
-export function setJourneyQuestionNoteRefs(journey, id, noteRefs) {
-  if (!journey.questions.some((item) => item.id === id)) throw new Error(`journey question not found: ${id}`);
-  return { ...journey, questions: journey.questions.map((item) => item.id === id ? { ...item, noteRefs: [...new Set(noteRefs.map(text).filter(Boolean))] } : item) };
-}
-
-export function writeLearningJourney(workspace, journey) {
-  const result = validateLearningJourney(journey);
-  const fatal = result.filter((warning) => !warning.startsWith("non-standard journey question id"));
-  if (fatal.length) throw new Error(`invalid learning journey: ${fatal.join("; ")}`);
-  const output = {
-    version: journey.version || 1,
-    root_id: journey.rootId,
-    questions: journey.questions.map((item) => ({ id: item.id, question: item.question, parent_id: item.parentId, why_needed: item.whyNeeded, resume_checkpoint: item.resumeCheckpoint, note_refs: item.noteRefs || [] })),
-  };
-  const target = path.join(path.resolve(workspace), ".learning", "journey.yaml");
-  mkdirSync(path.dirname(target), { recursive: true });
-  writeFileSync(target, YAML.stringify(output, { lineWidth: 0 }));
-  return target;
-}
+export function readLearningJourney(workspace){const target=path.join(path.resolve(workspace),".learning","journey.yaml");if(!existsSync(target))return{...normalizeLearningJourney({}),exists:false,path:target};try{const r=normalizeLearningJourney(YAML.parse(readFileSync(target,"utf8"),{prettyErrors:true}));return{...r,exists:true,warnings:[...r.warnings,...validateLearningJourney(r.journey)],path:target};}catch(e){return{...normalizeLearningJourney({}),exists:true,warnings:[`malformed journey.yaml: ${e.message}`],path:target};}}
+const next=(items,prefix)=>{const used=new Set(items.map(x=>x.id));let n=Math.max(0,...[...used].filter(x=>new RegExp(`^${prefix}\\d+$`).test(x)).map(x=>Number(x.slice(1))));do n++;while(used.has(`${prefix}${String(n).padStart(3,"0")}`));return `${prefix}${String(n).padStart(3,"0")}`;};
+export const nextJourneyQuestionId=j=>next(j.questions,"q"); export const nextEpisodeId=j=>next(j.episodes,"e");
+export function startEpisode(j,{id,rootQuestionId,question,startedAt}){if(j.episodes.some(e=>e.status==="active"))throw new Error("an active episode already exists");const n={version:2,episodes:[...j.episodes,{id,rootQuestionId,status:"active",startedAt,closedAt:null}],questions:[...j.questions,{id:rootQuestionId,episodeId:id,parentId:null,question,whyNeeded:null,resumeCheckpoint:null,status:"open",openedAt:startedAt,closedAt:null,noteRefs:[]}]};const w=validateLearningJourney(n);if(w.length)throw new Error(w.join("; "));return n;}
+export function appendJourneyQuestion(j,q){const n={...j,questions:[...j.questions,{...q,status:q.status||"open",closedAt:q.closedAt||null,noteRefs:[...new Set(q.noteRefs||[])]}]};const w=validateLearningJourney(n);if(w.length)throw new Error(w.join("; "));return n;}
+export const closeJourneyQuestion=(j,id,at)=>({...j,questions:j.questions.map(q=>q.id===id?{...q,status:"closed",closedAt:at}:q)});
+export const closeEpisode=(j,id,at)=>({...j,episodes:j.episodes.map(e=>e.id===id?{...e,status:"closed",closedAt:at}:e)});
+export function setJourneyQuestionNoteRefs(j,id,refs){if(!j.questions.some(q=>q.id===id))throw new Error(`question not found: ${id}`);return{...j,questions:j.questions.map(q=>q.id===id?{...q,noteRefs:[...new Set(refs.map(text).filter(Boolean))]}:q)};}
+export function writeLearningJourney(workspace,j){const w=validateLearningJourney(j);if(w.length)throw new Error(`invalid learning journey: ${w.join("; ")}`);const out={version:2,episodes:j.episodes.map(e=>({id:e.id,root_question_id:e.rootQuestionId,status:e.status,started_at:e.startedAt,closed_at:e.closedAt})),questions:j.questions.map(q=>({id:q.id,episode_id:q.episodeId,parent_id:q.parentId,question:q.question,why_needed:q.whyNeeded,resume_checkpoint:q.resumeCheckpoint,status:q.status,opened_at:q.openedAt,closed_at:q.closedAt,note_refs:q.noteRefs||[]}))};const target=path.join(path.resolve(workspace),".learning","journey.yaml");mkdirSync(path.dirname(target),{recursive:true});writeFileSync(target,YAML.stringify(out,{lineWidth:0}));return target;}

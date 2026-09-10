@@ -1,6 +1,12 @@
-# Learning Skills
+# Learning Skill V7
 
-A recursive learning system for Codex with one primary user interface: `$learning`.
+A small, evidence-backed recursive learning system for Codex, exposed as `$learning`.
+
+```text
+learner question → Episode → PUSH / LEARN / VERIFY / POP / RESUME
+                                  ↓
+                         root teach-back → CLOSED → IDLE
+```
 
 ## Install or update
 
@@ -8,41 +14,26 @@ A recursive learning system for Codex with one primary user interface: `$learnin
 ./install.sh
 ```
 
-The installer exposes `$learning` as the sole learning workflow and installs the shared runtime. It also installs `$learning-observe` as an optional read-only presentation tool.
-
-## V6 domain model
-
-The workflow follows real broken arrows rather than generating a curriculum:
+## Workspace
 
 ```text
-PUSH → LEARN → VERIFY → POP → RESUME
+.learning/
+  workspace.yaml   schema version
+  journey.yaml     finite Episodes and pursued questions
+  evidence.yaml    verification and misconception evidence
+  state.yaml       active Episode and focus ID stack, or IDLE
+notes/*.md         reusable knowledge
+OVERVIEW.md        optional whole-picture projection
 ```
 
-Its durable model separates traversal from knowledge:
+Only questions the learner asks or accepts are durable. A question closes only with passing verification evidence. A root pass closes the Episode and returns the workspace to IDLE. OVERVIEW may describe knowledge boundaries but cannot start or route learning.
 
-```text
-.learning/state.yaml    active recursive working memory
-.learning/journey.yaml  questions the learner actually pursued
-notes/*.md              reusable KnowledgeNotes
-```
+V7 intentionally has no Web observer, generated learning map, database, automatic review scheduler, or numeric mastery model.
 
-Several Journey questions may resolve to one KnowledgeNote, and one question may use several notes. Before writing knowledge, the workflow searches existing notes and chooses `reuse`, `revise`, or `create`.
-
-Generated artifacts are views rather than canonical state:
-
-- `learning-map.md` and `learning-map.mmd` show how learning unfolded, sourced from Journey plus active state.
-- `SYNTHESIS.md` is the single whole-picture review entry point, sourced from the current Knowledge Base.
-
-Run the map renderer with:
+## Commands
 
 ```bash
-node ~/.codex/skills/_shared/scripts/render-learning-map.mjs <workspace>
+node _shared/scripts/upgrade-learning-workspace.mjs <workspace>
+node _shared/scripts/learning-status.mjs <workspace>
+npm test --prefix _shared
 ```
-
-## Workspace upgrades
-
-Use `$learning` normally. If an older supported workspace is detected, `$learning` upgrades it once to the current workspace schema before future learning continues. Existing KnowledgeNotes are preserved, and normal rendering continues to use only canonical Journey and active state.
-
-## Read-only observer
-
-`learning-observe` starts or reconnects to the removable Web Observer for an existing workspace. The presentation layer remains outside the learning workflow and does not own state or knowledge.

@@ -1,7 +1,9 @@
 # Verify
 
-For a child closure check, use the parent question, child question, `why_needed`, and `resume_checkpoint`. Ask one natural transfer question that requires the child explanation to support the parent. Return `closed`, `uncertain`, or `open`, naming the smallest missing arrow.
+Verification produces one Evidence entry with `kind`, `result`, `independence`, demonstrated capabilities, remaining gaps, and timestamp.
 
-For root continuity, ask for one end-to-end teach-back. Locate important “then it…” jumps and identify the smallest blocking question behind each.
+For a child, use its parent, `why_needed`, and `resume_checkpoint`. Ask a natural connection or transfer question. Only `kind: child_connection` plus `result: pass` may close it.
 
-`closed` means the connection is sufficient for the parent to continue. The route owns state transitions after the verdict.
+For a root, request one end-to-end teach-back and probe the smallest important “then it…” jump. Only `kind: root_teach_back` plus `result: pass` may close the root and Episode.
+
+`uncertain` and `fail` remain evidence but never close a question. “I understand,” an AI explanation, or an existing note is not sufficient on its own. If the learner declines verification, continue or pause without fabricating a pass.

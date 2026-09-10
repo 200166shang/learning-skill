@@ -1,7 +1,5 @@
 # Curate
 
-Improve the Knowledge Base without changing the active route. Diagnose duplicate concepts, mixed scopes, stale notes, and missing evidence-backed semantic links. Propose the smallest useful merge, split, revise, link, or supersede operations with affected paths and preserved content.
+Improve notes without changing the active route. Diagnose duplicate concepts, mixed scopes, stale content, and unsupported semantic links. Apply structural changes after learner approval and preserve stable paths where practical.
 
-Apply structural note changes after learner approval. Preserve stable paths where practical, evidence, and uncertainty. Semantic links require content evidence or explicit approved curation; shared keywords and Journey ancestry are insufficient.
-
-After approved note changes, update affected Journey `note_refs`, refresh `SYNTHESIS.md` when its overview changed, and regenerate the map. `.learning/state.yaml` remains unchanged.
+Update affected Journey `note_refs` and refresh `OVERVIEW.md` when the whole picture changed. Never change State, create questions, or infer verification evidence during curation.

@@ -1,28 +1,3 @@
 #!/usr/bin/env node
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { inspectLearningWorkspace, upgradeLearningWorkspace } from "../lib/learning-workspace.mjs";
-
-const line = (label, value) => value ? `${label}: ${value}\n` : "";
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const workspace = process.argv[2];
-  if (!workspace) {
-    process.stderr.write("usage: node upgrade-learning-workspace.mjs <workspace>\n");
-    process.exitCode = 2;
-  } else {
-    try {
-      const result = upgradeLearningWorkspace(workspace);
-      process.stdout.write(line("source", result.source));
-      process.stdout.write(line("target schema", result.targetSchemaVersion));
-      process.stdout.write(line("root question", result.rootQuestion));
-      process.stdout.write(line("current question", result.currentQuestion));
-      process.stdout.write(line("resume checkpoint", result.resumeCheckpoint));
-      process.stdout.write(line("resume parent", result.resumeParentQuestion));
-      for (const warning of result.warnings) process.stdout.write(`warning: ${warning}\n`);
-      process.stdout.write(result.changed ? "upgrade complete; stop before continuing learning\n" : "no upgrade needed\n");
-    } catch (error) {
-      process.stderr.write(`error: ${error.message}\n`);
-      process.exitCode = 1;
-    }
-  }
-}
+import path from"node:path";import{fileURLToPath}from"node:url";import{upgradeLearningWorkspace}from"../lib/learning-workspace.mjs";
+if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){const workspace=process.argv[2];if(!workspace){process.stderr.write("usage: node upgrade-learning-workspace.mjs <workspace>\n");process.exitCode=2;}else try{const r=upgradeLearningWorkspace(workspace);process.stdout.write(`source: ${r.source}\n`);if(r.targetSchemaVersion)process.stdout.write(`target schema: ${r.targetSchemaVersion}\n`);if(r.rootQuestion)process.stdout.write(`root question: ${r.rootQuestion}\n`);if(r.currentQuestion)process.stdout.write(`current question: ${r.currentQuestion}\n`);for(const w of r.warnings)process.stdout.write(`warning: ${w}\n`);process.stdout.write(r.changed?"upgrade complete; stop before continuing learning\n":"no upgrade needed\n");}catch(e){process.stderr.write(`error: ${e.message}\n`);process.exitCode=1;}}

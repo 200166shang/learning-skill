@@ -1,29 +1,29 @@
 ---
 name: learning
-description: "Run a durable recursive learning workspace: learn or resume a question, review the whole picture, or curate accumulated knowledge."
+description: "Run evidence-backed recursive learning: pursue a learner-chosen question, resume an active episode, review retained understanding, or curate learning notes."
 ---
 
 # Learning
 
-Build a continuous explanation around the learner's chosen question. The leading invariant is **no broken arrow**: every important transition in the target causal chain can be explained.
+Help the learner close one question they chose. The loop is user-directed, recursive, evidence-backed, and finite:
 
-Keep two durable models distinct:
+`PUSH → LEARN → VERIFY → POP → RESUME → root VERIFY → IDLE`
 
-- `.learning/journey.yaml` records questions the learner actually pursued—how learning unfolded.
-- `notes/*.md` records reusable KnowledgeNotes—what is known.
+Keep the durable models separate:
 
-`.learning/state.yaml` is active working memory only. Its frame IDs match Journey question IDs. `learning-map.*` is generated from Journey plus state; `SYNTHESIS.md` is the current low-resolution review view of the Knowledge Base.
+- `.learning/journey.yaml`: finite Episodes and questions actually asked or accepted.
+- `.learning/evidence.yaml`: verification attempts and misconceptions.
+- `.learning/state.yaml`: only `idle | active`, active Episode ID, and focus question IDs.
+- `notes/*.md`: reusable knowledge, never proof of mastery.
+- `OVERVIEW.md`: a whole-picture projection of already-supported knowledge, never routing authority.
 
-## Bootstrap workspace compatibility
-
-Before reading or changing persisted learning state, follow [workspace upgrade](references/upgrade.md). Inspect every existing workspace through the shared upgrade command. A legacy upgrade changes semantic learning state, so report the recovered position and stop that turn; an already-canonical unversioned workspace may be adopted and then continue normally.
+Before persisted work, follow [workspace upgrade](references/upgrade.md).
 
 ## Route by intent
 
-- For a new question or an active topic, read [route](references/route.md), then [teach](references/teach.md) and [persistence](references/persistence.md). Read [verify](references/verify.md) when checking a child-to-parent connection or root continuity.
-- For review, recap, or reconnecting the whole picture, read [synthesis](references/synthesis.md).
-- For maintenance of accumulated notes, read [curate](references/curate.md).
+- New or active learner-chosen question: read [route](references/route.md), [teach](references/teach.md), and [persistence](references/persistence.md). Read [verify](references/verify.md) before any closure.
+- Manual review, recall, or “test me”: read [review](references/review.md).
+- Whole-picture recap or OVERVIEW refresh: read [overview](references/overview.md).
+- Note maintenance: read [curate](references/curate.md).
 
-Only learner-asked or learner-accepted questions enter Journey. A child closes when its answer reconnects the exact parent arrow; closure is local sufficiency, not topic mastery. The learning route owns PUSH, POP, and RESUME.
-
-Done when the learner's expressed intent is handled, active state remains coherent, and requested durable views or knowledge are refreshed from their canonical sources.
+Only learner-asked or learner-accepted questions enter Journey. A recommendation remains ephemeral until chosen. Every closed question requires persisted passing evidence. Closing a root also closes its Episode, empties the stack, sets state to IDLE, and stops; do not mine OVERVIEW or notes for an automatic next topic.

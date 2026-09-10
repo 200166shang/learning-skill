@@ -1,21 +1,19 @@
 # Route
 
-Own the recursive `PUSH → LEARN → VERIFY → POP → RESUME` loop.
+Own the finite recursive loop. Read Journey, Evidence, State, and only notes needed for the current focus.
 
-Read `MISSION.md`, `.learning/state.yaml`, `.learning/journey.yaml`, and only the notes needed for the current focus. For a new topic, create one root Journey question and one root state frame with the same stable ID. For a blocking gap the learner asks or accepts, append one child question to Journey, then push the matching frame with `why_needed` and the exact `resume_checkpoint`.
+When state is IDLE, a learner-chosen top-level question starts a new Episode and root question. Never infer a new Episode from an OVERVIEW boundary. When resuming an ACTIVE Episode without continuous conversational context, begin with one small unaided retrieval check.
 
-Classify the turn by its relationship to the current frame:
+Classify the turn:
 
 | Relationship | Action |
 | --- | --- |
-| Current focus | Teach the question without changing the stack. |
-| Inline gap | Restore the arrow briefly in context. |
-| Blocking gap | Append and push the smallest question that restores the parent explanation. |
-| Side branch | Answer without changing the route unless the learner chooses it. |
-| Evidence gap | Gather the missing evidence while preserving focus. |
+| Current focus | Teach without changing the stack. |
+| Inline gap | Repair briefly without persisting a question. |
+| Blocking gap | Explain the blocker; PUSH only after the learner asks or accepts it. |
+| Side branch | Answer without changing route unless chosen. |
+| Evidence gap | Gather verification while preserving focus. |
 
-Treat observed follow-ups as proposals. Persist one only when the learner asks it or explicitly chooses it.
+A pushed child belongs to the active Episode, points to the current question, and stores why it is needed plus the exact resume checkpoint. POP only after a persisted `child_connection: pass`; state the repaired parent connection on RESUME.
 
-Pop only after the child-to-parent connection is closed. Then resume the parent at the saved checkpoint and state the repaired causal connection before continuing. Root closure requires a continuous teach-back of the important mechanism, not exhaustive coverage.
-
-After Journey, state, or note references change, regenerate `learning-map.md` and `learning-map.mmd` with `_shared/scripts/render-learning-map.mjs`.
+A root closes only after persisted `root_teach_back: pass`. Then close root and Episode, clear the stack, set IDLE, report completion, and stop. Offer next-topic candidates only when the learner explicitly asks; candidates do not enter Journey until selected.

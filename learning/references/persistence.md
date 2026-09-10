@@ -1,11 +1,9 @@
 # Persistence
 
-Before writing, search relevant `notes/**/*.md` by concept, mechanism, tags, and likely vocabulary. Reconcile the candidate durable knowledge with what exists:
+Before writing, search `notes/**/*.md` by concept, mechanism, tags, and vocabulary. Choose:
 
-- **Reuse:** an existing note already expresses the concept at the needed scope. Keep it unchanged and add its path to the Journey question's `note_refs`.
-- **Revise:** an existing note has the same concept identity and the new learning corrects or completes that scope. Revise it in place and preserve its stable path.
-- **Create:** the concept has independent long-term value and adding it to an existing note would mix scopes. Create one KnowledgeNote and reference it from Journey.
+- **Reuse** an existing note and attach its path to the question.
+- **Revise** the same stable concept in place.
+- **Create** a note only when the knowledge has an independent reusable scope.
 
-One Journey question may reference several notes; several Journey questions may reference one note. An answered question may also have `note_refs: []` when no durable note is warranted.
-
-Use the shared LearningRecord contract. New notes use only semantic relations supported there. Learning provenance belongs in Journey; `derived-from` is read only by the explicit legacy migration tool.
+Questions and notes are many-to-many. `note_refs: []` is valid. Notes describe knowledge; they never close questions or Episodes. Learning history belongs in Journey and demonstrated understanding in Evidence.

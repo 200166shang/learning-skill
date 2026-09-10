@@ -1,4 +1,0 @@
-interface:
-  display_name: "Learning Observe"
-  short_description: "Start the live read-only learning observer"
-  default_prompt: "Use $learning-observe to start the Web observer for my current learning workspace and return its local URL."

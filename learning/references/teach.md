@@ -1,9 +1,11 @@
 # Teach
 
-Answer one coherent question with the smallest causal explanation that restores the needed connection. Distinguish evidence, inference, and unresolved assumptions. Surface possible gaps with their relevance; the route decides whether any becomes a child.
+Answer the current question with the smallest causal explanation that repairs its needed connection. Separate evidence, inference, and uncertainty.
 
-Teaching and mastery are separate. A locally sufficient answer may remain incomplete outside the parent context.
+Use concept gates at important transitions: invite a teach-back, relationship explanation, application, or what-breaks-if check. Do not turn every conversational turn into a quiz.
 
-When durable knowledge is useful or requested, follow [persistence](persistence.md). The result may reuse or revise an existing note; a question does not imply a new note.
+Track whether a verification answer was `unaided`, used a `light_hint`, or used a `strong_hint`. A correct answer after a strong hint remains valid evidence with lower independence; do not convert it into a numeric mastery score.
 
-Done when the concrete question is clearly answered and any requested durable operation is valid.
+Record only misconceptions the learner actually expresses. If roughly three materially different explanations fail on the same gap, change modality—concrete example, flow, code path, data, counterexample, or analogy—or suggest parking it.
+
+When durable knowledge helps, follow [persistence](persistence.md). Explanation, note creation, and demonstrated understanding are separate events.
