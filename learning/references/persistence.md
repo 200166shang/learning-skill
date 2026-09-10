@@ -8,4 +8,4 @@ Before writing, search relevant `notes/**/*.md` by concept, mechanism, tags, and
 
 One Journey question may reference several notes; several Journey questions may reference one note. An answered question may also have `note_refs: []` when no durable note is warranted.
 
-Use the shared LearningRecord contract. New notes use only semantic relations supported there. Learning provenance belongs in Journey, so new writes leave `derived-from` to legacy compatibility.
+Use the shared LearningRecord contract. New notes use only semantic relations supported there. Learning provenance belongs in Journey; `derived-from` is read only by the explicit legacy migration tool.

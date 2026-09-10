@@ -49,10 +49,10 @@ open → in-progress → resolved → integrated
                    ↘ cancelled
 ```
 
-- `concept` → `learning-teach` or the compatibility `learning-note` resolves the Ticket.
+- `concept` → the teach branch of `$learning` resolves the Ticket.
 - `code` → direct Codex investigates the listed repository material; prefer a child agent when the Ticket is independently executable.
 - `evidence` → records an external experiment/research need; execution happens outside this workflow, then the completed result can be materialized.
 
-Learning Map structure and whole-topic synthesis stay with `learning-synthesis`, not a Ticket type. A Ticket does not imply Map promotion, completion, or synthesis integration.
+Learning Map structure and whole-topic synthesis stay with the synthesis branch of `$learning`, not a Ticket type. A Ticket does not imply Map promotion, completion, or synthesis integration.
 
-A Ticket reaches `resolved` only after exactly one completed LearningRecord exists at its stated destination and `result` references it. Resolution stops there; `learning-synthesis` owns later integration. A LearningRecord may also exist without any Ticket when the learning result was already complete.
+A Ticket reaches `resolved` only after exactly one completed LearningRecord exists at its stated destination and `result` references it. Resolution stops there; the synthesis branch owns later integration. A LearningRecord may also exist without any Ticket when the learning result was already complete.

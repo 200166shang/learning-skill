@@ -42,8 +42,6 @@ Optional metadata:
 
 `sources[].type` is open vocabulary; common values are `repository`, `url`, `document`, `experiment`, and `conversation`.
 
-Legacy v2 `status` is tolerated as inert compatibility metadata. New Records omit it; producer completion plus this contract determines readiness. Revision preserves an existing legacy value unless metadata cleanup is explicitly requested.
-
 ## Knowledge relations
 
 New records use a small semantic vocabulary:
@@ -59,8 +57,6 @@ relations:
 ```
 
 `requires` identifies an explanation dependency. `part-of` identifies the larger mechanism containing the current note. `contrasts-with` is semantically symmetric, although only one canonical edge needs storage. Create a relation from explicit content evidence or an approved curation proposal.
-
-Legacy `derived-from` relations remain readable for migration. New learning provenance is written to `.learning/journey.yaml`; new notes do not add `derived-from`.
 
 Relation targets use workspace-relative note paths. Shared titles, tags, or Journey parents alone are not evidence of a semantic relation.
 
@@ -86,7 +82,7 @@ This evidence rule belongs here regardless of whether the Record came from a Tic
 
 Revise an existing LearningRecord in place when the user asks to adjust it.
 
-- Preserve file/path, `version`, `record_type`, `created_at`, still-correct content/evidence, supported relations, and any legacy `status` unless the requested change says otherwise.
+- Preserve file/path, `version`, `record_type`, `created_at`, still-correct content/evidence, and supported relations unless the requested change says otherwise.
 - Let the user's requested change define revision scope.
 - Keep source-backed `code-walkthrough` Records compliant with the evidence contract.
 - Keep supported semantic relations intact unless the requested revision changes their factual basis.
@@ -100,7 +96,10 @@ Revision changes only the Record. Ticket lifecycle, Map completion, synthesis in
 - Validate required frontmatter, non-empty body, producer-specific evidence obligations, and supported relations.
 - Preserve the completed body's meaning/structure and treat canonical lineage as producer-owned fact.
 - Map metadata to a destination without inventing producer-specific semantics; return destination identifiers/links as publication results rather than source mutations.
-- Legacy `status` never gates readiness.
+
+## Legacy migration boundary
+
+The reader tolerates old `status` metadata and `derived-from` relations only so `migrate-learning-journey.mjs` can safely inspect legacy workspaces. The migration may preserve that inert metadata, but normal V6 producers do not write it and runtime graph construction does not consume it.
 
 ## Migration from v1
 

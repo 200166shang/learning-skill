@@ -1,12 +1,12 @@
 # Recursive learning smoke cases
 
-These cases verify observable orchestration behavior. `learning-route` owns every stack transition; workers return local results without mutating state.
+These cases verify observable orchestration behavior. The route branch inside `$learning` owns every stack transition; other branches return local results without mutating state.
 
 ## Case 1: ordinary follow-up
 
 **Given:** root “PID 是怎么工作的？” and the learner asks “积分项为什么能消除稳态误差？”
 
-**Expect:** treat it as the current focus, do not push, and load `learning-teach` for that concrete question.
+**Expect:** treat it as the current focus, do not push, and load the teach branch for that concrete question.
 
 ## Case 2: inline gap
 
@@ -30,7 +30,7 @@ These cases verify observable orchestration behavior. `learning-route` owns ever
 
 **Given:** the child was explained but the learner cannot connect it to its parent.
 
-**Expect:** `learning-verify` reports `open`; do not pop. Identify the smallest broken arrow and continue the current child or push that smaller blocking gap.
+**Expect:** the verify branch reports `open`; do not pop. Identify the smallest broken arrow and continue the current child or push that smaller blocking gap.
 
 ## Case 6: local verification closes
 
@@ -48,7 +48,7 @@ These cases verify observable orchestration behavior. `learning-route` owns ever
 
 **Given:** the learner asks “MCU 多久收不到串口命令会停车？” and the answer requires source inspection.
 
-**Expect:** preserve the stack, collect repository/source evidence, return it to `learning-teach`, and explain the result. Research never mutates recursive state.
+**Expect:** preserve the stack, collect repository/source evidence, return it to the teach branch, and explain the result. Research never mutates recursive state.
 
 ## Case 9: resume in a new session
 
@@ -60,7 +60,7 @@ These cases verify observable orchestration behavior. `learning-route` owns ever
 
 **Given:** the learner believes the full topic is understood.
 
-**Expect:** load `learning-verify` in root mode and ask the learner to reconstruct the mechanism. Reopen the smallest blocking “then it…” jump; only a continuous explanation with no blocking gap permits synthesis.
+**Expect:** load the verify branch in root mode and ask the learner to reconstruct the mechanism. Reopen the smallest blocking “then it…” jump; only a continuous explanation with no blocking gap permits synthesis.
 
 ## Derived-map assertions
 

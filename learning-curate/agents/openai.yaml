@@ -1,6 +1,0 @@
-interface:
-  display_name: "Learning Curate"
-  short_description: "Safely organize accumulated learning notes"
-  default_prompt: "Use $learning-curate to analyze my KnowledgeNotes, propose a safe long-term organization, and apply only the changes I approve."
-policy:
-  allow_implicit_invocation: true

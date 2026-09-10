@@ -1,4 +1,0 @@
-interface:
-  display_name: "Learning Synthesis"
-  short_description: "Turn confirmed notes into one coherent explanation"
-  default_prompt: "Use $learning-synthesis to reorganize the existing learner-confirmed KnowledgeNotes into one continuous whole-picture explanation after recursive learning."

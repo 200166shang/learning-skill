@@ -11,6 +11,7 @@ const workspace = () => mkdtempSync(path.join(tmpdir(), "learning-model-test-"))
 test("parses nested resume state and derives the current frame", () => {
   const root = workspace();
   mkdirSync(path.join(root, ".learning"));
+  writeFileSync(path.join(root, ".learning", "journey.yaml"), `version: 1\nroot_id: q1\nquestions:\n  - id: q1\n    question: Root\n    parent_id: null\n    note_refs: []\n  - id: q2\n    question: Child\n    parent_id: q1\n    note_refs: []\n`);
   writeFileSync(path.join(root, ".learning", "state.yaml"), `version: 1\nroot_question:\n  id: q1\n  question: Root\nfocus_stack:\n  - id: q1\n    question: Root\n  - id: q2\n    question: Child\n    why_needed: The missing link\n    resume:\n      question: Root\n      checkpoint: Continue at output\n`);
   const view = buildLearningView(root);
   assert.equal(view.current.question, "Child");
@@ -28,13 +29,16 @@ test("malformed state becomes a warning rather than an exception", () => {
   assert.ok(view.warnings.some((warning) => warning.startsWith("malformed state.yaml")));
 });
 
-test("uses normalized note paths for stable node identity", () => {
+test("uses Journey question IDs for stable node identity", () => {
   const root = workspace();
   mkdirSync(path.join(root, "notes", "nested"), { recursive: true });
+  mkdirSync(path.join(root, ".learning"));
   writeFileSync(path.join(root, "notes", "nested", "topic.md"), "---\ntitle: First title\nrecord_type: note\n---\nBody\n");
+  writeFileSync(path.join(root, ".learning", "journey.yaml"), "version: 1\nroot_id: q1\nquestions:\n  - id: q1\n    question: Stable question\n    parent_id: null\n    note_refs: [notes/nested/topic.md]\n");
   const first = buildLearningView(root).graph.nodes[0].id;
   writeFileSync(path.join(root, "notes", "nested", "topic.md"), "---\ntitle: Renamed title\nrecord_type: note\n---\nBody\n");
   assert.equal(buildLearningView(root).graph.nodes[0].id, first);
+  assert.equal(first, "q1");
 });
 
 test("derives push, pop, and route-updated transitions", () => {

@@ -8,7 +8,7 @@ A recursive learning system for Codex with one primary user interface: `$learnin
 ./install.sh
 ```
 
-The installer copies the canonical skill, compatibility entry points, observer, and shared model into `~/.codex/skills/`.
+The installer exposes `$learning` as the sole learning workflow and installs the shared runtime. It also installs `$learning-observe` as an optional read-only presentation tool.
 
 ## V6 domain model
 
@@ -39,15 +39,15 @@ Run the map renderer with:
 node ~/.codex/skills/_shared/scripts/render-learning-map.mjs <workspace>
 ```
 
-Migrate a legacy workspace non-destructively with:
+## Migration
+
+The normal renderer requires `.learning/journey.yaml`; it never reconstructs traversal from note titles, paths, active-state guesses, or legacy relations. Migrate a legacy workspace non-destructively with:
 
 ```bash
 node ~/.codex/skills/_shared/scripts/migrate-learning-journey.mjs <workspace>
 ```
 
-Migration reads explicit `derived-from` provenance and active state, creates `.learning/journey.yaml`, and leaves existing notes unchanged. When Journey exists, it is the sole learning-map source; otherwise the renderer uses legacy `derived-from` relations as a compatibility fallback.
-
-The former `learning-route`, `learning-teach`, `learning-verify`, `learning-synthesis`, `learning-curate`, and `learning-note` skills remain thin compatibility entry points for one release. New workflows should use `$learning`.
+Migration alone may read old `derived-from` provenance and active-state hints. It creates `.learning/journey.yaml` and leaves existing KnowledgeNotes unchanged. After migration, Journey plus active state is the sole learning-map traversal source.
 
 ## Read-only observer
 

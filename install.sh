@@ -6,10 +6,12 @@ CODEX_SKILLS_DIR="${CODEX_HOME:-$HOME/.codex}/skills"
 
 mkdir -p "$CODEX_SKILLS_DIR"
 
-# Remove the legacy router name so upgrades do not leave two entry points installed.
-rm -rf "$CODEX_SKILLS_DIR/learning-flow"
+# Remove every former public entry point before installing the V6-only surface.
+for legacy_skill in learning-flow learning-route learning-teach learning-verify learning-note learning-synthesis learning-curate; do
+  rm -rf "$CODEX_SKILLS_DIR/$legacy_skill"
+done
 
-for skill in learning learning-route learning-teach learning-verify learning-note learning-synthesis learning-curate learning-observe; do
+for skill in learning learning-observe; do
   rm -rf "$CODEX_SKILLS_DIR/$skill"
   cp -R "$REPO_DIR/$skill" "$CODEX_SKILLS_DIR/$skill"
 done
@@ -27,5 +29,5 @@ cp "$REPO_DIR/web/package.json" "$REPO_DIR/web/package-lock.json" "$CODEX_SKILLS
 cp -R "$REPO_DIR/web/server" "$REPO_DIR/web/dist" "$CODEX_SKILLS_DIR/web/"
 npm install --omit=dev --no-audit --no-fund --prefix "$CODEX_SKILLS_DIR/web"
 
-echo "Installed learning, compatibility learning skills, and learning-observe."
+echo "Installed learning and learning-observe."
 echo "Restart or start a new Codex turn to reload skills."

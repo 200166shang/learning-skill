@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import YAML from "yaml";
+import { buildLearningGraph } from "../lib/learning-graph.mjs";
 import { migrateLearningJourney } from "./migrate-learning-journey.mjs";
 
 test("migrates explicit derived-from lineage without rewriting notes", () => {
@@ -18,5 +19,9 @@ test("migrates explicit derived-from lineage without rewriting notes", () => {
   assert.equal(journey.questions.length, 2);
   assert.equal(journey.questions.find((item) => item.question === "Why child?").parent_id, journey.questions.find((item) => item.question === "Root").id);
   assert.equal(readFileSync(path.join(root, "notes", "child.md"), "utf8"), child);
+  const graph = buildLearningGraph(root);
+  assert.equal(graph.source, "journey");
+  assert.equal(graph.nodes.length, 2);
+  assert.deepEqual(graph.edges.map(({ type }) => type), ["journey"]);
   assert.throws(() => migrateLearningJourney(root), /already exists/);
 });

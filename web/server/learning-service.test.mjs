@@ -10,6 +10,7 @@ function fixture() {
   mkdirSync(path.join(root, "notes"));
   mkdirSync(path.join(root, ".learning"));
   writeFileSync(path.join(root, "notes", "root.md"), "---\ntitle: Root question\nrecord_type: note\n---\n# Answer\n");
+  writeFileSync(path.join(root, ".learning", "journey.yaml"), "version: 1\nroot_id: q1\nquestions:\n  - id: q1\n    question: Root question\n    parent_id: null\n    note_refs: [notes/root.md]\n");
   writeFileSync(path.join(root, ".learning", "state.yaml"), "version: 1\nroot_question:\n  id: q1\n  question: Root question\nfocus_stack:\n  - id: q1\n    question: Root question\n    note: notes/root.md\n");
   return root;
 }
