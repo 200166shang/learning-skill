@@ -1,31 +1,31 @@
-# Learning Skill V3 重构计划
+# Learning Skill V4.1 迭代计划
 
 ## 目标
 
-围绕递归教学循环重构当前 Skill：用户只表达学习意图，Skill 内部维护状态；主流程聚焦小问题与知识笔记，`learning-synthesis` 只负责把已有知识串成完整理解，Ticket 降级为按需的跨上下文调查工具。
+在现有 V4 Recursive Understanding Loop 上增加 Generated Understanding Map，并收紧 worker 调用、metadata 与最小状态契约；不引入 curriculum、mastery 或新的 orchestration Skill。
 
 ## 阶段
 
-- [complete] 1. 审计现有 Skill、引用和验证入口，确定兼容边界
-- [complete] 2. 重写入口与核心 Skill 契约，收敛用户可见 workflow
-- [complete] 3. 清理/迁移旧的 synthesis 状态机与引用，补充新的持久化模型说明
-- [complete] 4. 更新 README、agent 配置与示例，确保安装后入口一致
-- [complete] 5. 静态检查、契约检查并总结兼容性影响
+- [complete] 1. 读取最新 V4.1 指令并审计仓库现状
+- [complete] 2. 为 Map CLI seam 增加黑盒测试并实现 renderer
+- [complete] 3. 收紧 route/teach/synthesis/state 契约与 UI metadata
+- [complete] 4. 增加 10 个 recursive workflow smoke cases 并更新 README
+- [complete] 5. 运行 fixtures、Skill validator、YAML/Markdown/安装脚本静态校验
 
 ## 决策记录
 
-- 主循环：`learning-teach → KnowledgeNote → follow-up → learning-teach`。
-- 用户接口：自然语言意图；`stage`、`mode`、Ticket lifecycle、completion provenance 默认隐藏。
-- `learning-synthesis`：读取 Mission、Knowledge Map、notes，输出 coherent synthesis document；不再承载日常 gap/ticket/integrate lifecycle。
-- Ticket：仅在需要独立源码调查或跨上下文工作时按需创建。
-- 暂不把 LearningRecord 继续作为“文章完成证明”；知识文章统一以 KnowledgeNote/LearningNote 表达。保留旧记录格式时必须标明兼容用途。
+- Source of truth：KnowledgeNotes 的 `derived-from` + `.learning/state.yaml` 的 `focus_stack`。
+- `learning-map.md` 与 `learning-map.mmd` 是同一内部 graph 的派生视图。
+- CLI seam：`node _shared/scripts/render-learning-map.mjs <workspace>`。
+- Renderer 只读 source of truth；不推断关系、不生成问题、不修改 state。
+- 当前 focus、parent 均由 stack 位置推导，frame `id` 保留作稳定引用。
 
 ## 风险与待验证项
 
-- 现有仓库可能没有 `learning-teach`，需要决定是新增入口还是复用/改名 `learning-note`。
-- 旧文件和已生成项目可能依赖 `learning.yaml`、Ticket、Record 字段；本次优先更新 Skill 契约，并明确迁移/兼容策略，不擅自删除用户产物。
-- 必须检查所有 Skill 之间是否仍互相要求用户手动进入内部 mode。
+- 仓库没有依赖清单，renderer 需使用 Node 标准库并容忍有限 YAML 子集。
+- `derived-from.ref` 可能相对 workspace 或当前 note；解析时兼容两者但不猜测标题关系。
+- cycle、坏 frontmatter、缺失 parent 必须 warning 后继续生成有限图。
 
 ## 错误记录
 
-暂无。
+- `quick_validate.py` 没有 executable bit，直接调用得到 permission denied；改用 `python3 quick_validate.py` 后五个 Skill 均通过。

@@ -42,7 +42,8 @@ For a saved note:
 - preserve explicit `derived-from` provenance only when the parent and learner follow-up are known;
 - keep a matching reader-facing lineage section when a canonical relation exists;
 - revise an existing note in place when asked, preserving correct metadata, evidence, and scope;
-- update `learning-map.md` only for a learner-expressed or learner-accepted question. Never add merely suggested gaps.
+- write a supported `derived-from` relation when the parent and learner follow-up are known, then report the durable result to the orchestrator;
+- prefer regenerating the derived map through `_shared/scripts/render-learning-map.mjs`; never maintain graph structure independently in multiple files or add merely suggested gaps.
 
 Existing v2 LearningRecords with `record_type: note` remain KnowledgeNotes. Do not require or extend legacy `learning.yaml`.
 

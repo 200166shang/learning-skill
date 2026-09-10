@@ -1,4 +1,4 @@
 interface:
   display_name: "Learning Synthesis"
-  short_description: "Connect learning notes into the whole picture"
-  default_prompt: "Use $learning-synthesis to connect the existing Mission, learning map, and KnowledgeNotes into one coherent explanation. Do not create workflow Tickets or expose internal state."
+  short_description: "Turn confirmed notes into one coherent explanation"
+  default_prompt: "Use $learning-synthesis to reorganize the existing learner-confirmed KnowledgeNotes into one continuous whole-picture explanation after recursive learning."

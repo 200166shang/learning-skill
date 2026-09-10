@@ -1,6 +1,6 @@
 interface:
   display_name: "Learning Route"
-  short_description: "Turn learning intent into the next useful action"
-  default_prompt: "Use $learning-route to handle my learning intent in plain language. Infer the right action, keep workflow state internal, and continue into teaching or synthesis when possible."
+  short_description: "Trace gaps, backtrack, and reconnect understanding"
+  default_prompt: "Use $learning-route to manage my learning recursively: distinguish inline from blocking gaps, keep the focus stack internal, resume suspended parents, and build a continuous explanation with no broken causal arrows."
 policy:
   allow_implicit_invocation: true

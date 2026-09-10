@@ -7,7 +7,13 @@ description: "Orchestrate recursive learning: identify real understanding gaps, 
 
 Help the learner build a continuous explanation of a chosen question. The objective is **no broken arrow** in the target causal chain: each important transition can be explained, rather than merely naming many concepts or collecting notes.
 
-Own the learning loop. `learning-teach`, `learning-verify`, research, and `learning-synthesis` are workers; they do not own the focus stack.
+Own the learning loop. Before a teaching, verification, or synthesis step, load and follow the corresponding worker contract:
+
+- [learning-teach](../learning-teach/SKILL.md)
+- [learning-verify](../learning-verify/SKILL.md)
+- [learning-synthesis](../learning-synthesis/SKILL.md)
+
+Workers execute only their local responsibility. They must not push, pop, replace, or reinterpret the recursive focus stack. `learning-route` remains the sole owner of workflow transitions: route decides → worker performs local work → result returns to route → route decides the next transition. This is a Skill contract, not a traditional function-call protocol.
 
 ## Core loop
 
@@ -23,7 +29,7 @@ frame root question → explain current focus → detect a real gap
                                      root teach-back → synthesize when continuous
 ```
 
-Do not pre-generate a curriculum or problem tree. `learning-map.md` records questions the learner actually pursued; it is the result of learning, not its script.
+Do not pre-generate a curriculum or problem tree. The generated `learning-map.md` records questions the learner actually pursued; it is the result of learning, not its script.
 
 ## State and workspace
 
@@ -41,24 +47,26 @@ notes/
 SYNTHESIS.md
 ```
 
+KnowledgeNotes and their canonical `derived-from` relations are the durable lineage source; `focus_stack` is the active recursive path. `learning-map.md` and `learning-map.mmd` are generated reader-facing views of those sources, never independent state.
+
 ## Classify every learning turn
 
 Compare the request to the top of `focus_stack`.
 
 | Relationship | Response | Stack / map effect |
 | --- | --- | --- |
-| Current focus | Delegate one concrete question to `learning-teach`. | No push. |
+| Current focus | Load `learning-teach` and handle one concrete question. | No push. |
 | Inline gap | Answer briefly in context, then continue the current explanation. | No note, map node, or push. |
-| Blocking gap | Formulate the smallest question needed to restore the parent explanation. Record why it blocks and the precise resume checkpoint; then delegate it to `learning-teach`. | Push one child. Add to map only after the learner asked for or accepted the question. |
+| Blocking gap | Formulate the smallest question needed to restore the parent explanation. Record why it blocks and the precise resume checkpoint; then load `learning-teach`. | Push one child. It appears in the generated map only after the learner asked for or accepted the question. |
 | Side branch | Answer without disturbing the current focus. Identify it as non-blocking. | Do not push or add it to the map unless the learner explicitly chooses to pursue it. |
 | Evidence gap | Collect the needed source, experiment, or code evidence, optionally through an independent worker. Then return the evidence to `learning-teach`. | Preserve focus stack; workers never own it. |
-| Synthesis request | Check for blocking gaps and root continuity. If they are materially open, explain the missing connection; otherwise delegate to `learning-synthesis`. | No hidden capture workflow. |
+| Synthesis request | Check for blocking gaps and root continuity. If they are materially open, explain the missing connection; otherwise load `learning-synthesis`. | No hidden capture workflow. |
 
 A blocking gap is necessary only when the learner cannot explain an important arrow in the current question without it. Prefer an inline answer when one to three short paragraphs restore that arrow. Do not turn AI-suggested extensions into nodes automatically.
 
 ## Dive, close, and backtrack
 
-For a blocking gap, push a frame before teaching it. Include `parent`, `why_needed`, and a `resume.checkpoint` that states the exact parent connection to revisit.
+For a blocking gap, push a frame before teaching it. Include `why_needed` and a `resume.checkpoint` that states the exact parent connection to revisit. Derive its parent from the preceding stack frame.
 
 After `learning-teach`, inspect its observed gaps. Treat them as proposals, not automatic stack mutations. Ask or infer the smallest necessary next gap only when it clearly blocks the current explanation.
 
@@ -66,12 +74,29 @@ Do not pop because a note exists or because the learner says they have seen the 
 
 When the connection is closed:
 
-1. Save or revise the child note when appropriate and update the map only for learner-confirmed questions.
+1. Save or revise the child note when appropriate, including supported lineage.
 2. Pop the child frame.
 3. Explicitly resume the parent at its saved checkpoint.
 4. Re-explain the child-to-parent causal connection before continuing.
 
 Never end a resolved child with an open-ended “what next?” while its parent is suspended.
+
+## Refresh generated maps
+
+After the turn's primary writes complete, run the shared renderer when the workspace is writable and any of these durable changes occurred:
+
+- a learner-confirmed KnowledgeNote was created;
+- a `derived-from` relation was added or revised;
+- a blocking gap was pushed;
+- a locally closed child was popped.
+
+Run:
+
+```bash
+node <installed-skills-directory>/_shared/scripts/render-learning-map.mjs <workspace>
+```
+
+The renderer is a derived refresh only. It must not mutate learning state, create questions, infer relations from topic similarity, or turn suggested gaps into nodes. Do not hand-edit graph structure separately in `learning-map.md` and `learning-map.mmd`.
 
 ## Root closure and synthesis
 

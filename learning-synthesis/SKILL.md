@@ -1,6 +1,6 @@
 ---
 name: learning-synthesis
-description: Own an explicitly selected or routed topic-centered learning workflow for framing, drafting, gap capture, integration, knowledge-lineage views, or resume from user-confirmed questions, materials, maps, and knowledge tickets.
+description: Synthesize existing learner-confirmed KnowledgeNotes into one coherent whole-picture explanation after recursive learning.
 ---
 
 # Learning Synthesis
@@ -38,6 +38,7 @@ The synthesis may link to source KnowledgeNotes. It must not silently invent mis
 - A Ticket is optional delegation infrastructure and is not a normal synthesis input requirement.
 - The Map records learner-chosen questions and links to notes; it is not a completion state machine.
 - `learning.yaml` is legacy topic memory. Do not add stage caches, candidate queues, completion provenance, or integration lifecycle for ordinary synthesis.
+- Do not discover or own recursive gaps, push or pop the focus stack, resume parent questions, or own the learning lifecycle.
 
 ## Result
 
