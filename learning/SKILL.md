@@ -14,6 +14,10 @@ Keep two durable models distinct:
 
 `.learning/state.yaml` is active working memory only. Its frame IDs match Journey question IDs. `learning-map.*` is generated from Journey plus state; `SYNTHESIS.md` is the current low-resolution review view of the Knowledge Base.
 
+## Bootstrap workspace compatibility
+
+Before reading or changing persisted learning state, follow [workspace upgrade](references/upgrade.md). Inspect every existing workspace through the shared upgrade command. A legacy upgrade changes semantic learning state, so report the recovered position and stop that turn; an already-canonical unversioned workspace may be adopted and then continue normally.
+
 ## Route by intent
 
 - For a new question or an active topic, read [route](references/route.md), then [teach](references/teach.md) and [persistence](references/persistence.md). Read [verify](references/verify.md) when checking a child-to-parent connection or root continuity.

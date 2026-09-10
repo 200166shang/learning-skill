@@ -39,15 +39,9 @@ Run the map renderer with:
 node ~/.codex/skills/_shared/scripts/render-learning-map.mjs <workspace>
 ```
 
-## Migration
+## Workspace upgrades
 
-The normal renderer requires `.learning/journey.yaml`; it never reconstructs traversal from note titles, paths, active-state guesses, or legacy relations. Migrate a legacy workspace non-destructively with:
-
-```bash
-node ~/.codex/skills/_shared/scripts/migrate-learning-journey.mjs <workspace>
-```
-
-Migration alone may read old `derived-from` provenance and active-state hints. It creates `.learning/journey.yaml` and leaves existing KnowledgeNotes unchanged. After migration, Journey plus active state is the sole learning-map traversal source.
+Use `$learning` normally. If an older supported workspace is detected, `$learning` upgrades it once to the current workspace schema before future learning continues. Existing KnowledgeNotes are preserved, and normal rendering continues to use only canonical Journey and active state.
 
 ## Read-only observer
 
