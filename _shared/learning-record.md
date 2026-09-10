@@ -38,43 +38,38 @@ Optional metadata:
 | --- | --- |
 | `tags` | Stable retrieval terms. |
 | `sources` | Evidence references with `type` + `ref`, optionally `note`. |
-| `relations` | Supported durable Record-to-Record lineage. |
+| `relations` | Supported semantic relationships between KnowledgeNotes. |
 
 `sources[].type` is open vocabulary; common values are `repository`, `url`, `document`, `experiment`, and `conversation`.
 
 Legacy v2 `status` is tolerated as inert compatibility metadata. New Records omit it; producer completion plus this contract determines readiness. Revision preserves an existing legacy value unless metadata cleanup is explicitly requested.
 
-## Knowledge lineage
+## Knowledge relations
 
-The currently supported durable relation is:
+New records use a small semantic vocabulary:
 
 ```yaml
 relations:
-  - type: derived-from
-    ref: records/Tensor基础.md
-    question: 一个图片是如何被转换成一个 Tensor 的？
+  - type: requires
+    ref: notes/pwm-basics.md
+  - type: part-of
+    ref: notes/mcu-control-loop.md
+  - type: contrasts-with
+    ref: notes/open-loop-control.md
 ```
 
-For `derived-from`, `ref` identifies the prior LearningRecord and `question` preserves the learner question that caused the child Record to grow. Create this edge only from explicit/supported learning provenance. The child/current Record owns the canonical edge; the parent remains unchanged.
+`requires` identifies an explanation dependency. `part-of` identifies the larger mechanism containing the current note. `contrasts-with` is semantically symmetric, although only one canonical edge needs storage. Create a relation from explicit content evidence or an approved curation proposal.
 
-When a supported edge exists, render the same fact for readers in a concise `## 来源脉络` section, for example:
+Legacy `derived-from` relations remain readable for migration. New learning provenance is written to `.learning/journey.yaml`; new notes do not add `derived-from`.
 
-```markdown
-## 来源脉络
-
-[Tensor基础](Tensor基础.md)
-→ 阅读时产生问题：“一个图片是如何被转换成一个 Tensor 的？”
-→ 当前记录继续回答这个问题。
-```
-
-The frontmatter edge is canonical; the Markdown section is its presentation. Additional relation types require a separately observed workflow need.
+Relation targets use workspace-relative note paths. Shared titles, tags, or Journey parents alone are not evidence of a semantic relation.
 
 ## Producer obligations
 
 - Write one standard frontmatter block plus a complete Markdown body.
 - Keep evidence, inference, and unresolved assumptions distinguishable.
 - Include only supported metadata.
-- Keep reader-facing lineage synchronized with any canonical relation.
+- Keep semantic relations supported by the note's content.
 - Hand off only after the producer branch's completion criterion and this contract are satisfied.
 
 ### `code-walkthrough` evidence contract
@@ -94,7 +89,7 @@ Revise an existing LearningRecord in place when the user asks to adjust it.
 - Preserve file/path, `version`, `record_type`, `created_at`, still-correct content/evidence, supported relations, and any legacy `status` unless the requested change says otherwise.
 - Let the user's requested change define revision scope.
 - Keep source-backed `code-walkthrough` Records compliant with the evidence contract.
-- Keep canonical lineage and its reader-facing rendering consistent; relation changes require explicit/supported provenance correction.
+- Keep supported semantic relations intact unless the requested revision changes their factual basis.
 - When the requested edit exposes unsupported new learning work, report that gap at the revision boundary; a later user-confirmed synthesis action may formalize it.
 - Revalidate the whole Record before handoff.
 

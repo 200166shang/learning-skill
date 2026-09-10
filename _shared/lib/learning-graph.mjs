@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { readLearningJourney } from "./learning-journey.mjs";
 import { normalizeNotePath, readLearningRecords } from "./learning-record.mjs";
 import { readLearningState } from "./learning-state.mjs";
 
@@ -30,10 +31,27 @@ function cycleExists(nodeIds, edges) {
   return [...nodeIds].some(visit);
 }
 
-export function buildLearningGraph(workspace) {
-  const root = path.resolve(workspace);
-  const stateResult = readLearningState(root);
-  const recordResult = readLearningRecords(root);
+function buildJourneyGraph(stateResult, journeyResult, recordResult) {
+  const warnings = [...stateResult.warnings, ...journeyResult.warnings, ...recordResult.warnings];
+  const knownNotes = new Set(recordResult.records.map((record) => record.notePath));
+  const activeIds = new Set(stateResult.state.focusStack.map((frame) => frame.id));
+  const currentId = stateResult.state.focusStack.at(-1)?.id || null;
+  const nodes = journeyResult.journey.questions.map((question) => {
+    for (const noteRef of question.noteRefs) if (!knownNotes.has(noteRef)) warnings.push(`journey note not found: ${question.id} -> ${noteRef}`);
+    return { id: question.id, label: question.question, question: question.question, whyNeeded: question.whyNeeded, resumeCheckpoint: question.resumeCheckpoint, notePaths: question.noteRefs, notePath: question.noteRefs[0] || null, durable: question.noteRefs.length > 0, active: activeIds.has(question.id), current: question.id === currentId };
+  });
+  const nodeIds = new Set(nodes.map((node) => node.id));
+  const edges = journeyResult.journey.questions.flatMap((question) => question.parentId && nodeIds.has(question.parentId)
+    ? [{ id: `${question.parentId}|${question.id}|journey`, source: question.parentId, target: question.id, type: "journey", active: activeIds.has(question.parentId) && activeIds.has(question.id) }]
+    : []);
+  const stack = stateResult.state.focusStack.map((frame, index) => {
+    if (!nodeIds.has(frame.id)) warnings.push(`active frame missing from journey: ${frame.id}`);
+    return { ...frame, nodeId: frame.id, depth: index + 1 };
+  });
+  return { nodes, edges, stack, activePath: stack.map((frame) => frame.id), current: stack.at(-1) || null, warnings };
+}
+
+function buildLegacyGraph(workspace, stateResult, recordResult) {
   const warnings = [...stateResult.warnings, ...recordResult.warnings];
   const nodesById = new Map();
   const noteIdByPath = new Map();
@@ -42,9 +60,8 @@ export function buildLearningGraph(workspace) {
     const id = stableNoteId(record.notePath);
     noteIdByPath.set(record.notePath, id);
     titleIds.set(comparable(record.title), [...(titleIds.get(comparable(record.title)) || []), id]);
-    nodesById.set(id, { id, label: record.title, notePath: record.notePath, recordType: record.recordType, durable: true, active: false, current: false });
+    nodesById.set(id, { id, label: record.title, notePath: record.notePath, notePaths: [record.notePath], recordType: record.recordType, durable: true, active: false, current: false });
   }
-
   const edges = [];
   const edgeKeys = new Set();
   for (const record of recordResult.records) {
@@ -53,7 +70,7 @@ export function buildLearningGraph(workspace) {
       if (!relation || typeof relation !== "object") { warnings.push(`malformed relation: ${record.notePath}`); continue; }
       if (relation.type !== "derived-from") continue;
       if (!relation.ref || typeof relation.ref !== "string") { warnings.push(`invalid derived-from relation skipped: ${record.notePath}`); continue; }
-      const source = noteIdByPath.get(relationPath(root, record, relation.ref));
+      const source = noteIdByPath.get(relationPath(workspace, record, relation.ref));
       if (!source) { warnings.push(`derived-from target not found: ${relation.ref}`); continue; }
       const key = `${source}|${target}|derived-from`;
       if (edgeKeys.has(key)) { warnings.push(`duplicate relation: ${record.notePath} -> ${relation.ref}`); continue; }
@@ -61,10 +78,9 @@ export function buildLearningGraph(workspace) {
       edges.push({ id: key, source, target, type: "derived-from", active: false });
     }
   }
-
   const stack = [];
   for (const [index, frame] of stateResult.state.focusStack.entries()) {
-    let nodeId = frame.note ? noteIdByPath.get(normalizeNotePath(root, path.resolve(root, frame.note))) : null;
+    let nodeId = frame.note ? noteIdByPath.get(normalizeNotePath(workspace, path.resolve(workspace, frame.note))) : null;
     if (frame.note && !nodeId) warnings.push(`stack note path not found: ${frame.note}`);
     if (!nodeId) {
       const matching = titleIds.get(comparable(frame.question)) || [];
@@ -72,13 +88,12 @@ export function buildLearningGraph(workspace) {
     }
     if (!nodeId) {
       nodeId = `active:${frame.id}`;
-      nodesById.set(nodeId, { id: nodeId, label: frame.question, notePath: null, recordType: null, durable: false, active: true, current: false });
+      nodesById.set(nodeId, { id: nodeId, label: frame.question, notePath: null, notePaths: [], recordType: null, durable: false, active: true, current: false });
       warnings.push(`active frame has no KnowledgeNote: ${frame.question}`);
     }
     const node = nodesById.get(nodeId);
     node.active = true;
     node.current = index === stateResult.state.focusStack.length - 1;
-    if (node.durable && comparable(node.label) !== comparable(frame.question)) warnings.push(`stack question differs from note title: ${frame.question}`);
     stack.push({ ...frame, nodeId, depth: index + 1 });
   }
   for (let index = 1; index < stack.length; index += 1) {
@@ -89,6 +104,15 @@ export function buildLearningGraph(workspace) {
     else edges.push({ id: `${source}|${target}|active-stack`, source, target, type: "active-stack", active: true });
   }
   if (cycleExists(nodesById.keys(), edges.filter((edge) => edge.type === "derived-from"))) warnings.push("derived-from relation cycle detected; rendering finite graph");
-  if (nodesById.size === 0 && stack.length === 0) warnings.push("empty workspace");
-  return { nodes: [...nodesById.values()], edges, stack, activePath: stack.map((frame) => frame.nodeId), current: stack.at(-1) || null, state: stateResult.state, records: recordResult.records, warnings: [...new Set(warnings)] };
+  return { nodes: [...nodesById.values()], edges, stack, activePath: stack.map((frame) => frame.nodeId), current: stack.at(-1) || null, warnings };
+}
+
+export function buildLearningGraph(workspace) {
+  const root = path.resolve(workspace);
+  const stateResult = readLearningState(root);
+  const journeyResult = readLearningJourney(root);
+  const recordResult = readLearningRecords(root);
+  const graph = journeyResult.exists ? buildJourneyGraph(stateResult, journeyResult, recordResult) : buildLegacyGraph(root, stateResult, recordResult);
+  if (graph.nodes.length === 0 && graph.stack.length === 0) graph.warnings.push("empty workspace");
+  return { ...graph, source: journeyResult.exists ? "journey" : "legacy-derived-from", journey: journeyResult.journey, state: stateResult.state, records: recordResult.records, warnings: [...new Set(graph.warnings)] };
 }

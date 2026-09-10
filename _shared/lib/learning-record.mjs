@@ -22,7 +22,15 @@ export function parseLearningRecord(markdown, source = "KnowledgeNote") {
   try {
     const metadata = YAML.parse(match[1], { prettyErrors: true }) || {};
     if (!metadata.title || typeof metadata.title !== "string") return { record: null, body: markdown.slice(match[0].length), warnings: [`KnowledgeNote missing title: ${source}`] };
-    return { record: { title: metadata.title.trim(), recordType: typeof metadata.record_type === "string" ? metadata.record_type : "note", createdAt: metadata.created_at ? String(metadata.created_at) : null, tags: Array.isArray(metadata.tags) ? metadata.tags.map(String) : [], sources: Array.isArray(metadata.sources) ? metadata.sources : [], relations: Array.isArray(metadata.relations) ? metadata.relations : [] }, body: markdown.slice(match[0].length), warnings: [] };
+    const relations = Array.isArray(metadata.relations) ? metadata.relations : [];
+    const warnings = [];
+    const supported = new Set(["derived-from", "requires", "part-of", "contrasts-with"]);
+    for (const relation of relations) {
+      if (!relation || typeof relation !== "object") continue;
+      if (typeof relation.type === "string" && !supported.has(relation.type)) warnings.push(`unsupported KnowledgeNote relation: ${source}: ${relation.type}`);
+      if (supported.has(relation.type) && (typeof relation.ref !== "string" || !relation.ref.trim())) warnings.push(`KnowledgeNote relation missing ref: ${source}: ${relation.type}`);
+    }
+    return { record: { title: metadata.title.trim(), recordType: typeof metadata.record_type === "string" ? metadata.record_type : "note", createdAt: metadata.created_at ? String(metadata.created_at) : null, tags: Array.isArray(metadata.tags) ? metadata.tags.map(String) : [], sources: Array.isArray(metadata.sources) ? metadata.sources : [], relations }, body: markdown.slice(match[0].length), warnings };
   } catch (error) {
     return { record: null, body: markdown, warnings: [`malformed KnowledgeNote frontmatter: ${source}: ${error.message}`] };
   }

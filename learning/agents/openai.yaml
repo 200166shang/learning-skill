@@ -1,0 +1,6 @@
+interface:
+  display_name: "Learning"
+  short_description: "Learn, review, and curate a durable knowledge workspace"
+  default_prompt: "Use $learning to help me understand this recursively, preserve the real learning journey, and reconcile reusable KnowledgeNotes."
+policy:
+  allow_implicit_invocation: false

@@ -1,8 +1,8 @@
-# Learning Skill V5 迭代计划
+# Learning Skill V6 迭代计划
 
 ## 目标
 
-在现有递归理解循环与 Generated Understanding Map 基础上，抽取标准化 Shared Learning Model，并实现完全解耦、只读、自动刷新的 Web Learning Observer；同步完善 Skill 契约、测试、文档和可运行 Demo。
+保留递归理解循环，将 Learning Journey 与 Knowledge Base 正交化，并把用户界面收敛为一个显式调用的 `$learning` deep workflow。Web Observer 保持只读且不在本轮修改范围内。
 
 ## 阶段
 
@@ -18,10 +18,15 @@
 - [complete] 10. 改善 route 的 PUSH/POP/RESUME 反馈并补齐 curate 兼容边界
 - [complete] 11. 完善 fixtures、单元/集成/UI 构建测试、README 与删除 web 后兼容性验证
 - [complete] 12. 新增 learning-observe 薄启动 Skill、复用机制与安装后 runtime 打包
+- [complete] 13. 新增 Journey schema、读写 API、校验与非破坏 migration
+- [complete] 14. 将 Map canonical identity 改为 Journey Question，并保留 legacy fallback
+- [complete] 15. 引入 write-time reuse/revise/create 与 KnowledgeNote semantic relations
+- [complete] 16. 新增显式 `$learning` 入口与按分支 progressive disclosure references
+- [complete] 17. 将旧 learning Skills 收敛为 compatibility wrappers，并完成回归验证
 
 ## 决策记录
 
-- Source of truth：KnowledgeNotes 的 `derived-from` + `.learning/state.yaml` 的 `focus_stack`。
+- Source of truth：`.learning/journey.yaml` 保存真实追问历史，KnowledgeNotes 保存可复用知识，`.learning/state.yaml` 只保存 active working memory。
 - `learning-map.md` 与 `learning-map.mmd` 是同一内部 graph 的派生视图。
 - CLI seam：`node _shared/scripts/render-learning-map.mjs <workspace>`。
 - Renderer 只读 source of truth；不推断关系、不生成问题、不修改 state。
@@ -33,7 +38,7 @@
 ## 风险与待验证项
 
 - 引入 npm 依赖后仍需保证删除 `web/` 不破坏 Skill Core；shared 依赖与 Web 依赖边界需要明确。
-- `derived-from.ref` 可能相对 workspace 或当前 note；解析时兼容两者但不猜测标题关系。
+- `derived-from` 只作为无 Journey 工作区的 legacy fallback 和 migration 输入。
 - cycle、坏 frontmatter、缺失 parent 必须 warning 后继续生成有限图。
 
 ## 错误记录

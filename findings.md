@@ -28,3 +28,12 @@
 - 必须验证删除 `web/` 后 renderer 与所有 Skill 仍正常；Web 不是核心运行依赖。
 - 浏览器视觉验收确认桌面首屏同时展示三层横向 graph、current stack、Why Here 与 Return To；点击 durable node 可打开只读 note 抽屉。
 - 视觉验收发现初版 note API 返回完整 frontmatter 且前端直接注入 marked HTML；已改为 shared parser 提取正文，并使用 DOMPurify 净化渲染结果。
+
+## V6 方案摘要（2026-09-10）
+
+- Journey Question 是一次真实追问事件；KnowledgeNote 是可被多个追问复用的稳定知识对象。
+- `.learning/journey.yaml` 成为学习路径真源，state frame 与 Journey question 共享 ID；Map 不再靠 note title/path 猜 active identity。
+- 新知识写入前先搜索并选择 reuse、revise 或 create；学习来源不再写入新的 `derived-from`。
+- KnowledgeNote 第一版语义关系限定为 `requires`、`part-of`、`contrasts-with`。
+- `SYNTHESIS.md` 是学习过程中也可刷新的唯一复习入口，而不是只能在 root closure 后生成的毕业产物。
+- `$learning` 是显式调用的主入口；Route、Teach、Verify、Persistence、Synthesis、Curate 成为按意图加载的 references。

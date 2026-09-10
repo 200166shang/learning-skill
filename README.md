@@ -1,115 +1,54 @@
 # Learning Skills
 
-Personal learning workflow skills for Codex.
-
-Included skills:
-
-- `learning-route`: recursive learning orchestrator.
-- `learning-teach`: one-question teaching worker.
-- `learning-verify`: connection continuity checker.
-- `learning-synthesis`: whole-picture synthesis worker.
-- `learning-note`: compatibility entry point for older prompts; prefer `learning-teach`.
-- `learning-curate`: analyze and safely reorganize accumulated KnowledgeNotes after learning.
-- `learning-observe`: start or reconnect to the read-only Web Observer and return its URL.
-
-The `_shared` directory contains the contracts used by the skills and must be installed alongside them.
+A recursive learning system for Codex with one primary user interface: `$learning`.
 
 ## Install or update
 
-Clone this repository, then run:
-
 ```bash
 ./install.sh
 ```
 
-The installer copies the skills and `_shared` into `~/.codex/skills/`. Re-run it after pulling updates.
+The installer copies the canonical skill, compatibility entry points, observer, and shared model into `~/.codex/skills/`.
 
-```bash
-git pull
-./install.sh
-```
+## V6 domain model
 
-## V5: Skill Core + Web Learning Observer
-
-The system follows the learner's real understanding gaps rather than generating a curriculum in advance:
+The workflow follows real broken arrows rather than generating a curriculum:
 
 ```text
-root question
-    ↓
-explain current focus → detect a real gap
-    ↓                       ↓
-continue             blocking gap: PUSH → learning-teach
-                                             ↓
-                                  learning-verify: connection closed?
-                                             ↓
-                                  POP → resume and reconnect parent
-                                             ↓
-                            root teach-back → learning-synthesis
+PUSH → LEARN → VERIFY → POP → RESUME
 ```
 
-The loop can be summarized as eight actions:
+Its durable model separates traversal from knowledge:
 
 ```text
-FRAME → EXPLAIN → DETECT → DIVE → LEARN → CLOSE → BACKTRACK → SYNTHESIZE
+.learning/state.yaml    active recursive working memory
+.learning/journey.yaml  questions the learner actually pursued
+notes/*.md              reusable KnowledgeNotes
 ```
 
-`learning-route` is the only orchestrator. The stack in `.learning/state.yaml` remembers why a child question was opened and exactly where to return; it is not a curriculum or mastery tracker.
+Several Journey questions may resolve to one KnowledgeNote, and one question may use several notes. Before writing knowledge, the workflow searches existing notes and chooses `reuse`, `revise`, or `create`.
 
-The core model has two sources of truth and several read-only views:
+Generated artifacts are views rather than canonical state:
 
-```text
-KnowledgeNotes + derived-from lineage ─┐
-                                      ├─→ Shared Learning Model ─→ learning-map.md / .mmd
-.learning/state.yaml focus_stack ─────┘                         └→ Web Observer
-```
+- `learning-map.md` and `learning-map.mmd` show how learning unfolded, sourced from Journey plus active state.
+- `SYNTHESIS.md` is the single whole-picture review entry point, sourced from the current Knowledge Base.
 
-`learning-map.md` is the generated view of questions the learner actually pursued—not a curriculum, mastery model, progress score, or AI-generated question tree. Regenerate both views after relevant note, lineage, PUSH, or POP changes:
+Run the map renderer with:
 
 ```bash
 node ~/.codex/skills/_shared/scripts/render-learning-map.mjs <workspace>
 ```
 
-The renderer recursively scans `notes/**/*.md`, reads canonical `derived-from` relations and the optional active focus stack, and tolerates missing state, missing notes, malformed relations, missing parent refs, and cycles with warnings where appropriate. It uses the standard `yaml` parser installed with `_shared`.
-
-Generate a JSON snapshot for debugging or integrations:
+Migrate a legacy workspace non-destructively with:
 
 ```bash
-node ~/.codex/skills/_shared/scripts/render-learning-view.mjs <workspace>
+node ~/.codex/skills/_shared/scripts/migrate-learning-journey.mjs <workspace>
 ```
 
-### Run the read-only Web Observer
+Migration reads explicit `derived-from` provenance and active state, creates `.learning/journey.yaml`, and leaves existing notes unchanged. When Journey exists, it is the sole learning-map source; otherwise the renderer uses legacy `derived-from` relations as a compatibility fallback.
 
-The observer is a removable presentation layer. It reads the shared model, watches the state and notes with `chokidar`, and sends updates to the browser over SSE. It never writes learning state or notes. After running `./install.sh`, the normal entry point is the thin launcher Skill:
+The former `learning-route`, `learning-teach`, `learning-verify`, `learning-synthesis`, `learning-curate`, and `learning-note` skills remain thin compatibility entry points for one release. New workflows should use `$learning`.
 
-```text
-Use $learning-observe for /absolute/path/to/learning-workspace.
-```
+## Read-only observer
 
-It starts the local server (or reuses the healthy server already watching that workspace) and returns a clickable `http://127.0.0.1:<port>` URL. Runtime PID metadata and logs live in the operating system's temporary directory, not the learning workspace.
-
-To run the Web app directly during development:
-
-```bash
-cd web
-npm install
-npm run build
-npm start -- /absolute/path/to/learning-workspace
-```
-
-Open `http://127.0.0.1:4174`. For development with Vite hot reload:
-
-```bash
-npm run dev -- /absolute/path/to/learning-workspace
-```
-
-Try the included fixture with `npm start -- ../examples/observer-demo`. The UI shows the actual explored graph, current stack, why the current question was opened, where learning returns next, in-memory transitions, and read-only KnowledgeNote previews. The server exposes only:
-
-- `GET /api/view`
-- `GET /api/note?path=notes/...md`
-- `GET /events`
-
-It binds to `127.0.0.1` by default. Override `LEARNING_WEB_PORT` when the default port is occupied. Note paths are resolved under `<workspace>/notes` and traversal is rejected.
-
-The architectural deletion test is intentional: removing `web/` leaves every Skill, `_shared/lib`, `render-learning-map.mjs`, `render-learning-view.mjs`, KnowledgeNotes, and canonical state fully usable.
-
-Use a Ticket only when an independent source, experiment, or research task needs its own context. `MISSION.md`, generated maps, `notes/`, and (when recursive state must persist) `.learning/state.yaml` are the preferred new workspace artifacts. Existing `learning.yaml`, `records/`, and v2 LearningRecords remain readable for migration.
+`learning-observe` starts or reconnects to the removable Web Observer for an existing workspace. The presentation layer remains outside the learning workflow and does not own state or knowledge.

@@ -9,7 +9,7 @@ mkdir -p "$CODEX_SKILLS_DIR"
 # Remove the legacy router name so upgrades do not leave two entry points installed.
 rm -rf "$CODEX_SKILLS_DIR/learning-flow"
 
-for skill in learning-route learning-teach learning-verify learning-note learning-synthesis learning-curate learning-observe; do
+for skill in learning learning-route learning-teach learning-verify learning-note learning-synthesis learning-curate learning-observe; do
   rm -rf "$CODEX_SKILLS_DIR/$skill"
   cp -R "$REPO_DIR/$skill" "$CODEX_SKILLS_DIR/$skill"
 done
@@ -27,5 +27,5 @@ cp "$REPO_DIR/web/package.json" "$REPO_DIR/web/package-lock.json" "$CODEX_SKILLS
 cp -R "$REPO_DIR/web/server" "$REPO_DIR/web/dist" "$CODEX_SKILLS_DIR/web/"
 npm install --omit=dev --no-audit --no-fund --prefix "$CODEX_SKILLS_DIR/web"
 
-echo "Installed learning-route, learning-teach, learning-verify, learning-note, learning-synthesis, learning-curate, and learning-observe."
+echo "Installed learning, compatibility learning skills, and learning-observe."
 echo "Restart or start a new Codex turn to reload skills."

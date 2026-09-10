@@ -28,3 +28,9 @@
 - 新增 `learning-observe`：解析 workspace、寻找可用本地端口、后台启动 observer、健康检查、复用同 workspace 服务并返回 URL；运行记录仅写系统临时目录。
 - `learning-observe` 启动/复用测试 1/1、Skill validator、Web 4/4、shared 9/9、production build、shell/diff 检查全部通过。
 - 在独立临时 Skills 布局中安装 `_shared` 与 Web production 依赖，installed launcher 成功返回并响应 `http://127.0.0.1:4367`；测试服务随后终止。
+- 启动 V6：读取 Review Skill 哲学对话中的执行方案，并按当前 Skill 机制校准显式调用配置。
+- 新增 Learning Journey 合同、读写/校验 API、migration CLI 及测试；migration 只采用显式 provenance 并保留旧 notes。
+- Map/View Model 在 Journey 存在时只消费 Journey + state；无 Journey 时继续使用 legacy `derived-from` fallback。
+- 新增 `$learning` deep workflow 与六个 conditional references；旧 Skills 已缩减为兼容 wrapper。
+- 更新 KnowledgeNote/LearningRecord/Synthesis 语义与 README/installer；Web 文件保持未修改。
+- V6 最终验证：shared 测试 14/14、8 个 Skill validator、install.sh 语法与 git diff check 通过。

@@ -73,3 +73,43 @@ test("warns for invalid relations and cycles without recursing forever", () => {
   assert.match(markdown, /\[A\]\(notes\/a\.md\)/);
   assert.match(markdown, /\[B\]\(notes\/b\.md\)/);
 });
+
+test("uses Journey questions as nodes and allows shared note references", () => {
+  const root = workspace();
+  mkdirSync(path.join(root, "notes"));
+  mkdirSync(path.join(root, ".learning"));
+  writeFileSync(path.join(root, "notes", "shared.md"), "---\ntitle: Shared mechanism\n---\nBody\n");
+  writeFileSync(path.join(root, ".learning", "journey.yaml"), `version: 1
+root_id: q001
+questions:
+  - id: q001
+    question: First context?
+    parent_id: null
+    note_refs: [notes/shared.md]
+  - id: q002
+    question: Same knowledge elsewhere?
+    parent_id: q001
+    note_refs: [notes/shared.md]
+`);
+  writeFileSync(path.join(root, ".learning", "state.yaml"), "version: 1\nfocus_stack:\n  - id: q001\n    question: First context?\n  - id: q002\n    question: Same knowledge elsewhere?\n");
+  render(root);
+  const markdown = readFileSync(path.join(root, "learning-map.md"), "utf8");
+  const mermaid = readFileSync(path.join(root, "learning-map.mmd"), "utf8");
+  assert.match(mermaid, /q001.*First context/);
+  assert.match(mermaid, /q001 --> q002/);
+  assert.equal((markdown.match(/\[知识笔记\]\(notes\/shared\.md\)/g) || []).length, 2);
+  assert.doesNotMatch(mermaid, /Shared mechanism/);
+});
+
+test("does not merge legacy lineage when Journey exists", () => {
+  const root = workspace();
+  mkdirSync(path.join(root, "notes"));
+  mkdirSync(path.join(root, ".learning"));
+  writeFileSync(path.join(root, "notes", "a.md"), "---\ntitle: Note A\nrelations:\n  - type: derived-from\n    ref: notes/b.md\n---\nA\n");
+  writeFileSync(path.join(root, "notes", "b.md"), "---\ntitle: Note B\n---\nB\n");
+  writeFileSync(path.join(root, ".learning", "journey.yaml"), "version: 1\nroot_id: q001\nquestions:\n  - id: q001\n    question: Only journey node\n    parent_id: null\n    note_refs: []\n");
+  render(root);
+  const mermaid = readFileSync(path.join(root, "learning-map.mmd"), "utf8");
+  assert.match(mermaid, /Only journey node/);
+  assert.doesNotMatch(mermaid, /Note A|Note B/);
+});

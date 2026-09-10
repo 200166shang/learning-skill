@@ -30,7 +30,7 @@ function lineage(graph) {
   if (!graph.nodes.length) return "当前还没有已记录的问题脉络。";
   const children = new Map();
   const incoming = new Set();
-  for (const edge of graph.edges.filter((item) => item.type === "derived-from")) {
+  for (const edge of graph.edges.filter((item) => item.type === "journey" || item.type === "derived-from")) {
     children.set(edge.source, [...(children.get(edge.source) || []), edge.target]);
     incoming.add(edge.target);
   }
@@ -40,9 +40,11 @@ function lineage(graph) {
   const visit = (id, depth, ancestry) => {
     const node = nodes.get(id);
     if (!node || ancestry.has(id)) return;
-    const suffix = node.current ? " → 当前学习中" : node.active && !node.durable ? " → 学习中" : "";
+    const suffix = node.current ? " → 当前学习中" : node.active ? " → 学习中" : "";
     const label = escapeMarkdown(node.label);
-    lines.push(`${"  ".repeat(depth)}- ${node.notePath ? `[${label}](${encodeURI(node.notePath)})` : label}${suffix}`);
+    const legacyLabel = graph.source === "legacy-derived-from" && node.notePath ? `[${label}](${encodeURI(node.notePath)})` : label;
+    const references = graph.source === "journey" && node.notePaths?.length ? ` ${node.notePaths.map((notePath) => `[知识笔记](${encodeURI(notePath)})`).join(" ")}` : "";
+    lines.push(`${"  ".repeat(depth)}- ${legacyLabel}${references}${suffix}`);
     rendered.add(id);
     const next = new Set(ancestry).add(id);
     for (const child of children.get(id) || []) visit(child, depth + 1, next);

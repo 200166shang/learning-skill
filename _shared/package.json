@@ -1,1 +1,1 @@
-{"name":"learning-skill-shared","private":true,"type":"module","dependencies":{"yaml":"^2.8.1"}}
+{"name":"learning-skill-shared","private":true,"type":"module","scripts":{"test":"node --test $(find . -name '*.test.mjs' -not -path './node_modules/*')"},"dependencies":{"yaml":"^2.8.1"}}
