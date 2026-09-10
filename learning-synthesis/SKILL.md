@@ -5,53 +5,40 @@ description: Own an explicitly selected or routed topic-centered learning workfl
 
 # Learning Synthesis
 
-Own one topic workspace: its Goal, Learning Map, synthesis mother document, pending-work Tickets, durable LearningRecords, and topic decisions/indexes.
+Synthesis is the final connective activity in the learning loop. It does not manage the loop. Read the topic's Mission, human-readable Map, and existing KnowledgeNotes, then reorganize what is already known into a coherent explanation.
 
-Read [LearningSynthesisState](../_shared/learning-synthesis-state.md) for persisted topic memory. Choose exactly one mode, load that mode's reference plus only the shared contracts it points to, and follow its `Done when` boundary.
+## Inputs
 
-## Workspace
+Resolve the topic workspace from a supplied directory, `MISSION.md`, `learning-map.md`, or explicit workspace. Read only relevant notes and sources. The conventional layout is:
 
-Resolve the workspace from, in order: the directory containing a supplied `learning.yaml`, the directory containing a supplied mother document, or an explicit workspace. Keep topic artifacts in that resolved workspace. If none is known, ask where the topic workspace belongs before writing.
+```text
+MISSION.md
+learning-map.md
+notes/*.md
+```
 
-## Modes
+Older workspaces may use `learning.yaml`, `records/`, or a synthesis `LearningRecord`; read those as compatibility inputs, but do not require their lifecycle fields for a new synthesis.
 
-| Mode | Use when | Reference |
-| --- | --- | --- |
-| `start` | Goal or initial Map is vague/unconfirmed. | [Start / frame](references/start.md) |
-| `draft` | Create/update/revise the synthesis-owned mother document. | [Draft](references/draft.md) |
-| `capture gaps` | Reconcile surfaced questions or formalize accepted pending learning work. | [Capture gaps](references/capture-gaps.md) |
-| `integrate` | Incorporate a valid LearningRecord or reconcile a prior integration after Record revision. | [Integrate](references/integrate.md) |
-| `lineage` | Show/refresh how durable Records grew from one another. | [Knowledge lineage views](references/knowledge-lineage.md) |
-| `status` | Reconcile artifacts and derive the current situation/next recommendation without executing it. | [Status / resume](references/status.md) |
+## Work
 
-`integrate` may also read the lineage reference when it needs the shared Map-attachment/derived-view rendering rules.
+1. Identify the learner's desired whole-picture question from the Mission or request.
+2. Inventory the notes that answer parts of it and the explicit gaps they leave.
+3. Arrange the explanation by dependency and causal flow, not by file creation order.
+4. Preserve uncertainty and distinguish established explanation from inference or missing evidence.
+5. Write or revise one synthesis document at a stable workspace path, normally `SYNTHESIS.md` or the existing synthesis path.
 
-## Cross-mode invariants
+The synthesis may link to source KnowledgeNotes. It must not silently invent missing notes, claim mastery, or turn every unresolved detail into a Ticket.
 
-The Learning Map is the topic's human-readable **learning-decision/question-lineage** view. Formal nodes come only from questions the user asked or explicitly chose to pursue; it is not a generated curriculum or general knowledge graph.
+## Boundaries
 
-Map markers have stable meanings:
+- `learning-teach` owns teaching, note creation, note revision, and follow-up questions.
+- Direct Codex/research owns repository or external evidence collection when needed.
+- A Ticket is optional delegation infrastructure and is not a normal synthesis input requirement.
+- The Map records learner-chosen questions and links to notes; it is not a completion state machine.
+- `learning.yaml` is legacy topic memory. Do not add stage caches, candidate queues, completion provenance, or integration lifecycle for ordinary synthesis.
 
-- `[ ]` — confirmed question with no accepted partial result;
-- `[~]` — an accepted covered portion plus a concrete residual gap;
-- `[x]` — complete under the [state completion contract](../_shared/learning-synthesis-state.md#map-completion-contract);
-- `[-]` — explicitly excluded from the selected scope.
+## Result
 
-Every trusted `[~]` can explain both what is covered and what remains. Every `[x]` has matching `map_completions` provenance. The mode references own how questions are proposed, reconciled, promoted, completed, attached to Records, or rendered as knowledge lineage.
+Return the synthesis path and a concise account of the explanatory thread, unresolved gaps, and the most useful next question. If the source notes are insufficient, say exactly what is missing; do not start a hidden capture/integrate workflow.
 
-Use one source of truth per durable concept:
-
-- [KnowledgeTicket](../_shared/knowledge-ticket.md) owns one accepted gap's worker contract and lifecycle;
-- [LearningRecord](../_shared/learning-record.md) owns durable knowledge, evidence obligations, revision identity, and canonical Record-to-Record lineage;
-- [LearningSynthesisState](../_shared/learning-synthesis-state.md) owns non-derivable topic decisions/indexes and Map completion provenance;
-- `knowledge-lineage.md` and Map Record links are derived learner-facing views under the [lineage reference](references/knowledge-lineage.md).
-
-## Ownership and phase boundaries
-
-Synthesis owns topic structure, accepted-gap capture, mother-document drafting, integration, and derived topic views. It stops before producer work: conceptual Ticket execution belongs to `learning-note`; code Ticket execution belongs to direct Codex under the Ticket contract. A producer's valid LearningRecord is the handoff back into synthesis integration.
-
-The synthesis mother document is itself `record_type: synthesis`; its create/revise behavior is co-located in `draft`. Child LearningRecords remain owned by their producer class; synthesis only consumes/reconciles them through `integrate` and derived views.
-
-One invocation completes one selected mode and stops at that mode's `Done when` boundary. Validation and external publication are separate workflows.
-
-The selected topic scope is complete when the mother document is coherent and every required confirmed Map node is either excluded or has valid completion provenance. Ticket lifecycle, Record count, or lineage rendering alone never establishes topic completion.
+Done when one coherent synthesis document exists or has been revised in place, with links to the relevant notes and explicit remaining gaps.

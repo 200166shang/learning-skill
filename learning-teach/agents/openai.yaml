@@ -1,0 +1,6 @@
+interface:
+  display_name: "Learning Teach"
+  short_description: "Learn one concrete question and save a durable note"
+  default_prompt: "Use $learning-teach to explain one concrete question in plain language, connect it to the current topic when known, and save or revise one KnowledgeNote when appropriate."
+policy:
+  allow_implicit_invocation: true

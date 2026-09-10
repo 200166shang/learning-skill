@@ -1,6 +1,6 @@
-# LearningRecord v2
+# LearningRecord v2 / KnowledgeNote storage contract
 
-`LearningRecord` is the directly readable Markdown handoff between learning producers and later consumers. YAML frontmatter carries metadata; the reader-facing Markdown body follows the closing fence.
+`LearningRecord` is the storage contract for durable Markdown knowledge. For the ordinary learning loop, a `record_type: note` Record is called a `KnowledgeNote`; it is an explanation, not proof that the learner has mastered the subject. YAML frontmatter carries metadata; the reader-facing Markdown body follows the closing fence.
 
 ## Format
 

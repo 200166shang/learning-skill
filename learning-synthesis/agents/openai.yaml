@@ -1,4 +1,4 @@
 interface:
   display_name: "Learning Synthesis"
-  short_description: "Build and evolve one topic-centered learning document"
-  default_prompt: "Use $learning-synthesis to start or continue a topic-centered learning document from my goals, materials, map, or knowledge tickets."
+  short_description: "Connect learning notes into the whole picture"
+  default_prompt: "Use $learning-synthesis to connect the existing Mission, learning map, and KnowledgeNotes into one coherent explanation. Do not create workflow Tickets or expose internal state."

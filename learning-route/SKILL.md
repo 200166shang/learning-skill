@@ -6,41 +6,33 @@ disable-model-invocation: true
 
 # Learning Route
 
-You do not need to remember every learning Skill. Ask.
+This is the thin learning intent layer. The learner should be able to say what they want in ordinary language. Read relevant workspace artifacts, infer the next owner, and carry out the obvious action when the destination contract is available. Do not make the learner operate a state machine.
 
-This Skill is an advisor, not a worker. Read enough supplied workspace state to understand the learner's situation, choose the next path internally, and explain that choice in ordinary learning language.
+## Intent dispatch
 
-## Advice
+| Learner intent | Handle with |
+| --- | --- |
+| “我想学这个 / 继续深入 / 这里没看懂” | `learning-teach`: explain one concrete question and save/revise a note when appropriate |
+| “把刚才讲的保存下来” | `learning-teach`: materialize one KnowledgeNote |
+| “这篇笔记改清楚一点” | `learning-teach`: revise that same note |
+| “我想把这些知识串起来 / 形成完整理解” | `learning-synthesis`: synthesize existing notes |
+| “我现在学到哪了 / 还有什么没懂” | summarize Mission, Map, and note tree in plain language |
+| “需要读源码、跑实验或查外部资料” | direct source/research work, optionally using a self-contained delegation task for a real context boundary |
+| explicit workflow/debug question | explain internal mechanics only; do not execute unrelated learning work |
 
-For a normal request, communicate three things without forcing a fixed template:
+## Dispatch rules
 
-- the recommended top-level Skill/path the learner should use next;
-- why that fits the current learning situation;
-- one self-contained prompt they can copy into the next turn that explicitly invokes that same top-level Skill/path.
+1. Prefer the smallest concrete question over a broad curriculum.
+2. Reuse an existing note when the learner is asking about its scope; revise it if the explanation is unclear.
+3. A follow-up question becomes a child KnowledgeNote when the learner pursues it. Preserve `derived-from` only when the parent is explicit or directly supported.
+4. A Ticket is exceptional infrastructure for independent investigation across a context boundary, not a prerequisite for conceptual learning.
+5. A KnowledgeNote is evidence that an explanation exists, not proof that the learner has mastered it.
+6. Ask one focused question only when a real learner decision is missing. Never ask the learner to specify `stage`, `mode`, lifecycle, completion basis, or integration operation.
 
-Keep top-level routing visible to the learner: `learning-note`, `learning-synthesis`, direct Codex source investigation, or direct chat when no learning Skill is needed. The copyable prompt should name that destination explicitly, then describe the intended work in ordinary learning language with the concrete context that matters—question, Record name/path, source provenance, or scope.
+## User-facing response
 
-Keep branch/mode/lifecycle vocabulary inside the destination Skill by default. Names such as `Materialize`, `Resolve`, `Revise`, `Integrate`, `capture gaps`, lifecycle values, completion bases, and state fields appear only when the learner explicitly asks how the workflow works or why a route was chosen. Keep diagnostic answers scoped to the question.
+Describe what was done in learning language: the question answered, the note created/revised, its relationship to the current topic, and one natural follow-up if useful. Keep internal routing, state reconciliation, and artifact bookkeeping out of the response unless the learner asks for diagnostics.
 
-When `learning.yaml` is supplied, use [LearningSynthesisState](../_shared/learning-synthesis-state.md) as the topic-memory contract instead of reconstructing decisions from chat history.
+If the request is only “what should I do next?”, recommend exactly one concrete action and provide a copyable prompt naming the destination Skill. Otherwise continue into the destination work in the same turn.
 
-## Decision map
-
-Route by the work the learner actually wants:
-
-- **Topic work** — Goal, Learning Map, mother document, surfaced/accepted topic questions, integration, resume/status, or knowledge-lineage views → [`learning-synthesis`](../learning-synthesis/SKILL.md).
-- **Durable conceptual knowledge** — resolve a supplied conceptual Ticket, preserve an already-completed conceptual result, or revise a conceptual LearningRecord → [`learning-note`](../learning-note/SKILL.md).
-- **Repository evidence** — real files, callers, runtime state, execution/data paths, or a supplied code Ticket → direct Codex source investigation; when it must become durable topic work, synthesis first owns the accepted gap/Ticket boundary.
-- **Pending external evidence** — an unresolved experiment/research need remains pending work until its result is supplied; the completed result can then be preserved through the conceptual producer path.
-- **Transient standalone concept** — a brand-new conceptual question with no preservation/topic-work request → direct chat.
-- **Workflow mechanics** — explicit questions about status internals, ownership, Tickets, modes, or contracts → diagnostic explanation only.
-
-A question that surfaced while reading inside an existing topic stays inside that topic first: reconcile it against the current Map, Tickets, AI candidates, and Records before recommending new work. A missing explanation can point back to Record revision; an already-known question reuses its existing path; only a genuinely new learning objective needs new formal work.
-
-## Advice boundary
-
-Stop at the recommendation. This Skill never performs the downstream synthesis, note production, source investigation, integration, or publication step it recommends.
-
-The next-turn prompt must explicitly invoke the recommended top-level Skill/path and be sufficient for that next owner to infer the intended internal work without the learner naming branches such as `Materialize`, `Integrate`, or `capture gaps`.
-
-Done when the learner knows which top-level Skill/path to use, understands why it fits, and has one copyable prompt that explicitly invokes it; or, for an explicit diagnostic request, when the requested internal mechanic is explained without downstream execution.
+Done when the learner's expressed intent has been handled by one clear teaching, synthesis, or investigation action, or when one focused decision is required.

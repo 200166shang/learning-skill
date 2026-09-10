@@ -1,8 +1,8 @@
 # KnowledgeTicket v2
 
-A `KnowledgeTicket` is the self-contained worker contract for one user-confirmed learning gap that still requires work. Creating it records pending work. Already-resolved learning goes directly to a LearningRecord rather than receiving a retroactive Ticket.
+A `KnowledgeTicket` is optional delegation infrastructure for one learning gap that still requires an independent worker, source investigation, experiment, or research context. It is not part of the normal conceptual learning loop. Already-resolved learning goes directly to a KnowledgeNote rather than receiving a retroactive Ticket.
 
-Store each Ticket as Markdown in the topic workspace's configured tickets directory. YAML carries identity/routing/lifecycle; the Markdown body carries the executable work contract. The user owns `question`; `learning-synthesis` compiles the remaining scope from the confirmed question, current topic state, supplied materials, and—only for `code`—lightweight reconnaissance.
+Store each Ticket as Markdown in the topic workspace's configured tickets directory when a separate task is genuinely needed. YAML carries identity/routing/lifecycle; the Markdown body carries the executable work contract. The user owns `question`; the creating worker compiles only the scope required by that independent task.
 
 ## Required shape
 
@@ -49,10 +49,10 @@ open → in-progress → resolved → integrated
                    ↘ cancelled
 ```
 
-- `concept` → `learning-note` resolves the Ticket.
+- `concept` → `learning-teach` or the compatibility `learning-note` resolves the Ticket.
 - `code` → direct Codex investigates the listed repository material; prefer a child agent when the Ticket is independently executable.
 - `evidence` → records an external experiment/research need; execution happens outside this workflow, then the completed result can be materialized.
 
-Learning Map structure and mother-document organization stay with `learning-synthesis`, not a Ticket type.
+Learning Map structure and whole-topic synthesis stay with `learning-synthesis`, not a Ticket type. A Ticket does not imply Map promotion, completion, or synthesis integration.
 
 A Ticket reaches `resolved` only after exactly one completed LearningRecord exists at its stated destination and `result` references it. Resolution stops there; `learning-synthesis` owns later integration. A LearningRecord may also exist without any Ticket when the learning result was already complete.

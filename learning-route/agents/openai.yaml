@@ -1,6 +1,6 @@
 interface:
   display_name: "Learning Route"
-  short_description: "Ask what to do next in the learning workflow"
-  default_prompt: "Use $learning-route like Ask Matt: tell me in plain learning language what I should do next and why, then give me one natural-language prompt I can copy into the next turn. Stop at the advice boundary."
+  short_description: "Turn learning intent into the next useful action"
+  default_prompt: "Use $learning-route to handle my learning intent in plain language. Infer the right action, keep workflow state internal, and continue into teaching or synthesis when possible."
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

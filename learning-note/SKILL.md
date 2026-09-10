@@ -1,27 +1,12 @@
 ---
 name: learning-note
-description: Produce or revise a durable conceptual LearningRecord when the learner wants preserved knowledge, supplies an existing conceptual Record for adjustment, or a concept/evidence Ticket routes completed work here.
+description: Compatibility entry point for creating or revising a durable conceptual KnowledgeNote. Prefer learning-teach for new learning conversations.
 ---
 
-# Learning Note
+# Learning Note (compatibility)
 
-Own conceptual `record_type: note` LearningRecords. Read the shared [LearningRecord contract](../_shared/learning-record.md), choose one branch, then load only that branch reference.
+This entry point is retained so existing prompts keep working. For ordinary learning, continue through [Learning Teach](../learning-teach/SKILL.md): teach one concrete question, save one KnowledgeNote, and follow the learner's next question.
 
-| Branch | Use when | Reference |
-| --- | --- | --- |
-| `Resolve` | A supplied `concept` KnowledgeTicket still represents pending conceptual work. | [Resolve](references/resolve.md) |
-| `Materialize` | The learning result already exists and should become durable knowledge, standalone or as the completed result of one `evidence` Ticket. | [Materialize](references/materialize.md) |
-| `Revise` | An existing conceptual LearningRecord should be adjusted in place. | [Revise](references/revise.md) |
+When the user explicitly supplies an existing note and asks to revise or save a completed explanation, perform that single operation using the shared [KnowledgeNote contract](../_shared/knowledge-note.md) and [LearningRecord contract](../_shared/learning-record.md). Do not create a Ticket, update a mother document, or expose internal workflow modes unless explicitly requested.
 
-## Cross-branch boundaries
-
-- Produce/preserve exactly one `record_type: note` artifact under the shared LearningRecord contract.
-- Keep verified evidence, inference, and unresolved assumptions distinguishable.
-- Create `derived-from` only from explicit/supported learner provenance; the shared Record contract owns the canonical relation and reader-facing lineage rules.
-- Real file/function/caller/runtime/data-flow tracing and revision of source-backed `code-walkthrough` Records belong to direct Codex.
-- External publication belongs to its destination workflow.
-- Mother-document integration belongs to `learning-synthesis`.
-
-A Ticket is required only when pending work actually exists; Materialize and Revise operate directly on already-existing knowledge/artifacts.
-
-Done when the selected branch reaches its own completion gate and returns exactly one contract-valid conceptual LearningRecord at its ownership boundary.
+Done when one KnowledgeNote is created or revised at one stable path, or when the learner has received the requested explanation without file persistence.
