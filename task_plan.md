@@ -1,8 +1,8 @@
-# Learning Skill V4.1 迭代计划
+# Learning Skill V5 迭代计划
 
 ## 目标
 
-在现有 V4 Recursive Understanding Loop 上增加 Generated Understanding Map，并收紧 worker 调用、metadata 与最小状态契约；不引入 curriculum、mastery 或新的 orchestration Skill。
+在现有递归理解循环与 Generated Understanding Map 基础上，抽取标准化 Shared Learning Model，并实现完全解耦、只读、自动刷新的 Web Learning Observer；同步完善 Skill 契约、测试、文档和可运行 Demo。
 
 ## 阶段
 
@@ -11,6 +11,13 @@
 - [complete] 3. 收紧 route/teach/synthesis/state 契约与 UI metadata
 - [complete] 4. 增加 10 个 recursive workflow smoke cases 并更新 README
 - [complete] 5. 运行 fixtures、Skill validator、YAML/Markdown/安装脚本静态校验
+- [complete] 6. 审计 V5 方案、现有 renderer、Skill 契约与测试基线
+- [complete] 7. 抽取 shared state/record/graph/view-model/transition 模块并重构 renderer
+- [complete] 8. 实现只读 Web server、SSE watcher、note 安全读取与自动更新
+- [complete] 9. 实现 React Flow 学习观察器 UI、stack/why/return/timeline/note preview
+- [complete] 10. 改善 route 的 PUSH/POP/RESUME 反馈并补齐 curate 兼容边界
+- [complete] 11. 完善 fixtures、单元/集成/UI 构建测试、README 与删除 web 后兼容性验证
+- [complete] 12. 新增 learning-observe 薄启动 Skill、复用机制与安装后 runtime 打包
 
 ## 决策记录
 
@@ -19,13 +26,22 @@
 - CLI seam：`node _shared/scripts/render-learning-map.mjs <workspace>`。
 - Renderer 只读 source of truth；不推断关系、不生成问题、不修改 state。
 - 当前 focus、parent 均由 stack 位置推导，frame `id` 保留作稳定引用。
+- Shared model 位于 `_shared/lib/`，Web 与 Markdown/Mermaid renderer 共同消费它。
+- Web 只提供 `GET /api/view`、`GET /api/note`、`GET /events`，默认仅绑定 `127.0.0.1`。
+- UI 视觉方向采用“学习调试器工作台”：高密度但克制，突出 current、active path 与 return address。
 
 ## 风险与待验证项
 
-- 仓库没有依赖清单，renderer 需使用 Node 标准库并容忍有限 YAML 子集。
+- 引入 npm 依赖后仍需保证删除 `web/` 不破坏 Skill Core；shared 依赖与 Web 依赖边界需要明确。
 - `derived-from.ref` 可能相对 workspace 或当前 note；解析时兼容两者但不猜测标题关系。
 - cycle、坏 frontmatter、缺失 parent 必须 warning 后继续生成有限图。
 
 ## 错误记录
 
 - `quick_validate.py` 没有 executable bit，直接调用得到 permission denied；改用 `python3 quick_validate.py` 后五个 Skill 均通过。
+- `read_thread` 首次请求的 `maxOutputCharsPerItem=30000` 超过接口上限；已改为 20000，长方案仍会被单项截断，因此以可读取内容和用户明确目标为实现基线。
+- Shared renderer 首次回归为 3/5；两个失败均因测试仍断言旧 `flowchart TD`，实现已按 V5 要求改为 `LR`，同步更新测试预期。
+- `init_skill.py` 首次创建 learning-curate 时因 short_description 为 65 字符而拒绝生成 UI metadata；目录与 scaffold 已创建，随后使用更短描述补齐一致的 metadata。
+- 首次加入 DOMPurify 时安装了已废弃的 `@types/dompurify` stub，且单 bundle 超过 500 kB；移除 stub 并用 Vite manual chunks 分离 graph/markdown 依赖。
+- 首次兼容性模拟包含清理临时目录的 `rm -rf`，被执行环境的安全规则拒绝且未执行；改用 rsync 排除目录且不做删除的测试副本。
+- 兼容性副本中 `npm ci --prefix <tmp>/_shared` 在 npm 11 错误识别包名为 `_shared@`；改为进入副本目录执行 `npm ci`，避开 prefix 路径解析问题。

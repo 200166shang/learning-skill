@@ -106,6 +106,12 @@ Only then offer or run `learning-synthesis`. Synthesis turns DFS learning order 
 
 ## User-facing response
 
-Describe the current question, whether a real gap was opened or a parent was resumed, and the concrete connection that was restored. Keep stack bookkeeping internal unless the learner asks for diagnostics. If the request is only “what should I do next?”, recommend exactly one concrete next action.
+Lead with the explanation, not routine bookkeeping. When the route changes, include one compact navigation sentence:
+
+- On PUSH: name the blocking child, why it is necessary, and the parent checkpoint that remains suspended.
+- On POP: say the connection is closed, name the resumed parent, and restate the checkpoint now continuing.
+- On RESUME: reconnect the child result to the exact parent arrow before advancing.
+
+When no transition occurred, omit stack narration unless the learner asks for diagnostics. If the request is only “what should I do next?”, recommend exactly one concrete next action.
 
 Done when the learner's expressed intent has been handled, the active focus has been correctly preserved or resumed, and any requested durable artifact has been updated.

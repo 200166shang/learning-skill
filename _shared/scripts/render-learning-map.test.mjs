@@ -27,7 +27,7 @@ test("renders canonical lineage and the active stack from one workspace", () => 
   render(root);
   const markdown = readFileSync(path.join(root, "learning-map.md"), "utf8");
   const mermaid = readFileSync(path.join(root, "learning-map.mmd"), "utf8");
-  assert.match(mermaid, /flowchart TD/);
+  assert.match(mermaid, /flowchart LR/);
   assert.match(mermaid, /PID 为什么输出 PWM/);
   assert.match(mermaid, /▶ PWM 为什么控制电机速度/);
   assert.match(markdown, /\[PID 为什么输出 PWM？\]\(notes\/root\.md\)/);
@@ -37,7 +37,7 @@ test("renders canonical lineage and the active stack from one workspace", () => 
 test("renders a minimal valid map when the workspace has no notes or state", () => {
   const root = workspace();
   render(root);
-  assert.match(readFileSync(path.join(root, "learning-map.mmd"), "utf8"), /^flowchart TD/m);
+  assert.match(readFileSync(path.join(root, "learning-map.mmd"), "utf8"), /^flowchart LR/m);
   assert.match(readFileSync(path.join(root, "learning-map.md"), "utf8"), /当前没有挂起的递归学习路径/);
 });
 

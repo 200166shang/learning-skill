@@ -17,3 +17,14 @@
 - 新增 10 个 recursive workflow smoke cases，并更新 README 为 V4.1。
 - 最终验证：renderer 黑盒测试 5/5 通过，五个 Skill 均通过官方 quick validator，agent YAML、install.sh 语法与 `git diff --check` 均通过。
 - 保持安装边界：未执行 `install.sh`，因此本轮只修改仓库，没有覆盖已安装 Skill。
+- 启动 V5 目标，读取参考会话的最新可用方案与两个适用技能说明。
+- 将既有规划扩展到 V5：shared model、只读 Web observer、UI、Skill 反馈、测试与文档六个阶段。
+- 完成 `_shared/lib` 首版拆分，并将 renderer 改为消费统一 graph；首次回归 3/5，确认失败仅为 V4.1 的纵向布局断言，已更新并新增 model/transition 测试。
+- 完成 Web observer server、SSE watcher、React Flow/Dagre UI、stack/why/return/timeline/note preview 与演示 workspace；首轮 Web 测试 3/3、production build 通过。
+- 完成浏览器视觉验收与 node 点击交互；随后收紧 note preview，隐藏 frontmatter 并净化 Markdown HTML。
+- 新增 nested note watcher 测试，确认 chokidar 变更会 debounce 为一次刷新；Web 测试现为 4/4。
+- 最终验证通过：shared model/renderer 9/9、Web server/watcher 4/4、Vite/TypeScript production build、6 个 Skill validator、install.sh 语法、git diff check。
+- 在不包含 `web/` 的独立临时副本中重新安装 `_shared` 依赖，成功生成 learning-map.md、learning-map.mmd 与 learning-view.json，确认 Web 可删除边界成立。
+- 新增 `learning-observe`：解析 workspace、寻找可用本地端口、后台启动 observer、健康检查、复用同 workspace 服务并返回 URL；运行记录仅写系统临时目录。
+- `learning-observe` 启动/复用测试 1/1、Skill validator、Web 4/4、shared 9/9、production build、shell/diff 检查全部通过。
+- 在独立临时 Skills 布局中安装 `_shared` 与 Web production 依赖，installed launcher 成功返回并响应 `http://127.0.0.1:4367`；测试服务随后终止。

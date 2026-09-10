@@ -9,13 +9,23 @@ mkdir -p "$CODEX_SKILLS_DIR"
 # Remove the legacy router name so upgrades do not leave two entry points installed.
 rm -rf "$CODEX_SKILLS_DIR/learning-flow"
 
-for skill in learning-route learning-teach learning-verify learning-note learning-synthesis; do
+for skill in learning-route learning-teach learning-verify learning-note learning-synthesis learning-curate learning-observe; do
   rm -rf "$CODEX_SKILLS_DIR/$skill"
   cp -R "$REPO_DIR/$skill" "$CODEX_SKILLS_DIR/$skill"
 done
 
 rm -rf "$CODEX_SKILLS_DIR/_shared"
 cp -R "$REPO_DIR/_shared" "$CODEX_SKILLS_DIR/_shared"
+rm -rf "$CODEX_SKILLS_DIR/_shared/node_modules"
+npm install --omit=dev --no-audit --no-fund --prefix "$CODEX_SKILLS_DIR/_shared"
 
-echo "Installed learning-route, learning-teach, learning-verify, learning-note, and learning-synthesis."
+npm install --no-audit --no-fund --prefix "$REPO_DIR/web"
+npm run build --prefix "$REPO_DIR/web"
+rm -rf "$CODEX_SKILLS_DIR/web"
+mkdir -p "$CODEX_SKILLS_DIR/web"
+cp "$REPO_DIR/web/package.json" "$REPO_DIR/web/package-lock.json" "$CODEX_SKILLS_DIR/web/"
+cp -R "$REPO_DIR/web/server" "$REPO_DIR/web/dist" "$CODEX_SKILLS_DIR/web/"
+npm install --omit=dev --no-audit --no-fund --prefix "$CODEX_SKILLS_DIR/web"
+
+echo "Installed learning-route, learning-teach, learning-verify, learning-note, learning-synthesis, learning-curate, and learning-observe."
 echo "Restart or start a new Codex turn to reload skills."

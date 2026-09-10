@@ -1,0 +1,21 @@
+version: 1
+root_question:
+  id: q001
+  question: MCU 是如何把上位机命令最终变成电机运动的？
+focus_stack:
+  - id: q001
+    question: MCU 是如何把上位机命令最终变成电机运动的？
+    note: notes/mcu-command.md
+  - id: q007
+    question: PID 为什么最终输出 PWM？
+    note: notes/pid-to-pwm.md
+    why_needed: 控制算法的数值输出与真实电机驱动之间还缺少执行层连接。
+    resume:
+      question: MCU 是如何把上位机命令最终变成电机运动的？
+      checkpoint: PID 输出如何进入电机执行链路？
+  - id: q012
+    question: 为什么积分项需要累计误差？
+    why_needed: 不理解累计误差，就无法解释 I 项为什么会持续影响 PID 输出。
+    resume:
+      question: PID 为什么最终输出 PWM？
+      checkpoint: I 项如何参与 PID 最终输出。
