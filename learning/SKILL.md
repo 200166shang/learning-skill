@@ -1,6 +1,6 @@
 ---
 name: learning
-description: "Run evidence-backed recursive learning: pursue a learner-chosen question, resume an active episode, review retained understanding, or curate learning notes."
+description: "Run evidence-backed recursive learning from either a concrete learner question or a broad topic, goal, and source set when the learner does not yet know what questions to ask; resume an active episode, review retained understanding, or curate learning notes."
 ---
 
 # Learning
@@ -15,6 +15,7 @@ Keep the durable models separate:
 - `.learning/evidence.yaml`: verification attempts and misconceptions.
 - `.learning/state.yaml`: only `idle | active`, active Episode ID, and focus question IDs.
 - `.learning/targets.yaml`: stable reusable KnowledgeTarget identities (`memory | concept | procedure | design`) with Journey provenance.
+- `.learning/goals.yaml`: broad learner objectives, source references, and explicitly accepted Root Intents; absent means no Goals.
 - `notes/*.md`: reusable knowledge, never proof of mastery.
 - `OVERVIEW.md`: a derived whole-picture projection of already-supported knowledge, never routing authority.
 
@@ -33,9 +34,21 @@ All active-learning mutations must go through `node ~/.codex/skills/_shared/scri
 
 Only learner-asked or learner-accepted questions enter Journey; recommendations remain ephemeral until chosen. Every closed question requires persisted passing Evidence.
 
+## Topic-first orientation
+
+When State is IDLE and the learner supplies a broad objective plus sources but cannot yet name a useful question, **ORIENT** before starting an Episode:
+
+1. Create or reuse the learner's Goal through `node ~/.codex/skills/_shared/scripts/learning-goal.mjs <workspace>`. Store source references only.
+2. Survey cheap structure first: filenames, headings, entry points, imports, and chapter titles. Selectively deepen only enough to identify the module's role, execution entry, boundaries, and end-to-end chain. State unavailable-source uncertainty.
+3. Give a compact goal restatement, provisional source-grounded system picture, source-role map, and normally 1–3 candidate Root Questions. Candidates remain ephemeral.
+4. Persist only questions the learner explicitly accepts, using one `add_roots` command. If several are accepted without a selection, show them and stop.
+5. Start only the Root Intent the learner explicitly chooses, using the normal transition with `{"type":"start","goalId":"gNNN","rootIntentId":"rqNNN",...}`. The runtime resolves its stored wording and atomically links the Episode.
+
+If the learner already supplies a concrete root question, use the question-first fast path. Do not force Orientation, create a Goal, or turn several roots into one Episode. After a Goal-backed Episode closes, pending roots may be shown but none is automatically selected.
+
 KnowledgeTargets stay selective: a closed child remains Journey-only by default. Suggest explicit `promote_target` only when that child became independently reusable knowledge; never promote every recursive gap. Target creation or editing must not change the focus stack.
 
-Use `node ~/.codex/skills/_shared/scripts/learning-view.mjs --workspace <workspace> --format text` after context loss, when the learner asks where they are or why the current gap matters, or when recursive depth becomes hard to follow. JSON is available for machine consumers and Mermaid for a bounded local path. The view is read-only and never routing authority; do not run it on every turn or use it to select or create questions.
+Use `node ~/.codex/skills/_shared/scripts/learning-view.mjs --workspace <workspace> --format text` after context loss, when the learner asks where they are or why the current gap matters, or when recursive depth becomes hard to follow. Use `--goals` to list Goals and `--goal gNNN` to recover accepted roots plus the active recursive path. JSON is available for machine consumers and Mermaid for a bounded local path. The view is read-only and never routing authority; do not run it on every turn or use it to select or create questions.
 
 ## Conditional branches
 
