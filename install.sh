@@ -5,7 +5,7 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CODEX_SKILLS_DIR="${CODEX_HOME:-$HOME/.codex}/skills"
 mkdir -p "$CODEX_SKILLS_DIR"
 
-for old in learning-flow learning-route learning-teach learning-verify learning-note learning-synthesis learning-curate learning-observe learning review practice; do
+for old in learning-flow learning-route learning-teach learning-verify learning-note learning-synthesis learning-curate learning-observe learning review practice web; do
   rm -rf "$CODEX_SKILLS_DIR/$old"
 done
 for current in learning-ask learning-learn learning-review learning-practice learning-view _shared _learning-viewer; do
