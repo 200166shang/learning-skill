@@ -17,6 +17,7 @@ test("primary skill owns the execution spine and keeps real branches optional", 
   assert.match(skill, /learning-view\.mjs/);
   assert.match(skill, /view is read-only and never routing authority/i);
   assert.equal(existsSync(path.join(root, "learning", "references", "route.md")), false);
+  assert.equal(existsSync(path.join(root, "learning", "references", "review.md")), false);
 });
 
 test("review is an independent retrieval-first skill", () => {
