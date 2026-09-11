@@ -15,4 +15,8 @@ Review tests retained knowledge independently from active learning. It is retrie
 
 Never edit review YAML or Evidence directly. Review cannot write Journey, State, Episode/Question status, or the focus stack. A failure is new factual Evidence; it never reopens historical learning. You may suggest a new `$learning` Episode, but start one only if the learner chooses it.
 
-Target kind is guidance, not a gate: `memory` often suits recall, `concept` explanation/transfer, `procedure` steps/transfer, and `design` trade-off transfer. There is no scheduler, due queue, flashcard behavior, or numeric mastery score in this version.
+Target kind is guidance, not a gate: `memory` often suits recall, `concept` explanation/transfer, `procedure` steps/transfer, and `design` trade-off transfer. There is no scheduler, due queue, or numeric mastery score in this version.
+
+## Selective flashcards
+
+A flashcard is one ReviewItem representation, not a synonym for Review. Create one only on explicit learner choice, with one retrievable idea on `front` and a concise reference answer on `back`; never generate cards automatically for every Target, Question, or Note. Use `create_card`, `update_card`, and `archive_card` intents through the review runtime. Exact duplicate creates are idempotent. Editing or archiving preserves the ReviewItem ID and all ReviewAttempt history; archived cards are hidden from the default listing. Review a card through the same `record_attempt` pipeline: show only the front first, then evaluate and reveal the back.

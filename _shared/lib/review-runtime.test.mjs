@@ -35,3 +35,15 @@ test("review during active learning never changes recursive state", () => {
   assert.deepEqual(inspectLearningWorkspace(root).state.state, before);
   assert.equal(inspectReviewWorkspace(root, { targetId: "k001" }).history.attempts.length, 1);
 });
+
+test("flashcards are explicit, editable, archivable ReviewItems with stable history", () => {
+  const root = learned();
+  executeReviewCommand(root, { type: "create_card", targetId: "k001", front: "Why?", back: "Because.", createdAt: at });
+  executeReviewCommand(root, { type: "create_card", targetId: "k001", front: "Why?", back: "Because.", createdAt: at });
+  assert.equal(inspectReviewWorkspace(root).items.items.length, 1);
+  executeReviewCommand(root, { type: "record_attempt", reviewItemId: "r001", result: "pass", independence: "unaided", answerSummary: "Because.", createdAt: at });
+  executeReviewCommand(root, { type: "update_card", reviewItemId: "r001", front: "Why exactly?", back: "For this reason." });
+  executeReviewCommand(root, { type: "archive_card", reviewItemId: "r001" });
+  const active = inspectReviewWorkspace(root), all = inspectReviewWorkspace(root, { includeArchived: true });
+  assert.equal(active.items.items.length, 0); assert.equal(all.items.items[0].id, "r001"); assert.equal(all.items.items[0].front, "Why exactly?"); assert.equal(all.history.attempts.length, 1);
+});

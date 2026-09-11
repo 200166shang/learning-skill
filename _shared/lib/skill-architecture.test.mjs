@@ -25,4 +25,6 @@ test("review is an independent retrieval-first skill", () => {
   assert.match(skill, /recall[^\n]*explain[^\n]*transfer/i);
   assert.match(skill, /cannot write Journey, State/i);
   assert.match(skill, /never reopens historical learning/i);
+  assert.match(skill, /flashcard is one ReviewItem representation/i);
+  assert.match(skill, /never generate cards automatically/i);
 });
