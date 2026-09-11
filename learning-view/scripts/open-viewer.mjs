@@ -1,8 +1,9 @@
 #!/usr/bin/env node
-import { existsSync, statSync } from "node:fs";
-import { homedir } from "node:os";
+import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import { existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { homedir, tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
-import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 function fail(message) {
@@ -29,7 +30,7 @@ function parseArgs(argv) {
 }
 
 function isViewerDir(candidate) {
-  return existsSync(join(candidate, "package.json")) && existsSync(join(candidate, "scripts", "launch.mjs"));
+  return existsSync(join(candidate, "package.json"));
 }
 
 function resolveViewerDir() {
@@ -46,40 +47,91 @@ function resolveViewerDir() {
   return found;
 }
 
+function readReady(readyFile, workspace, goal) {
+  if (!existsSync(readyFile)) return null;
+  try {
+    const ready = JSON.parse(readFileSync(readyFile, "utf8"));
+    if (ready.workspace !== workspace || (ready.goal ?? null) !== goal) return null;
+    process.kill(ready.pid, 0);
+    return ready;
+  } catch {
+    return null;
+  }
+}
+
+function run(command) {
+  const result = spawnSync(command[0], command.slice(1), { stdio: "inherit" });
+  if (result.status !== 0) process.exit(result.status ?? 1);
+}
+
+function waitUntil(predicate, timeoutMs) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (predicate()) return true;
+    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50);
+  }
+  return false;
+}
+
 const args = parseArgs(process.argv.slice(2));
 if (!args.workspace) fail("--workspace is required");
+const dryRun = args.dryRun || process.env.LEARNING_VIEW_DRY_RUN === "1";
+if (process.platform !== "darwin" && !dryRun) fail("The packaged Learning Companion currently requires macOS.");
 
 const workspace = resolve(expandHome(args.workspace));
 if (!existsSync(workspace) || !statSync(workspace).isDirectory()) fail(`Learning workspace does not exist: ${workspace}`);
 
 const viewerDir = resolveViewerDir();
-const launchScript = join(viewerDir, "scripts", "launch.mjs");
-const cliPackage = join(viewerDir, "node_modules", "@tauri-apps", "cli", "package.json");
-const installNeeded = !existsSync(cliPackage);
-const launchArgs = [launchScript, "--workspace", workspace, ...(args.goal ? ["--goal", args.goal] : [])];
-const dryRun = args.dryRun || process.env.LEARNING_VIEW_DRY_RUN === "1";
+const appPath = process.env.LEARNING_VIEWER_APP
+  ? resolve(expandHome(process.env.LEARNING_VIEWER_APP))
+  : join(viewerDir, "Learning Companion.app");
+if (!existsSync(appPath)) fail(`The prebuilt Learning Companion app is missing at ${appPath}; run the Learning Suite installer.`);
 
+const projectionScript = resolve(viewerDir, "..", "_shared", "scripts", "learning-view.mjs");
+if (!existsSync(projectionScript)) fail(`Learning projection script is missing at ${projectionScript}`);
+
+const stateDir = resolve(expandHome(process.env.LEARNING_VIEWER_STATE_DIR ?? join(tmpdir(), "learning-companion")));
+mkdirSync(stateDir, { recursive: true });
+const instanceKey = createHash("sha256").update(JSON.stringify([workspace, args.goal])).digest("hex").slice(0, 20);
+const readyFile = join(stateDir, `${instanceKey}.json`);
+const focusFile = `${readyFile}.focus`;
+const ready = readReady(readyFile, workspace, args.goal);
+const launchCommand = [
+  "open", "-n", appPath, "--args",
+  "--workspace", workspace,
+  "--node-path", process.execPath,
+  "--projection-script", projectionScript,
+  "--ready-file", readyFile,
+  "--focus-file", focusFile,
+  ...(args.goal ? ["--goal", args.goal] : []),
+];
+const plan = {
+  mode: ready ? "focus" : "launch",
+  viewer_dir: viewerDir,
+  app_path: appPath,
+  workspace,
+  ready_file: readyFile,
+  focus_file: focusFile,
+  launch_command: ready ? null : launchCommand,
+};
 if (dryRun) {
-  console.log(JSON.stringify({
-    viewer_dir: viewerDir,
-    workspace,
-    install_needed: installNeeded,
-    install_command: installNeeded ? ["npm", "ci", "--prefix", viewerDir] : null,
-    launch_command: [process.execPath, ...launchArgs],
-    detached: true,
-  }));
+  console.log(JSON.stringify(plan));
   process.exit(0);
 }
 
-if (installNeeded) {
-  const install = spawnSync("npm", ["ci", "--prefix", viewerDir], { stdio: "inherit" });
-  if (install.status !== 0) process.exit(install.status ?? 1);
+if (ready) {
+  writeFileSync(focusFile, "focus\n");
+  if (!waitUntil(() => !existsSync(focusFile), 2_000)) {
+    fail("Learning Companion is running but did not acknowledge the focus request.");
+  }
+  console.log(`Learning Companion focused for ${workspace}`);
+  process.exit(0);
 }
 
-const child = spawn(process.execPath, launchArgs, {
-  cwd: viewerDir,
-  detached: true,
-  stdio: "ignore",
-});
-child.unref();
-console.log(`Learning Companion launched for ${workspace}`);
+rmSync(readyFile, { force: true });
+run(launchCommand);
+if (waitUntil(() => readReady(readyFile, workspace, args.goal), 15_000)) {
+  console.log(`Learning Companion ready for ${workspace}`);
+  process.exit(0);
+}
+fail("Learning Companion opened but did not render a learning projection within 15 seconds.");

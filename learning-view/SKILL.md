@@ -10,8 +10,7 @@ Operate the native Desktop Learning Companion as a thin UI adapter. The companio
 ## Contract
 
 - Treat requests to open, show, focus, inspect, pin, or keep the learning window on top as native-window intents.
-- When desktop control is available, first reuse and focus an already-running Learning Companion instead of launching a duplicate.
-- If no companion is running, launch it through `node ~/.codex/skills/learning-view/scripts/open-viewer.mjs --workspace <workspace>`; add `--goal <goal-id>` only when the learner already selected a Goal.
+- Launch through `node ~/.codex/skills/learning-view/scripts/open-viewer.mjs --workspace <workspace>`; add `--goal <goal-id>` only when the learner already selected a Goal. The launcher reuses and focuses an already-running Learning Companion for the same workspace, otherwise it returns only after the first learning projection renders.
 - After launch, use host desktop control for focus or pin/unpin when that capability exists.
 - Return only the window-operation result the learner needs.
 

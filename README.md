@@ -102,7 +102,7 @@ Those terms are implementation vocabulary for the agent/runtime, not commands th
 ./install.sh
 ```
 
-The installer places the five public skills under `~/.codex/skills`, installs the shared deterministic runtime, and copies the optional Desktop Learning Companion to `~/.codex/skills/_learning-viewer`. Viewer dependencies remain lazy and are handled by the `Learning: View` launch adapter on first launch.
+The installer places the five public skills under `~/.codex/skills`, installs the shared deterministic runtime, and builds a packaged Desktop Learning Companion at `~/.codex/skills/_learning-viewer/Learning Companion.app`. Compilation happens during updates; normal launches reuse the prebuilt app and wait for its first successful projection.
 
 ## Desktop Learning Companion
 
