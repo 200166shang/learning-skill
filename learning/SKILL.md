@@ -14,6 +14,7 @@ Keep the durable models separate:
 - `.learning/journey.yaml`: finite Episodes and questions actually asked or accepted.
 - `.learning/evidence.yaml`: verification attempts and misconceptions.
 - `.learning/state.yaml`: only `idle | active`, active Episode ID, and focus question IDs.
+- `.learning/targets.yaml`: stable reusable KnowledgeTarget identities (`memory | concept | procedure | design`) with Journey provenance.
 - `notes/*.md`: reusable knowledge, never proof of mastery.
 - `OVERVIEW.md`: a derived whole-picture projection of already-supported knowledge, never routing authority.
 
@@ -28,9 +29,11 @@ All active-learning mutations must go through `node ~/.codex/skills/_shared/scri
 3. When a real blocking gap appears, propose or explain it. **PUSH** only after the learner asks or accepts it: append one child to Journey with `parent_id`, `why_needed`, and the exact `resume_checkpoint`, then append only its ID to State.
 4. When the current question may be ready to close, enter the verification branch. A failed or uncertain attempt leaves it open.
 5. Child pass: persist the evidence, close only that child, **POP** its ID, state how the child repairs the parent arrow, then **RESUME** exactly at the saved checkpoint.
-6. Root pass, after the stack has returned to the root and no blocking child remains: persist the evidence, close the root and Episode, clear State to **IDLE**, report completion, and stop. Never mine Notes or OVERVIEW for an automatic next topic.
+6. Root pass, after the stack has returned to the root and no blocking child remains: supply semantic target metadata to the transition so it persists the evidence, creates exactly one root KnowledgeTarget, closes the root and Episode, clears State to **IDLE**, reports completion, and stops. Never mine Notes or OVERVIEW for an automatic next topic.
 
 Only learner-asked or learner-accepted questions enter Journey; recommendations remain ephemeral until chosen. Every closed question requires persisted passing Evidence.
+
+KnowledgeTargets stay selective: a closed child remains Journey-only by default. Suggest explicit `promote_target` only when that child became independently reusable knowledge; never promote every recursive gap. Target creation or editing must not change the focus stack.
 
 ## Conditional branches
 

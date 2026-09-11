@@ -22,11 +22,12 @@ learner question → Episode → PUSH / LEARN / VERIFY / POP / RESUME
   journey.yaml     finite Episodes and pursued questions
   evidence.yaml    verification and misconception evidence
   state.yaml       active Episode and focus ID stack, or IDLE
+  targets.yaml     stable reusable KnowledgeTarget identities
 notes/*.md         reusable knowledge
 OVERVIEW.md        optional whole-picture projection
 ```
 
-Only questions the learner asks or accepts are durable. A question closes only with passing verification evidence. A root pass closes the Episode and returns the workspace to IDLE. OVERVIEW may describe knowledge boundaries but cannot start or route learning.
+Only questions the learner asks or accepts are durable. A question closes only with passing verification evidence. A root pass creates one stable KnowledgeTarget, closes the Episode, and returns the workspace to IDLE. Closed children are promoted only explicitly. OVERVIEW may describe knowledge boundaries but cannot start or route learning.
 
 `_shared/knowledge-note.md` is the single current KnowledgeNote contract. Journey owns learning provenance, Evidence owns demonstrated understanding, and notes never prove mastery or route the next question.
 
