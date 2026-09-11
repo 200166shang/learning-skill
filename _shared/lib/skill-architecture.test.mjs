@@ -6,23 +6,16 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
-test("Learning: Learn owns the execution spine and keeps internal branches optional", () => {
+test("Learning: Learn owns the execution spine while branch mechanics stay disclosed", () => {
   const skill = readFileSync(path.join(root, "learning-learn", "SKILL.md"), "utf8");
   assert.match(skill, /no broken arrow/i);
   assert.match(skill, /PUSH[\s\S]*LEARN[\s\S]*VERIFY[\s\S]*POP[\s\S]*RESUME[\s\S]*IDLE/);
-  assert.match(skill, /only when[^\n]*KnowledgeNote/i);
-  assert.match(skill, /only when[^\n]*(close|verification)/i);
   assert.match(skill, /exactly one root KnowledgeTarget/i);
   assert.match(skill, /closed child remains Journey-only by default/i);
-  assert.match(skill, /learning-view\.mjs/);
-  assert.match(skill, /view is read-only and never routing authority/i);
-  assert.match(skill, /Topic-first orientation/);
-  assert.match(skill, /Survey cheap structure first/);
-  assert.match(skill, /normally 1–3 candidate Root Questions/);
-  assert.match(skill, /Persist only questions the learner explicitly accepts/);
-  assert.match(skill, /question-first fast path/);
   assert.match(skill, /runtime concepts, not learner commands/i);
   assert.match(skill, /current question[\s\S]*why it matters[\s\S]*what happens next/i);
+  assert.match(skill, /references\/orient\.md/);
+  assert.match(skill, /references\/runtime\.md/);
   assert.equal(existsSync(path.join(root, "learning-learn", "references", "route.md")), false);
   assert.equal(existsSync(path.join(root, "learning-learn", "references", "review.md")), false);
 });
