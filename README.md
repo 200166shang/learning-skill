@@ -1,6 +1,6 @@
 # Learning Skill V7
 
-A small, evidence-backed recursive learning system for Codex, exposed as `$learning`.
+A small, evidence-backed personal learning runtime for Codex, exposed as `$learning` and `$review`.
 
 ```text
 learner question → Episode → PUSH / LEARN / VERIFY / POP / RESUME
@@ -40,5 +40,6 @@ node _shared/scripts/upgrade-learning-workspace.mjs <workspace>
 node _shared/scripts/learning-status.mjs <workspace>
 node _shared/scripts/learning-transition.mjs <workspace> < intent.json
 node _shared/scripts/learning-view.mjs --workspace <workspace> --format text|json|mermaid
+node _shared/scripts/review.mjs <workspace> < intent.json
 npm test --prefix _shared
 ```

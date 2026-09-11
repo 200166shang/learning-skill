@@ -42,6 +42,6 @@ Use `node ~/.codex/skills/_shared/scripts/learning-view.mjs --workspace <workspa
 - Read [verification](references/verify.md) only when about to close a child or root, or record a verification attempt that may affect closure.
 - Read [persistence](references/persistence.md) only when the turn will create, reuse, or revise a KnowledgeNote, or reconcile Journey `note_refs`.
 - Read [teaching tactics](references/teach.md) only when concept gates, hint independence, repeated explanation failure, or a modality change would help.
-- For manual review or “test me,” read [review](references/review.md).
+- For review of an existing KnowledgeTarget, use the independent `$review` skill; Learning does not own ReviewItem or ReviewAttempt state.
 - For a requested whole-picture recap or OVERVIEW refresh, read [overview](references/overview.md).
 - For approved note maintenance, read [curate](references/curate.md).
