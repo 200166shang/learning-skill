@@ -4,6 +4,7 @@ import YAML from "yaml";
 import { emptyLearningEvidence, readLearningEvidence, validateLearningEvidence, writeLearningEvidence } from "./learning-evidence.mjs";
 import { readLearningJourney, writeLearningJourney } from "./learning-journey.mjs";
 import { readLearningRecords } from "./learning-record.mjs";
+import { readLearningGoals, validateLearningGoals } from "./learning-goals.mjs";
 import { readLearningState, validateLearningState, writeLearningState } from "./learning-state.mjs";
 import { readLearningTargets, validateLearningTargets } from "./learning-targets.mjs";
 import { buildLegacyV2Workspace } from "../migrations/legacy-to-v2.mjs";
@@ -13,8 +14,8 @@ export const CURRENT_SCHEMA_VERSION = 2;
 const manifest = (root) => path.join(path.resolve(root), ".learning", "workspace.yaml");
 const hasLegacy = (root) => existsSync(path.join(root, ".learning", "state.yaml")) || (existsSync(path.join(root, "notes")) && readdirSync(path.join(root, "notes"), { recursive: true }).some((entry) => String(entry).endsWith(".md")));
 
-export function validateCanonicalSnapshot({ journey, evidence, state, targets = { version: 1, targets: [] } }) {
-  const warnings = [...validateLearningState(state, journey), ...validateLearningTargets(targets, journey), ...validateLearningEvidence(evidence, journey, targets)];
+export function validateCanonicalSnapshot({ journey, evidence, state, targets = { version: 1, targets: [] }, goals = { version: 1, goals: [] } }) {
+  const warnings = [...validateLearningState(state, journey), ...validateLearningTargets(targets, journey), ...validateLearningEvidence(evidence, journey, targets), ...validateLearningGoals(goals, journey)];
   for (const question of journey.questions.filter((candidate) => candidate.status === "closed")) {
     const episode = journey.episodes.find((candidate) => candidate.id === question.episodeId);
     const kind = episode?.rootQuestionId === question.id ? "root_teach_back" : "child_connection";
@@ -24,12 +25,12 @@ export function validateCanonicalSnapshot({ journey, evidence, state, targets = 
 }
 
 function canonical(root) {
-  const journey = readLearningJourney(root), evidence = readLearningEvidence(root), state = readLearningState(root), targets = readLearningTargets(root), records = readLearningRecords(root);
-  const warnings = [...journey.warnings, ...evidence.warnings, ...state.warnings, ...targets.warnings, ...records.warnings];
+  const journey = readLearningJourney(root), evidence = readLearningEvidence(root), state = readLearningState(root), targets = readLearningTargets(root), records = readLearningRecords(root), goals = readLearningGoals(root);
+  const warnings = [...journey.warnings, ...evidence.warnings, ...state.warnings, ...targets.warnings, ...records.warnings, ...goals.warnings];
   if (journey.exists && !evidence.exists) warnings.push("evidence.yaml is missing");
   if (journey.exists && !state.exists) warnings.push("state.yaml is missing");
-  warnings.push(...validateCanonicalSnapshot({ journey: journey.journey, evidence: evidence.evidence, state: state.state, targets: targets.targets }));
-  return { valid: journey.exists && warnings.length === 0, journey, evidence, state, targets, records, warnings: [...new Set(warnings)] };
+  warnings.push(...validateCanonicalSnapshot({ journey: journey.journey, evidence: evidence.evidence, state: state.state, targets: targets.targets, goals: goals.goals }));
+  return { valid: journey.exists && warnings.length === 0, journey, evidence, state, targets, goals, records, warnings: [...new Set(warnings)] };
 }
 
 export function inspectLearningWorkspace(workspace) {
