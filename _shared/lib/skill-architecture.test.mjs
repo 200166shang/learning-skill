@@ -16,6 +16,11 @@ test("primary skill owns the execution spine and keeps real branches optional", 
   assert.match(skill, /closed child remains Journey-only by default/i);
   assert.match(skill, /learning-view\.mjs/);
   assert.match(skill, /view is read-only and never routing authority/i);
+  assert.match(skill, /Topic-first orientation/);
+  assert.match(skill, /Survey cheap structure first/);
+  assert.match(skill, /normally 1–3 candidate Root Questions/);
+  assert.match(skill, /Persist only questions the learner explicitly accepts/);
+  assert.match(skill, /question-first fast path/);
   assert.equal(existsSync(path.join(root, "learning", "references", "route.md")), false);
   assert.equal(existsSync(path.join(root, "learning", "references", "review.md")), false);
 });
