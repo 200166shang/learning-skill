@@ -1,6 +1,7 @@
 ---
 name: learning-practice
 description: "Apply an existing KnowledgeTarget through coding, debugging, or design and record observable results."
+disable-model-invocation: true
 ---
 
 # Learning: Practice

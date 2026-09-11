@@ -31,6 +31,8 @@ test("Learning: Ask is a read-only router over public learner intents", () => {
   assert.match(skill, /Never create, update, close, promote, schedule/i);
   assert.match(skill, /Do not run workspace upgrade\/migration/i);
   assert.match(skill, /Do not invoke another public skill automatically/i);
+  assert.doesNotMatch(skill, /learning-transition\.mjs|learning-goal\.mjs|review\.mjs|practice\.mjs/);
+  assert.doesNotMatch(skill, /node\s+[^\n]*(upgrade-learning-workspace|learning-transition|learning-goal|review|practice)\.mjs/);
 });
 
 test("Learning: Review is an independent retrieval-first skill", () => {

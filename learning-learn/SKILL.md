@@ -1,6 +1,7 @@
 ---
 name: learning-learn
 description: "Understand one learner-chosen question or broad topic through recursive, evidence-backed learning and verification."
+disable-model-invocation: true
 ---
 
 # Learning: Learn
