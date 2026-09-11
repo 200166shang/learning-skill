@@ -26,6 +26,10 @@ test("topic orientation is disclosed only behind its branch pointer", () => {
   assert.match(orient, /normally 1–3 candidate Root Questions/);
   assert.match(orient, /Persist only questions the learner explicitly accepts/);
   assert.match(orient, /selection boundary/);
+  const choice = orient.indexOf("Stop for an explicit learner choice");
+  const create = orient.indexOf("After acceptance, create or reuse");
+  assert.ok(choice >= 0 && create > choice, "orientation must not create state before the learner chooses");
+  assert.match(orient, /Before that choice, do not run `learning-goal\.mjs`[\s\S]*state-writing command/);
 });
 
 test("runtime implementation mechanics have one disclosed home", () => {

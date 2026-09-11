@@ -23,7 +23,7 @@ $learning-view      Open/focus/pin the native desktop Learning Companion.
 
 `Learning: View` may be reached automatically from natural requests such as “open the learning window” because it is a read-only UI action rather than a learning phase decision.
 
-The learner does **not** operate internal state-machine phases directly. Orientation, recursive prerequisite descent, verification, return-to-parent, persistence, and runtime transitions stay inside `Learning: Learn`.
+The learner does **not** operate internal state-machine phases directly. `Learning: Ask` may perform a read-only source survey and recommend candidate starting questions; accepted-question persistence, recursive prerequisite descent, verification, return-to-parent, and runtime transitions stay inside `Learning: Learn`.
 
 ## User workflow
 
@@ -32,6 +32,8 @@ When you are unsure, start with:
 ```text
 $learning-ask I have notes and a repository but I do not know where to start.
 ```
+
+For a fresh idle workspace, this inspects the supplied material without creating learning state, offers one to three candidate root questions, and waits for a choice. Continue with the exact accepted candidate in `Learning: Learn`; only then does it become visible as the root in the Learning Map.
 
 For a concrete question:
 

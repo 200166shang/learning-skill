@@ -31,6 +31,10 @@ test("Learning: Ask is a read-only router over public learner intents", () => {
   assert.match(skill, /Never create, update, close, promote, schedule/i);
   assert.match(skill, /Do not run workspace upgrade\/migration/i);
   assert.match(skill, /Do not invoke another public skill automatically/i);
+  assert.match(skill, /Fresh broad-topic orientation/);
+  assert.match(skill, /normally 1–3 candidate root questions/i);
+  assert.match(skill, /do not create a Goal, Root Intent, Episode, or Question/i);
+  assert.match(skill, /route that exact accepted wording[\s\S]*\$learning-learn/i);
   assert.doesNotMatch(skill, /learning-transition\.mjs|learning-goal\.mjs|review\.mjs|practice\.mjs/);
   assert.doesNotMatch(skill, /node\s+[^\n]*(upgrade-learning-workspace|learning-transition|learning-goal|review|practice)\.mjs/);
 });

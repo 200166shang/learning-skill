@@ -14,7 +14,7 @@ The finite internal loop is `PUSH → LEARN → VERIFY → POP → RESUME → ro
 
 Keep the learner oriented at meaningful boundaries without turning every turn into a status report:
 
-- **Broad topic / source set:** say you will first build a lightweight whole-picture view and offer a few worthwhile starting questions. Read [orientation](references/orient.md) before creating or starting anything for this branch.
+- **Broad topic / source set:** say you will first build a lightweight whole-picture view and offer a few worthwhile starting questions. Read [orientation](references/orient.md) before creating or starting anything for this branch. If `$learning-ask` already supplied a source-grounded candidate that the learner accepted, preserve that wording and continue at the acceptance step rather than orienting again.
 - **Concrete question:** restate it briefly and begin directly; do not force orientation.
 - **Resume:** state the current question and the causal reason it is on the path before continuing.
 - **Blocking prerequisite:** explain why the gap blocks the current arrow. Descend only after the learner asks or accepts that child question.
