@@ -1,54 +1,108 @@
 ---
 name: learning-learn
-description: "Understand one learner-chosen question or broad topic through recursive, evidence-backed learning and verification."
+description: "Learn one learner-chosen question or source scope through a coherent recursive explanation and one living Markdown document."
 disable-model-invocation: true
 ---
 
 # Learning: Learn
 
-Help the learner understand one question through natural conversation and turn durable understanding into living documents. The invariant is **no broken arrow**: repair only the smallest causal gap needed to continue the learner's chosen explanation.
+Build one source-grounded explanation around the learner's chosen scope. Keep a
+single **main line**; descend only into a **blocking gap**; resume at an explicit
+**return point**. Fold stable understanding into one readable Markdown article.
 
-The internal loop is `RESOLVE → ANSWER / TEACH → DOCUMENT RECONCILE → PUSH when blocked → closure VERIFY → POP / RESUME → FINAL DOCUMENT RECONCILE → root VERIFY → IDLE`. These are runtime concepts, not learner commands. Speak instead about the **current question**, **why it matters**, a **blocking prerequisite**, returning to the **main line**, related documents, and **what happens next**.
+## Start
 
-## Learner interaction contract
+Choose the matching entry:
 
-Keep the learner oriented at meaningful boundaries without turning every turn into a status report:
+- **Concrete question:** inspect only the relevant supplied sources and begin the
+  useful explanation immediately. The explanation has started when it states the
+  first causal connection supported by those sources.
+- **Broad scope without a useful question:** cheaply scan filenames, headings,
+  entry points, imports or calls, and transcript chapter titles. Recommend one
+  root question that connects the scope end to end. Offer at most two alternatives
+  only when they expose genuinely different routes. Stop after the choices unless
+  the learner has already delegated the decision. Begin only after the learner chooses,
+  or use the recommendation when the learner delegates the choice. This branch is
+  complete when the learner has a conversational choice, not a curriculum.
+- **Resume:** read the article's `当前学习位置` section, start at the deepest current
+  question, then follow its saved return points one level at a time. Resume is complete
+  when the next explanation advances that active path without skipping an ancestor.
 
-- **Broad topic / source set:** say you will first build a lightweight whole-picture view and offer a few worthwhile starting questions. Read [orientation](references/orient.md) before creating or starting anything for this branch.
-- **Explicit write-first request:** read [document lifecycle](references/documents.md), initialize the source-grounded document, then continue ordinary conversation and reconciliation on the same active path.
-- **Concrete question:** restate it briefly and begin directly; do not force orientation.
-- **Resume:** state the current question and the causal reason it is on the path before continuing.
-- At a meaningful transition, explain the current question, why it matters, and what happens next in learner-facing language.
+Treat supplied files and links as the learning boundary. Ask for missing material
+only when the requested causal connection cannot be established without it.
 
-When the learner asks where they are, why the current question matters, or what happens next, answer from persisted read-only state in plain language.
+## Follow the main line
 
-Teach forward at the learner's pace. When they say “I don't know”, explain the smallest missing connection with an example and continue the main line. Use verification when closing a question, rather than ending each explanation with a quiz or “do you understand?”. Keep file operations and learning bookkeeping out of the teaching narrative.
+For each turn:
 
-## Execution spine
+1. Explain the current question causally, using only source or code evidence that
+   helps establish the next connection. State uncertainty where the sources do not
+   settle a claim. This step is complete when the learner can see how the current
+   connection advances the main line.
+2. Repair a small missing connection inline when a brief explanation is sufficient.
+3. Work from the deepest current question. At that level, open at most one child only
+   when a missing connection blocks further explanation. The child may later open its
+   own necessary child, so one active path can recurse through multiple levels. Keep
+   every ancestor suspended with its return point; create no sibling frontier. For
+   each new child, say in plain language:
+   - the blocking gap;
+   - why the main line cannot continue without it;
+   - the exact parent sentence or connection that is the return point.
+4. Teach the child until the missing connection is available. At a natural boundary,
+   use the smallest useful check: ask for the child-to-parent link, inspect a tiny
+   example, or apply the mechanism once. A check is complete when that link is
+   established; verification is not required on every reply.
+5. Return immediately to the nearest parent's return point. Rewrite or continue that
+   explanation with the repaired link visible, then repeat upward one level at a time.
+   A child is complete only when its repaired connection is merged into its parent;
+   the recursive path is complete only when the root main line is coherent again.
+6. Close the root with an end-to-end learner explanation or concrete application
+   when closure would help. Otherwise continue the conversation without manufacturing
+   a test.
 
-Read [runtime mechanics](references/runtime.md) before the first persisted read or write in a workspace. Runtime mechanics own schema recovery, state inspection, mutation commands, IDs, atomic persistence, and read-only projections.
+Let questions emerge from real confusion or a broken causal arrow. Keep side questions
+that do not block the explanation conversational and preserve the current main line.
 
-1. Resolve the active question. If the workspace is idle, start only a learner-chosen concrete root or a root selected through the orientation branch.
-2. **ANSWER / TEACH:** address the learner's current question. For a substantive explanation, read [document lifecycle](references/documents.md), compose the complete teaching passage once, and save it before delivering the final answer. Preserve the causal reasoning, necessary code, worked examples, units, caveats, and source locations that make it independently useful for review. Repair tiny gaps inline and preserve focus for non-blocking side branches.
-3. **DOCUMENT RECONCILE:** create or revise the primary Topic/Module document in the same turn, including the first coherent explanation or source-code chain. Present the saved explanation, or a linked excerpt, and a short accurate save receipt. Continue revising the same document as learning develops. A summary or OVERVIEW entry does not replace detailed teaching content. Acknowledgements and status-only replies do not require writes. Documents record supported explanations, not demonstrated mastery.
-4. When a real blocking gap appears, explain why it blocks the current arrow and propose it. **PUSH** only after the learner asks or accepts that child question, persisting one child with `parent_id`, `why_needed`, and the exact `resume_checkpoint`.
-5. **Verification is a closure gate, not the default conversational cadence.** Enter it when the question has been answered end to end, no promised teaching segment or blocking gap remains, and the learner signals closure by asking to finish/check understanding, accepting closure, or offering a synthesis. Reconcile its durable understanding, then read [verification](references/verify.md). Reuse sufficient spontaneous learner-produced Evidence; probe only the smallest missing connection. Failed or uncertain verification leaves the question open and returns to teaching.
-6. On child pass, persist passing Evidence, close only that child, **POP**, explain what was repaired, and **RESUME** its parent at the saved checkpoint. A closed child remains Journey-only by default; promote it only when it became independently reusable knowledge.
-7. When the root is ready and no blocking child remains, perform **FINAL DOCUMENT RECONCILE** over touched documents and validate their refs. On root pass, persist passing Evidence, create exactly one root KnowledgeTarget with the relevant note refs, close the root and Episode, return State to **IDLE**, report closure, and stop. Review and Practice are optional later phases, never automatic continuation.
+## Maintain one living document
 
-Only learner-asked or learner-accepted questions enter Journey; recommendations remain ephemeral until chosen. Every closed question requires persisted passing Evidence.
+Use one primary Topic or Module Markdown article by default. Organize it in explanatory
+order, revising earlier prose when understanding changes. Put a child into the relevant
+subsection or parent paragraph. Create a separate reusable Concept document only when
+the learner explicitly asks, or when it has a clearly independent reusable scope.
 
-Do not mine Notes or OVERVIEW for an automatic next topic after completion.
+At the first stable checkpoint, use the article path the learner supplied. Otherwise,
+reuse the single existing primary document that clearly matches the topic. If neither
+exists, choose a sensible path within the learner's workspace. Ask only when multiple
+existing candidates create a real risk of overwriting the wrong document. A stable
+checkpoint is one of:
 
-## Conditional references
+- a coherent part of the main chain has been established;
+- a blocking child has been repaired and merged into its parent;
+- an earlier explanation has been corrected;
+- the learner asks to organize or export the understanding;
+- the session is pausing or the root is closing.
 
-- **Topic-first orientation:** read [orientation](references/orient.md) only when the learner has a broad objective/source set but no useful concrete question yet.
-- **Document lifecycle:** read [document lifecycle](references/documents.md) before delivering substantive teaching, before child/root closure with durable output, or for an explicit write-first request.
-- **Runtime/state operations:** read [runtime mechanics](references/runtime.md) at the first persisted read/write, after context loss, or when state recovery/inspection is needed.
-- **Verification:** read [verification](references/verify.md) only when a child/root may close or a verification attempt must be recorded.
-- **KnowledgeNote format:** read [persistence](references/persistence.md) only when the document lifecycle requires a KnowledgeNote write.
-- **Teaching adaptation:** read [teaching tactics](references/teach.md) for repeated explanation failure, a modality change, or hint independence during verification.
-- **Whole-picture recap:** read [overview](references/overview.md) only when the learner requests a recap/OVERVIEW refresh.
-- **Document hygiene:** read [curate](references/curate.md) when touched documents overlap or need merge/rename/relink decisions.
+At a checkpoint, make at most one direct Markdown edit that integrates all stable
+changes from the turn. Do not write merely because an assistant message was sent.
 
-For retained-knowledge review, direct the learner to `Learning: Review` (`/learning-review`). For coding/debugging/design application, direct them to `Learning: Practice` (`/learning-practice`). Those skills own their own state.
+Keep this small, human-readable section near the top and overwrite it as the path
+changes:
+
+```markdown
+## 当前学习位置
+- 主问题：...
+- 活动路径：主问题 → 子问题 A（回到：父层的具体句子或连接） → 当前问题 B（回到：父层的具体句子或连接）
+- 当前阻塞：为什么最深问题阻塞它的父层
+```
+
+Record the entire active path and every level's return point in order. When no child
+is active, keep only the main question. When the topic closes, mark it complete or
+remove temporary routing details. A fresh session must be able to begin at the deepest
+question, repair it, return to each ancestor in order, and recover the root main line
+from this section and the surrounding article alone.
+
+## Finish
+
+Before pausing or closing, confirm that the response and article agree, every active
+level has a return point, and each repaired child is visibly reconnected to its parent.
+Report the article path and what was integrated when a write occurred.

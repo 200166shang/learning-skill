@@ -1,4 +1,0 @@
-{"turns":[
-  {"id":"teach","snapshot":"snapshots/teach.md","documentCommit":{"ref":"radar-data-model.md","section":"Overview","revision":"959db61c99c34b31ac4fda42d034802a61c863f5da71a01c31ea653615289617"},"receipt":{"ref":"radar-data-model.md","revision":"959db61c99c34b31ac4fda42d034802a61c863f5da71a01c31ea653615289617"}},
-  {"id":"continue-time","snapshot":"snapshots/continue-time.md","documentCommit":{"ref":"radar-data-model.md","section":"Time","revision":"fba0a9ebf2bbdab14945bdafb8075dfe273957dc3f94af26852e3dc041f4ed7a"},"receipt":{"ref":"radar-data-model.md","revision":"fba0a9ebf2bbdab14945bdafb8075dfe273957dc3f94af26852e3dc041f4ed7a"}}
-]}
