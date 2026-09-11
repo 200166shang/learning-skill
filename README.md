@@ -47,6 +47,14 @@ For a broad topic plus sources:
 $learning-learn I need to learn the robot LLM module from these notes, repository, and transcripts. I do not yet know what questions to ask; I need to explain the concepts, source code, and complete chain in an interview.
 ```
 
+For a document-first learning flow:
+
+```text
+$learning-learn First build a complete source-grounded knowledge map in my learning workspace. Then teach and verify me against that document.
+```
+
+This creates or updates the written artifact before teach-back questions. The document supports learning but does not count as mastery evidence or close the active question.
+
 After a learning question is closed, Review and Practice are explicit phase boundaries rather than hidden automatic mode switches:
 
 ```text

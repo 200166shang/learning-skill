@@ -15,6 +15,7 @@ The finite internal loop is `PUSH → LEARN → VERIFY → POP → RESUME → ro
 Keep the learner oriented at meaningful boundaries without turning every turn into a status report:
 
 - **Broad topic / source set:** say you will first build a lightweight whole-picture view and offer a few worthwhile starting questions. Read [orientation](references/orient.md) before creating or starting anything for this branch. If `$learning-ask` already supplied a source-grounded candidate that the learner accepted, preserve that wording and continue at the acceptance step rather than orienting again.
+- **Document-first request:** when the learner wants a complete written map before discussion or verification, read [document-first workflow](references/document-first.md). Produce the artifact first, then teach and verify against it while preserving the active question.
 - **Concrete question:** restate it briefly and begin directly; do not force orientation.
 - **Resume:** state the current question and the causal reason it is on the path before continuing.
 - **Blocking prerequisite:** explain why the gap blocks the current arrow. Descend only after the learner asks or accepts that child question.
@@ -46,6 +47,7 @@ Do not mine Notes or OVERVIEW for an automatic next topic after completion.
 ## Conditional references
 
 - **Topic-first orientation:** read [orientation](references/orient.md) only when the learner has a broad objective/source set but no useful concrete question yet.
+- **Document-first workflow:** read [document-first workflow](references/document-first.md) when the learner asks for a knowledge map, study guide, architecture document, or written source synthesis before questioning.
 - **Runtime/state operations:** read [runtime mechanics](references/runtime.md) at the first persisted read/write, after context loss, or when state recovery/inspection is needed.
 - **Verification:** read [verification](references/verify.md) only when a child/root may close or a verification attempt must be recorded.
 - **KnowledgeNote work:** read [persistence](references/persistence.md) only when creating, reusing, revising, or reconciling a KnowledgeNote.
