@@ -1,9 +1,0 @@
-**/node_modules/
-web/dist/
-web/*.tsbuildinfo
-web/vite.config.js
-web/vite.config.d.ts
-.DS_Store
-viewer/dist/
-viewer/src-tauri/gen/
-viewer/src-tauri/target/

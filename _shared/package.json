@@ -1,1 +1,0 @@
-{"name":"learning-skill-shared","private":true,"type":"module","scripts":{"test":"node --test $(find . -name '*.test.mjs' -not -path './node_modules/*')"},"dependencies":{"ts-fsrs":"5.4.2","yaml":"^2.8.1"}}

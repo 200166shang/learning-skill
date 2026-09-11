@@ -1,6 +1,6 @@
 interface:
   display_name: "Learning: Learn"
-  short_description: "Understand one question through recursive, verified learning"
-  default_prompt: "Use $learning-learn to help me understand this question or topic, keep me oriented as we recurse into real gaps, and stop when the chosen learning question is closed."
+  short_description: "Learn one question along a coherent main line"
+  default_prompt: "Use $learning-learn to help me understand this question or source scope and keep the stable explanation in one living Markdown document."
 policy:
   allow_implicit_invocation: false

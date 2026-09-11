@@ -1,7 +1,0 @@
-{
-  "name": "learning-skill",
-  "private": true,
-  "scripts": {
-    "viewer": "node viewer/scripts/launch.mjs"
-  }
-}
