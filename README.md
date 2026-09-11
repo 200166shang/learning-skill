@@ -26,8 +26,9 @@ notes. I do not yet know which question will connect it end to end.
 
 The skill recommends one connecting root question and may offer up to two genuinely
 different alternatives. Once a route is chosen, stable understanding is maintained
-in one primary Markdown article. Its `当前学习位置` section is enough for a fresh
-session to resume the main line.
+in one primary Markdown article. Its `当前学习位置` section records the complete
+active path and every level's return point so a fresh session can resume at the deepest
+question and return to the root one level at a time.
 
 ## Install or update
 
@@ -45,3 +46,5 @@ to install elsewhere:
 
 The repository intentionally contains no learning runtime, hidden workspace schema,
 viewer, review scheduler, practice tracker, migration layer, or compatibility aliases.
+Updating from Learning Suite V3 also removes its four retired public skills, packaged
+viewer, installation manifest, and its own identified `_shared` runtime directory.
