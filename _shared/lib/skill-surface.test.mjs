@@ -5,13 +5,14 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const skills = [
+const userInvoked = [
   ["learning-ask", "Learning: Ask"],
   ["learning-learn", "Learning: Learn"],
   ["learning-review", "Learning: Review"],
   ["learning-practice", "Learning: Practice"],
-  ["learning-view", "Learning: View"],
 ];
+const modelInvoked = [["learning-view", "Learning: View"]];
+const skills = [...userInvoked, ...modelInvoked];
 
 test("public Learning Suite skill surface is namespaced and discoverable", () => {
   for (const [name, displayName] of skills) {
@@ -24,8 +25,18 @@ test("public Learning Suite skill surface is namespaced and discoverable", () =>
     const agent = readFileSync(agentPath, "utf8");
     assert.equal(skill.startsWith(`---\nname: ${name}\n`), true, `${name} frontmatter should use the directory name`);
     assert.equal(agent.includes(`display_name: "${displayName}"`), true, `${name} should expose ${displayName}`);
-    assert.equal(agent.includes("allow_implicit_invocation: false"), true, `${name} should be explicitly invoked`);
   }
+
+  for (const [name] of userInvoked) {
+    const agent = readFileSync(resolve(repo, name, "agents/openai.yaml"), "utf8");
+    assert.equal(agent.includes("allow_implicit_invocation: false"), true, `${name} should remain user-invoked in Codex`);
+  }
+
+  const viewSkill = readFileSync(resolve(repo, "learning-view", "SKILL.md"), "utf8");
+  const viewAgent = readFileSync(resolve(repo, "learning-view", "agents/openai.yaml"), "utf8");
+  assert.equal(viewSkill.includes("disable-model-invocation: true"), false, "learning-view should be model-invoked");
+  assert.equal(viewAgent.includes("allow_implicit_invocation"), false, "learning-view should permit model invocation in Codex");
+  assert.match(viewSkill, /Use when the learner asks to open, show, focus, inspect, pin/i);
 
   for (const legacy of ["learning", "review", "practice"]) {
     assert.equal(existsSync(resolve(repo, legacy)), false, `legacy ${legacy}/ skill directory should be removed`);

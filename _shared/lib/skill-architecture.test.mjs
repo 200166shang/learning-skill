@@ -64,8 +64,9 @@ test("Learning: Practice is independent and stores only observable application r
 test("Learning: View owns native-window routing but not learning state", () => {
   const skill = readFileSync(path.join(root, "learning-view", "SKILL.md"), "utf8");
   assert.match(skill, /native Desktop Learning Companion/i);
-  assert.match(skill, /Do \*\*not\*\* substitute Mermaid/i);
-  assert.match(skill, /find and focus an already-running Learning Companion/i);
-  assert.match(skill, /_learning-viewer/);
+  assert.match(skill, /native companion window/i);
+  assert.match(skill, /already-running Learning Companion/i);
+  assert.match(skill, /open-viewer\.mjs/);
+  assert.doesNotMatch(skill, /npm ci|_learning-viewer|tauri/i);
   assert.match(skill, /must not mutate `\.learning` domain state/i);
 });
