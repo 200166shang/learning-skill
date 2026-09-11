@@ -43,5 +43,6 @@ Use `node ~/.codex/skills/_shared/scripts/learning-view.mjs --workspace <workspa
 - Read [persistence](references/persistence.md) only when the turn will create, reuse, or revise a KnowledgeNote, or reconcile Journey `note_refs`.
 - Read [teaching tactics](references/teach.md) only when concept gates, hint independence, repeated explanation failure, or a modality change would help.
 - For review of an existing KnowledgeTarget, use the independent `$review` skill; Learning does not own ReviewItem or ReviewAttempt state.
+- For application through coding, debugging, or design, use the independent `$practice` skill; Learning does not own PracticeTask or PracticeAttempt state.
 - For a requested whole-picture recap or OVERVIEW refresh, read [overview](references/overview.md).
 - For approved note maintenance, read [curate](references/curate.md).

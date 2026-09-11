@@ -30,3 +30,12 @@ test("review is an independent retrieval-first skill", () => {
   assert.match(skill, /fail → Again/);
   assert.match(skill, /decides when an existing item reappears, never what the learner should learn next/i);
 });
+
+test("practice is independent and stores only observable application results", () => {
+  const skill = readFileSync(path.join(root, "practice", "SKILL.md"), "utf8");
+  assert.match(skill, /coding[^\n]*debugging[^\n]*design/i);
+  assert.match(skill, /pass \| partial \| fail/);
+  assert.match(skill, /merely reading\/listing a task must never execute/i);
+  assert.match(skill, /cannot write Learning State/i);
+  assert.match(skill, /Review schedule/i);
+});

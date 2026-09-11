@@ -1,6 +1,6 @@
 # Learning Skill V7
 
-A small, evidence-backed personal learning runtime for Codex, exposed as `$learning` and `$review`.
+A small, evidence-backed personal learning runtime for Codex, exposed as `$learning`, `$review`, and `$practice`.
 
 ```text
 learner question → Episode → PUSH / LEARN / VERIFY / POP / RESUME
@@ -42,5 +42,6 @@ node _shared/scripts/learning-transition.mjs <workspace> < intent.json
 node _shared/scripts/learning-view.mjs --workspace <workspace> --format text|json|mermaid
 node _shared/scripts/review.mjs <workspace> < intent.json
 node _shared/scripts/review.mjs <workspace> due <ISO-now> [target-id]
+node _shared/scripts/practice.mjs <workspace> < intent.json
 npm test --prefix _shared
 ```
