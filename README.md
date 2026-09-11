@@ -41,5 +41,6 @@ node _shared/scripts/learning-status.mjs <workspace>
 node _shared/scripts/learning-transition.mjs <workspace> < intent.json
 node _shared/scripts/learning-view.mjs --workspace <workspace> --format text|json|mermaid
 node _shared/scripts/review.mjs <workspace> < intent.json
+node _shared/scripts/review.mjs <workspace> due <ISO-now> [target-id]
 npm test --prefix _shared
 ```

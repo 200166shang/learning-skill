@@ -47,3 +47,12 @@ test("flashcards are explicit, editable, archivable ReviewItems with stable hist
   const active = inspectReviewWorkspace(root), all = inspectReviewWorkspace(root, { includeArchived: true });
   assert.equal(active.items.items.length, 0); assert.equal(all.items.items[0].id, "r001"); assert.equal(all.items.items[0].front, "Why exactly?"); assert.equal(all.history.attempts.length, 1);
 });
+
+test("created items are scheduled and manual attempts update only Review schedule", () => {
+  const root = learned(); executeReviewCommand(root, { type: "create", targetId: "k001", mode: "recall", prompt: "Recall", createdAt: at });
+  assert.equal(inspectReviewWorkspace(root, { now: at }).due.length, 1);
+  const stateBefore = structuredClone(inspectLearningWorkspace(root).state.state);
+  executeReviewCommand(root, { type: "record_attempt", reviewItemId: "r001", result: "fail", independence: "unaided", answerSummary: "miss", createdAt: at });
+  const recovered = inspectReviewWorkspace(root, { now: "2026-09-11T03:00:30Z" });
+  assert.equal(recovered.due.length, 0); assert.equal(recovered.schedule.states[0].dueAt, "2026-09-11T03:01:00.000Z"); assert.deepEqual(inspectLearningWorkspace(root).state.state, stateBefore);
+});
