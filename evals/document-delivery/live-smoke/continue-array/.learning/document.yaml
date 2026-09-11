@@ -1,0 +1,21 @@
+version: 1
+primary_document: notes/radar-data-model.md
+last_commit: &a1
+  operation_id: radar-angle-index-v1
+  input_hash: b426227efe58a79f1a74fb732947e317cef08ed0d07c775e1dc85e4864129144
+  question_id: q001
+  document_ref: notes/radar-data-model.md
+  section: 从角度映射到数组位置
+  revision: 6805f7482282d54cfd66b86b7362f5d60291ff384226b9a3133b393458f2a1be
+  section_hash: 860852fd8d2da34c8ee75f0f8bbd71565e1f9e0fc1b68a8be9ebea9eaee7d098
+  committed_at: 2026-09-11T15:49:07.821Z
+operations:
+  - operation_id: radar-frame-v1
+    input_hash: 5ee0b5661ad7e8feb7cc137459ebd7a796f0409f6c13c8b963aebcdb4b768fa7
+    question_id: q001
+    document_ref: notes/radar-data-model.md
+    section: 一帧扫描：角度、距离与时空语义
+    revision: eccf9c080f3e40f3d4f28341c5cf79e3c91d27c807a91dc36a2aa697f6fa9824
+    section_hash: b9b5cb88ce36f5b352b062cf8767ecbc8ffaa96884ae3f16811315815a80dc17
+    committed_at: 2026-09-11T15:47:40.118Z
+  - *a1

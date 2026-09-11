@@ -15,7 +15,7 @@ test("development server matches Tauri devUrl and app arguments pass through Car
 test("production install builds a macOS app and runtime readiness is projection-backed", () => {
   const config = JSON.parse(readFileSync(new URL("../src-tauri/tauri.conf.json", import.meta.url), "utf8"));
   const rust = readFileSync(new URL("../src-tauri/src/lib.rs", import.meta.url), "utf8");
-  const install = readFileSync(new URL("../../install.sh", import.meta.url), "utf8");
+  const install = readFileSync(new URL("../../scripts/learning-installation.mjs", import.meta.url), "utf8");
 
   assert.equal(config.bundle.active, true);
   assert.deepEqual(config.bundle.targets, ["app"]);

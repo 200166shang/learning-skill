@@ -1,0 +1,13 @@
+{
+  "kind": "scripted-grader-fixture",
+  "fixture": "../fixtures/laserscan-source.md",
+  "transcript": "../transcripts/mechanics-pass.json",
+  "notesRoot": "../workspaces/mechanics-pass/notes",
+  "captureRoot": "../workspaces/mechanics-pass",
+  "canonicalSnapshot": "canonical.json",
+  "currentQuestion": "radar-data-model",
+  "documentRef": "radar-data-model.md",
+  "expectedTeachingTurns": ["teach", "continue-array", "dont-know", "continue-time", "insufficient"],
+  "readOnlyTurns": ["status"],
+  "resumeTurns": ["resume"]
+}

@@ -7,6 +7,8 @@ import { emptyLearningEvidence, writeLearningEvidence } from "./learning-evidenc
 import { idleLearningState, writeLearningState } from "./learning-state.mjs";
 import { emptyLearningTargets, writeLearningTargets } from "./learning-targets.mjs";
 import { inspectLearningWorkspace, writeWorkspaceManifest } from "./learning-workspace.mjs";
+import { GOAL_INTENT_SCHEMA, validateIntent } from "./learning-cli-contracts.mjs";
+import { withLearningWorkspaceMutationLock } from "./learning-document-runtime.mjs";
 
 function ensureWorkspace(workspace) {
   const inspection = inspectLearningWorkspace(workspace);
@@ -26,8 +28,13 @@ function persistGoals(workspace, goals, journey) {
   } finally { rmSync(stage, { recursive: true, force: true }); }
 }
 
-export function executeLearningGoalCommand(workspace, intent) {
-  const inspection = ensureWorkspace(workspace), current = structuredClone(inspection.goals.goals), journey = inspection.journey.journey;
+function executeLearningGoalCommandLocked(workspace, intent) {
+  const initial = inspectLearningWorkspace(workspace);
+  if (intent.type === "list" && initial.status === "empty") return [];
+  if (intent.type === "show" && initial.status === "empty") throw new Error(`goal not found: ${intent.goalId}`);
+  const inspection = ["list", "show"].includes(intent.type) ? initial : ensureWorkspace(workspace);
+  if (inspection.status !== "current") throw new Error(`workspace is invalid for goal command: ${inspection.status}`);
+  const current = structuredClone(inspection.goals.goals), journey = inspection.journey.journey;
   let model = current, result;
   if (intent.type === "create") { const created = createLearningGoal(model, intent, journey); model = created.model; result = created.goal; }
   else if (intent.type === "add_roots") { const added = addRootIntents(model, intent.goalId, (intent.questions || []).map((question) => ({ question, acceptedAt: intent.acceptedAt })), journey); model = added.model; result = added.roots; }
@@ -44,4 +51,10 @@ export function executeLearningGoalCommand(workspace, intent) {
   persistGoals(workspace, model, journey);
   const persisted = inspectLearningWorkspace(workspace); if (persisted.status !== "current") throw new Error(`goal mutation produced invalid workspace: ${persisted.warnings?.join("; ")}`);
   return result;
+}
+
+export function executeLearningGoalCommand(workspace, intent) {
+  validateIntent(intent, GOAL_INTENT_SCHEMA, "goal");
+  if (["list", "show"].includes(intent.type)) return executeLearningGoalCommandLocked(workspace, intent);
+  return withLearningWorkspaceMutationLock(workspace, () => executeLearningGoalCommandLocked(workspace, intent));
 }

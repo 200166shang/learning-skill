@@ -1,0 +1,13 @@
+version: 1
+primary_document: notes/radar-data-model.md
+last_commit: &a1
+  operation_id: radar-frame-v1
+  input_hash: 5ee0b5661ad7e8feb7cc137459ebd7a796f0409f6c13c8b963aebcdb4b768fa7
+  question_id: q001
+  document_ref: notes/radar-data-model.md
+  section: 一帧扫描：角度、距离与时空语义
+  revision: eccf9c080f3e40f3d4f28341c5cf79e3c91d27c807a91dc36a2aa697f6fa9824
+  section_hash: b9b5cb88ce36f5b352b062cf8767ecbc8ffaa96884ae3f16811315815a80dc17
+  committed_at: 2026-09-11T15:47:40.118Z
+operations:
+  - *a1

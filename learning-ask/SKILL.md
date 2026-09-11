@@ -12,6 +12,7 @@ Be the read-only router for the Learning Suite. The learner should not need to r
 
 - Explain what the Learning Suite can do in learner-facing language.
 - When a workspace is available and current-schema state can be read safely, inspect only read-only projections such as `learning-view.mjs` / status outputs to recover the current learning position, available Goals, and existing KnowledgeTargets.
+- For document questions, the document module's read-only `inspect` projection provides the primary article, related documents and latest saved section. Distinguish these saved facts from whether a chat explanation was fully preserved or the learner has mastered it. A recent commit is not proof that all chat content is synchronized.
 - Recommend **one primary next action** when the evidence is clear, with concise alternatives when useful.
 - Route an active current question to `$learning-learn` to resume it.
 - Route a new concrete question or broad topic with sources to `$learning-learn`; explain that Learning: Learn owns topic orientation when the learner does not yet know what question to ask.

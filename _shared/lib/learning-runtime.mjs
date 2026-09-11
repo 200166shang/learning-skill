@@ -8,6 +8,8 @@ import { idleLearningState, writeLearningState } from "./learning-state.mjs";
 import { createKnowledgeTarget, emptyLearningTargets, nextKnowledgeTargetId, updateKnowledgeTarget, writeLearningTargets } from "./learning-targets.mjs";
 import { emptyLearningGoals, linkRootIntent, writeLearningGoals } from "./learning-goals.mjs";
 import { inspectLearningWorkspace, validateCanonicalSnapshot, writeWorkspaceManifest } from "./learning-workspace.mjs";
+import { withLearningWorkspaceMutationLock } from "./learning-document-runtime.mjs";
+import { TRANSITION_INTENT_SCHEMA, validateIntent } from "./learning-cli-contracts.mjs";
 
 const files = ["workspace.yaml", "journey.yaml", "evidence.yaml", "state.yaml", "targets.yaml", "goals.yaml"];
 const nextId = (items, prefix) => { const used = new Set(items.map((item) => item.id)); let number = Math.max(0, ...[...used].filter((id) => new RegExp(`^${prefix}\\d+$`).test(id)).map((id) => Number(id.slice(1)))); do number += 1; while (used.has(`${prefix}${String(number).padStart(3, "0")}`)); return `${prefix}${String(number).padStart(3, "0")}`; };
@@ -54,8 +56,7 @@ function persistAtomically(workspace, snapshot) {
   } finally { rmSync(stage, { recursive: true, force: true }); }
 }
 
-export function executeLearningTransition(workspace, intent) {
-  if (!intent || typeof intent !== "object") throw new Error("transition intent is required");
+function executeLearningTransitionLocked(workspace, intent) {
   let snapshot = load(workspace, intent.type);
   if (intent.type === "start") {
     const hasQuestion = typeof intent.question === "string" && intent.question.trim().length > 0;
@@ -124,4 +125,9 @@ export function executeLearningTransition(workspace, intent) {
   }
   else throw new Error(`unknown transition type: ${intent.type}`);
   persistAtomically(workspace, snapshot); return inspectLearningWorkspace(workspace);
+}
+
+export function executeLearningTransition(workspace, intent) {
+  validateIntent(intent, TRANSITION_INTENT_SCHEMA, "transition");
+  return withLearningWorkspaceMutationLock(workspace, () => executeLearningTransitionLocked(workspace, intent));
 }

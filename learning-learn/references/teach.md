@@ -1,6 +1,8 @@
 # Teaching tactics
 
-Use a concept gate at an important transition when it would reveal whether the causal connection held: invite a teach-back, relationship explanation, application, or what-breaks-if check. Do not turn every conversational turn into a quiz.
+When the learner is uncertain, explain the smallest missing connection with a concrete example and resume the main line. Save a materially useful new explanation in the same article. Leave room for follow-ups without repeatedly asking for confirmation of understanding.
+
+Use a teach-back, relationship explanation, or transfer probe when the learner has signaled closure and the question is ready for verification. A function boundary or the end of an explanation is not a closure signal.
 
 Track whether a verification answer was `unaided`, used a `light_hint`, or used a `strong_hint`. A correct answer after a strong hint remains valid evidence with lower independence; do not convert it into a numeric mastery score.
 

@@ -1,0 +1,19 @@
+version: 2
+episodes:
+  - id: e001
+    root_question_id: q001
+    status: active
+    started_at: null
+    closed_at: null
+questions:
+  - id: q001
+    episode_id: e001
+    parent_id: null
+    question: 雷达的一帧数据包含什么，如何表示角度和距离？
+    why_needed: null
+    resume_checkpoint: null
+    status: open
+    opened_at: null
+    closed_at: null
+    note_refs:
+      - notes/radar-data-model.md

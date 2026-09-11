@@ -87,7 +87,8 @@ test("public skills retain distinct ownership contracts", () => {
 
 test("installer exposes the suite and keeps the desktop viewer internal", () => {
   const install = readFileSync(resolve(repo, "install.sh"), "utf8");
-  assert.equal(install.includes("for skill in learning-ask learning-learn learning-review learning-practice learning-view"), true);
-  assert.equal(install.includes("_learning-viewer"), true);
-  assert.equal(install.includes("learning review practice"), true, "installer should clean legacy public skill names");
+  const implementation = readFileSync(resolve(repo, "scripts/learning-installation.mjs"), "utf8");
+  assert.match(install, /learning-installation\.mjs/);
+  for (const [skill] of skills) assert.match(implementation, new RegExp(`"${skill}"`));
+  assert.match(implementation, /_learning-viewer/); assert.match(implementation, /"learning", "review", "practice"/);
 });

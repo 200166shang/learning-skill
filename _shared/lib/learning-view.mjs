@@ -1,12 +1,13 @@
-export function projectLearningView(journey, evidence, state, targets) {
-  if (state.mode === "idle") return { mode: "idle", episode: null, path: [], currentQuestionId: null, depth: 0, popDestinationQuestionId: null };
+export function projectLearningView(journey, evidence, state, targets, documents = null) {
+  const documentView = documents ? { documents } : {};
+  if (state.mode === "idle") return { mode: "idle", episode: null, path: [], currentQuestionId: null, depth: 0, popDestinationQuestionId: null, ...documentView };
   const byId = new Map(journey.questions.map((question) => [question.id, question]));
   const episode = journey.episodes.find((candidate) => candidate.id === state.activeEpisodeId);
   const path = state.focusStack.map((id) => {
     const question = byId.get(id);
     return { questionId: id, title: question.question, whyNeeded: question.whyNeeded, resumeCheckpoint: question.resumeCheckpoint, targetIds: targets.targets.filter((target) => target.origin.questionIds.includes(id)).map((target) => target.id) };
   });
-  return { mode: "active", episode: { id: episode.id, rootQuestionId: episode.rootQuestionId, rootTitle: byId.get(episode.rootQuestionId).question }, path, currentQuestionId: state.focusStack.at(-1), depth: path.length, popDestinationQuestionId: state.focusStack.at(-2) || null };
+  return { mode: "active", episode: { id: episode.id, rootQuestionId: episode.rootQuestionId, rootTitle: byId.get(episode.rootQuestionId).question }, path, currentQuestionId: state.focusStack.at(-1), depth: path.length, popDestinationQuestionId: state.focusStack.at(-2) || null, ...documentView };
 }
 
 export function projectLearningGoalView(goal, journey, evidence, state, targets) {
@@ -33,14 +34,24 @@ export function projectLearningGoals(goals, journey) {
 }
 
 const escapeMermaid = (value) => String(value).replaceAll("\\", "\\\\").replaceAll('"', "&quot;").replaceAll("\n", " ");
+function documentLines(documents) {
+  if (!documents) return [];
+  const lines = ["", `Primary document: ${documents.primaryStatus?.path || documents.primaryDocument || "none"}`];
+  if (documents.lastCommit) lines.push(`Last saved section: ${documents.lastCommit.document_ref} → ${documents.lastCommit.section}`, `Saved revision: ${documents.lastCommit.revision}`);
+  if (documents.primaryStatus?.matchesLastCommit === false) lines.push("Document changed since the last save receipt; inspect current content.");
+  if (documents.primaryStatus?.exists === false) lines.push(`Document unavailable: ${documents.primaryStatus.error}`);
+  if (documents.pendingRecovery?.length) lines.push("Document recovery required before further writes.");
+  return lines;
+}
 export function renderLearningView(projection, format = "text") {
   if (format === "json") return `${JSON.stringify(projection, null, 2)}\n`;
   if (format === "text") {
-    if (projection.mode === "idle") return "Learning: IDLE\n";
+    if (projection.mode === "idle") return ["Learning: IDLE", ...documentLines(projection.documents)].join("\n") + "\n";
     const lines = [`Episode: ${projection.episode.rootTitle}`, "", "Path:"];
     projection.path.forEach((item, index) => { if (index) lines.push(`  ↓ because: ${item.whyNeeded}`); lines.push(`${index === projection.path.length - 1 ? "▶ " : ""}${item.title}${item.targetIds.length ? ` [${item.targetIds.join(", ")}]` : ""}`); });
     lines.push("", `Depth: ${projection.depth}`, `After pass: ${projection.popDestinationQuestionId ? `POP → ${projection.path.at(-2).title}` : "root close → IDLE"}`);
     if (projection.path.at(-1).resumeCheckpoint) lines.push(`Resume: "${projection.path.at(-1).resumeCheckpoint}"`);
+    lines.push(...documentLines(projection.documents));
     return `${lines.join("\n")}\n`;
   }
   if (format === "mermaid") {
