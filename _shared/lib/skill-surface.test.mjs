@@ -22,9 +22,9 @@ test("public Learning Suite skill surface is namespaced and discoverable", () =>
 
     const skill = readFileSync(skillPath, "utf8");
     const agent = readFileSync(agentPath, "utf8");
-    assert.match(skill, new RegExp(`^---\\nname: ${name}\\n`, "m"));
-    assert.match(agent, new RegExp(`display_name: "${displayName.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}"`));
-    assert.match(agent, /allow_implicit_invocation: false/);
+    assert.equal(skill.startsWith(`---\nname: ${name}\n`), true, `${name} frontmatter should use the directory name`);
+    assert.equal(agent.includes(`display_name: "${displayName}"`), true, `${name} should expose ${displayName}`);
+    assert.equal(agent.includes("allow_implicit_invocation: false"), true, `${name} should be explicitly invoked`);
   }
 
   for (const legacy of ["learning", "review", "practice"]) {
@@ -34,9 +34,7 @@ test("public Learning Suite skill surface is namespaced and discoverable", () =>
 
 test("installer exposes the suite and keeps the desktop viewer internal", () => {
   const install = readFileSync(resolve(repo, "install.sh"), "utf8");
-  for (const [name] of skills) {
-    assert.match(install, new RegExp(`cp -R .*\\$skill|${name}`));
-  }
-  assert.match(install, /_learning-viewer/);
-  assert.match(install, /learning review practice/);
+  assert.equal(install.includes("for skill in learning-ask learning-learn learning-review learning-practice learning-view"), true);
+  assert.equal(install.includes("_learning-viewer"), true);
+  assert.equal(install.includes("learning review practice"), true, "installer should clean legacy public skill names");
 });
