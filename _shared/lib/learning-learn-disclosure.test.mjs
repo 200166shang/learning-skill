@@ -13,11 +13,11 @@ const documentFirst = readFileSync(path.join(root, "learning-learn", "references
 test("Learning: Learn keeps the invariant and completion gates in the primary skill", () => {
   assert.match(main, /no broken arrow/i);
   assert.match(main, /PUSH[\s\S]*LEARN[\s\S]*VERIFY[\s\S]*POP[\s\S]*RESUME[\s\S]*IDLE/);
-  assert.match(main, /Descend only after the learner asks or accepts/i);
+  assert.match(main, /PUSH[^\n]*only after the learner asks or accepts/i);
   assert.match(main, /exact `resume_checkpoint`/i);
   assert.match(main, /Every closed question requires persisted passing Evidence/i);
   assert.match(main, /child[\s\S]*passing Evidence[\s\S]*saved checkpoint/i);
-  assert.match(main, /root[\s\S]*exactly one root KnowledgeTarget[\s\S]*State is IDLE/i);
+  assert.match(main, /root pass[\s\S]*exactly one root KnowledgeTarget[\s\S]*State[^\n]*IDLE/i);
 });
 
 test("topic orientation is disclosed only behind its branch pointer", () => {
@@ -36,10 +36,13 @@ test("topic orientation is disclosed only behind its branch pointer", () => {
 test("runtime implementation mechanics have one disclosed home", () => {
   assert.match(main, /Read \[runtime mechanics\][^\n]*before the first persisted read or write/i);
   assert.doesNotMatch(main, /upgrade-learning-workspace\.mjs|learning-transition\.mjs|learning-view\.mjs/);
-  assert.match(runtime, /upgrade-learning-workspace\.mjs/);
-  assert.match(runtime, /learning-transition\.mjs/);
-  assert.match(runtime, /learning-view\.mjs/);
-  assert.match(runtime, /view is read-only and never routing authority/i);
+  assert.match(runtime, /deterministic runtime owns[^\n]*(persisted )?writes/i);
+  assert.match(runtime, /schema recovery[^\n]*before persisted access|before persisted access[^\n]*schema recovery/i);
+  assert.match(runtime, /atomic/i);
+  assert.match(runtime, /never hand-edit/i);
+  assert.match(runtime, /read-only projection[^\n]*not routing authority/i);
+  assert.match(runtime, /focus stack/i);
+  assert.doesNotMatch(runtime, /\.learning\/(journey|evidence|state|targets|goals)\.yaml/);
 });
 
 test("main skill points precisely to conditional references", () => {

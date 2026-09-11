@@ -6,37 +6,47 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
+function read(...segments) {
+  return readFileSync(path.join(root, ...segments), "utf8");
+}
+
+function frontmatter(source) {
+  return source.match(/^---\n([\s\S]*?)\n---/)?.[1] ?? "";
+}
+
 test("Learning: Learn owns the execution spine while branch mechanics stay disclosed", () => {
-  const skill = readFileSync(path.join(root, "learning-learn", "SKILL.md"), "utf8");
+  const skill = read("learning-learn", "SKILL.md");
+  const agent = read("learning-learn", "agents", "openai.yaml");
   assert.match(skill, /no broken arrow/i);
   assert.match(skill, /PUSH[\s\S]*LEARN[\s\S]*VERIFY[\s\S]*POP[\s\S]*RESUME[\s\S]*IDLE/);
   assert.match(skill, /exactly one root KnowledgeTarget/i);
   assert.match(skill, /closed child remains Journey-only by default/i);
   assert.match(skill, /runtime concepts, not learner commands/i);
-  assert.match(skill, /current question[\s\S]*why it matters[\s\S]*what happens next/i);
-  assert.match(skill, /references\/orient\.md/);
-  assert.match(skill, /references\/runtime\.md/);
+  assert.match(frontmatter(skill), /^disable-model-invocation: true$/m);
+  assert.match(agent, /allow_implicit_invocation: false/);
+  for (const reference of ["orient.md", "runtime.md", "verify.md"]) {
+    assert.equal(existsSync(path.join(root, "learning-learn", "references", reference)), true);
+  }
+  assert.match(read("learning-learn", "references", "orient.md"), /candidate Root Questions/i);
   assert.equal(existsSync(path.join(root, "learning-learn", "references", "route.md")), false);
   assert.equal(existsSync(path.join(root, "learning-learn", "references", "review.md")), false);
 });
 
 test("Learning: Ask is a read-only router over public learner intents", () => {
-  const skill = readFileSync(path.join(root, "learning-ask", "SKILL.md"), "utf8");
+  const skill = read("learning-ask", "SKILL.md");
+  const agent = read("learning-ask", "agents", "openai.yaml");
   assert.match(skill, /read-only router/i);
-  assert.match(skill, /one primary next action/i);
   assert.match(skill, /\$learning-learn/);
   assert.match(skill, /\$learning-review/);
   assert.match(skill, /\$learning-practice/);
   assert.match(skill, /\$learning-view/);
-  assert.match(skill, /Never create, update, close, promote, schedule/i);
-  assert.match(skill, /Do not run workspace upgrade\/migration/i);
-  assert.match(skill, /Do not invoke another public skill automatically/i);
-  assert.match(skill, /Fresh broad-topic orientation/);
-  assert.match(skill, /normally 1–3 candidate root questions/i);
-  assert.match(skill, /do not create a Goal, Root Intent, Episode, or Question/i);
-  assert.match(skill, /route that exact accepted wording[\s\S]*\$learning-learn/i);
+  assert.match(frontmatter(skill), /^disable-model-invocation: true$/m);
+  assert.match(agent, /allow_implicit_invocation: false/);
+  assert.match(skill, /read-only|must not mutate/i);
+  assert.match(skill, /broad[^\n]*(topic|objective)[^\n]*\$learning-learn|\$learning-learn[^\n]*orientation/i);
+  assert.doesNotMatch(skill, /Fresh broad-topic orientation|candidate root questions|accept or choose a candidate|accepted wording/i);
   assert.doesNotMatch(skill, /learning-transition\.mjs|learning-goal\.mjs|review\.mjs|practice\.mjs/);
-  assert.doesNotMatch(skill, /node\s+[^\n]*(upgrade-learning-workspace|learning-transition|learning-goal|review|practice)\.mjs/);
+  assert.doesNotMatch(skill, /node\s+[^\n]*\.mjs/);
 });
 
 test("Learning: Review is an independent retrieval-first skill", () => {
@@ -61,11 +71,14 @@ test("Learning: Practice is independent and stores only observable application r
 });
 
 test("Learning: View owns native-window routing but not learning state", () => {
-  const skill = readFileSync(path.join(root, "learning-view", "SKILL.md"), "utf8");
+  const skill = read("learning-view", "SKILL.md");
+  const agent = read("learning-view", "agents", "openai.yaml");
   assert.match(skill, /native Desktop Learning Companion/i);
   assert.match(skill, /native companion window/i);
-  assert.match(skill, /already-running Learning Companion/i);
   assert.match(skill, /open-viewer\.mjs/);
   assert.doesNotMatch(skill, /npm ci|_learning-viewer|tauri/i);
   assert.match(skill, /must not mutate `\.learning` domain state/i);
+  assert.doesNotMatch(frontmatter(skill), /^disable-model-invocation: true$/m);
+  assert.doesNotMatch(agent, /allow_implicit_invocation: false/);
+  assert.equal(existsSync(path.join(root, "learning-view", "scripts", "open-viewer.mjs")), true);
 });

@@ -14,13 +14,11 @@ The finite internal loop is `PUSH → LEARN → VERIFY → POP → RESUME → ro
 
 Keep the learner oriented at meaningful boundaries without turning every turn into a status report:
 
-- **Broad topic / source set:** say you will first build a lightweight whole-picture view and offer a few worthwhile starting questions. Read [orientation](references/orient.md) before creating or starting anything for this branch. If `$learning-ask` already supplied a source-grounded candidate that the learner accepted, preserve that wording and continue at the acceptance step rather than orienting again.
+- **Broad topic / source set:** say you will first build a lightweight whole-picture view and offer a few worthwhile starting questions. Read [orientation](references/orient.md) before creating or starting anything for this branch.
 - **Document-first request:** when the learner wants a complete written map before discussion or verification, read [document-first workflow](references/document-first.md). Produce the artifact first, then teach and verify against it while preserving the active question.
 - **Concrete question:** restate it briefly and begin directly; do not force orientation.
 - **Resume:** state the current question and the causal reason it is on the path before continuing.
-- **Blocking prerequisite:** explain why the gap blocks the current arrow. Descend only after the learner asks or accepts that child question.
-- **Child closure:** state what was repaired and return explicitly to the parent explanation.
-- **Root closure:** state that the chosen question is closed and stop. Review and Practice are optional later phases, never automatic continuation.
+- At a meaningful transition, explain the current question, why it matters, and what happens next in learner-facing language.
 
 When the learner asks where they are, why the current question matters, or what happens next, answer from persisted read-only state in plain language.
 
@@ -30,17 +28,12 @@ Read [runtime mechanics](references/runtime.md) before the first persisted read 
 
 1. Resolve the active question. If the workspace is idle, start only a learner-chosen concrete root or a root selected through the orientation branch.
 2. **LEARN:** give the smallest causal explanation that repairs the current arrow. Repair tiny gaps inline and answer side branches without changing focus.
-3. When a real blocking gap appears, propose it. **PUSH** only after learner consent, persisting one child with `parent_id`, `why_needed`, and the exact `resume_checkpoint`.
+3. When a real blocking gap appears, explain why it blocks the current arrow and propose it. **PUSH** only after the learner asks or accepts that child question, persisting one child with `parent_id`, `why_needed`, and the exact `resume_checkpoint`.
 4. When the current question may be ready to close, read [verification](references/verify.md). Failed or uncertain verification leaves the question open.
-5. On child pass, persist passing Evidence, close only that child, **POP**, explain how it repairs the parent arrow, and **RESUME** at the saved checkpoint.
-6. On root pass, only after focus has returned to the root and no blocking child remains, persist passing Evidence, create exactly one root KnowledgeTarget, close the root and Episode, return State to **IDLE**, report completion, and stop.
+5. On child pass, persist passing Evidence, close only that child, **POP**, explain what was repaired, and **RESUME** its parent at the saved checkpoint. A closed child remains Journey-only by default; promote it only when it became independently reusable knowledge.
+6. On root pass, only after focus has returned to the root and no blocking child remains, persist passing Evidence, create exactly one root KnowledgeTarget, close the root and Episode, return State to **IDLE**, report that the chosen question is closed, and stop. Review and Practice are optional later phases, never automatic continuation.
 
-Only learner-asked or learner-accepted questions enter Journey; recommendations remain ephemeral until chosen. Every closed question requires persisted passing Evidence. A closed child remains Journey-only by default; promote it only when it became independently reusable knowledge.
-
-### Completion criteria
-
-- A **child** is complete only when passing Evidence is persisted, that child is closed, and focus has returned to its parent at the saved checkpoint.
-- A **root** is complete only when passing Evidence is persisted, exactly one root KnowledgeTarget exists, the Episode is closed, and State is IDLE.
+Only learner-asked or learner-accepted questions enter Journey; recommendations remain ephemeral until chosen. Every closed question requires persisted passing Evidence.
 
 Do not mine Notes or OVERVIEW for an automatic next topic after completion.
 
