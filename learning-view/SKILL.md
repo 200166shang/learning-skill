@@ -1,6 +1,6 @@
 ---
 name: learning-view
-description: "Native learning-window control. Use when the learner asks to open, show, focus, inspect, pin, or keep the Learning Companion or learning map on top."
+description: "Native Learning Companion window control. Use for showing the learning map or changing its window state."
 ---
 
 # Learning: View

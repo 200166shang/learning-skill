@@ -45,7 +45,9 @@ test("public Learning Suite skill surface is namespaced and discoverable", () =>
   const viewAgent = readFileSync(resolve(repo, "learning-view", "agents/openai.yaml"), "utf8");
   assert.equal(viewSkill.includes("disable-model-invocation: true"), false, "learning-view should be model-invoked");
   assert.equal(viewAgent.includes("allow_implicit_invocation"), false, "learning-view should permit model invocation in Codex");
-  assert.match(viewSkill, /Use when the learner asks to open, show, focus, inspect, pin/i);
+  assert.match(frontmatter(viewSkill), /Native Learning Companion/i);
+  assert.match(frontmatter(viewSkill), /learning map/i);
+  assert.match(frontmatter(viewSkill), /window state/i);
 
   for (const legacy of ["learning", "review", "practice"]) {
     assert.equal(existsSync(resolve(repo, legacy)), false, `legacy ${legacy}/ skill directory should be removed`);
