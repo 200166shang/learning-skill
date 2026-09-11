@@ -1,6 +1,6 @@
 ---
 name: learning
-description: "Run evidence-backed recursive learning: pursue a learner-chosen question, resume an active episode, review retained understanding, or curate learning notes."
+description: "Run evidence-backed recursive learning from either a concrete learner question or a broad topic, goal, and source set when the learner does not yet know what questions to ask; resume an active episode, review retained understanding, or curate learning notes."
 ---
 
 # Learning
@@ -15,6 +15,7 @@ Keep the durable models separate:
 - `.learning/evidence.yaml`: verification attempts and misconceptions.
 - `.learning/state.yaml`: only `idle | active`, active Episode ID, and focus question IDs.
 - `.learning/targets.yaml`: stable reusable KnowledgeTarget identities (`memory | concept | procedure | design`) with Journey provenance.
+- `.learning/goals.yaml`: broad learner objectives, source references, and explicitly accepted Root Intents; absent means no Goals.
 - `notes/*.md`: reusable knowledge, never proof of mastery.
 - `OVERVIEW.md`: a derived whole-picture projection of already-supported knowledge, never routing authority.
 
@@ -32,6 +33,17 @@ All active-learning mutations must go through `node ~/.codex/skills/_shared/scri
 6. Root pass, after the stack has returned to the root and no blocking child remains: supply semantic target metadata to the transition so it persists the evidence, creates exactly one root KnowledgeTarget, closes the root and Episode, clears State to **IDLE**, reports completion, and stops. Never mine Notes or OVERVIEW for an automatic next topic.
 
 Only learner-asked or learner-accepted questions enter Journey; recommendations remain ephemeral until chosen. Every closed question requires persisted passing Evidence.
+
+## Topic-first orientation
+
+When State is IDLE and the learner supplies a broad objective plus sources but cannot yet name a useful question, **ORIENT** before starting an Episode:
+
+1. Create or reuse the learner's Goal through `node ~/.codex/skills/_shared/scripts/learning-goal.mjs <workspace>`. Store source references only.
+2. Survey cheap structure first: filenames, headings, entry points, imports, and chapter titles. Selectively deepen only enough to identify the module's role, execution entry, boundaries, and end-to-end chain. State unavailable-source uncertainty.
+3. Give a compact goal restatement, provisional source-grounded system picture, source-role map, and normally 1–3 candidate Root Questions. Candidates remain ephemeral.
+4. Persist only questions the learner explicitly accepts, using one `add_roots` command. If several are accepted without a selection, show them and stop at the selection boundary.
+
+If the learner already supplies a concrete root question, use the question-first fast path. Do not force Orientation, create a Goal, or turn several roots into one Episode. Phase 3 owns starting an Episode from an accepted Root Intent.
 
 KnowledgeTargets stay selective: a closed child remains Journey-only by default. Suggest explicit `promote_target` only when that child became independently reusable knowledge; never promote every recursive gap. Target creation or editing must not change the focus stack.
 
