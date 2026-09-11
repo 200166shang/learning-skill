@@ -19,6 +19,8 @@ Keep the durable models separate:
 
 At workspace entry, before persisted reads or writes, run `node ~/.codex/skills/_shared/scripts/upgrade-learning-workspace.mjs <workspace>`. Continue immediately when it reports no upgrade needed. If it upgrades, report the recovered position and stop before learning; if it errors, fail closed. Inspect the script or migrations only when migration reasoning is needed.
 
+All active-learning mutations must go through `node ~/.codex/skills/_shared/scripts/learning-transition.mjs <workspace>` with one JSON intent on stdin. Never coordinate Journey, Evidence, and State writes directly. The runtime validates the complete persisted snapshot before and after each transition and owns IDs, PUSH/POP bookkeeping, and atomic persistence.
+
 ## Active-learning spine
 
 1. Resolve the active Episode and current focus question through Journey plus State. If State is IDLE, start an Episode only for a learner-chosen root question.

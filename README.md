@@ -37,5 +37,6 @@ V7 intentionally has no Web observer, generated learning map, database, automati
 ```bash
 node _shared/scripts/upgrade-learning-workspace.mjs <workspace>
 node _shared/scripts/learning-status.mjs <workspace>
+node _shared/scripts/learning-transition.mjs <workspace> < intent.json
 npm test --prefix _shared
 ```

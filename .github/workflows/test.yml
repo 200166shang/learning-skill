@@ -1,0 +1,16 @@
+name: test
+on:
+  push:
+  pull_request:
+jobs:
+  shared-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: _shared/package-lock.json
+      - run: npm ci --prefix _shared
+      - run: npm test --prefix _shared
