@@ -1,13 +1,28 @@
 ---
-name: learning
-description: "Run evidence-backed recursive learning from either a concrete learner question or a broad topic, goal, and source set when the learner does not yet know what questions to ask; resume an active episode, review retained understanding, or curate learning notes."
+name: learning-learn
+description: "Understand one learner-chosen question or broad topic through recursive, evidence-backed learning and verification."
 ---
 
-# Learning
+# Learning: Learn
 
-Help the learner close one question they chose. The leading invariant is **no broken arrow**: repair only the smallest causal gap needed to continue the learner's chosen explanation. The finite loop is:
+Help the learner close one question they chose. The leading invariant is **no broken arrow**: repair only the smallest causal gap needed to continue the learner's chosen explanation. The finite internal loop is:
 
 `PUSH → LEARN → VERIFY → POP → RESUME → root VERIFY → IDLE`
+
+These are runtime concepts, not learner commands. In normal conversation, speak in learner-facing language such as **current question**, **why it matters**, **blocking prerequisite**, **back to the main line**, and **what happens next**. Do not expose Goal, Root Intent, Episode, PUSH, POP, focus stacks, or transition jargon unless the learner explicitly asks about internals.
+
+## Learner interaction contract
+
+At meaningful boundaries, keep the learner oriented without turning every turn into a status report:
+
+- **Broad topic / source set:** say that you will first build a lightweight whole-picture view, then offer a small set of worthwhile starting questions. Do not silently start an Episode.
+- **Concrete question:** restate the question briefly and begin directly.
+- **Resume:** state the current question and the causal reason it is on the path before continuing.
+- **Blocking prerequisite:** explain why the gap blocks the current arrow and ask/confirm before descending when a real child question is needed.
+- **Child closure:** say what was repaired and explicitly return to the parent explanation.
+- **Root closure:** say that the chosen question is now closed and stop. You may mention `Learning: Review` or `Learning: Practice` as optional next phases, but never start them automatically.
+
+When the learner asks where they are, why the current question matters, or what happens next, answer from the persisted state/view in plain language. The learner should not need to understand the state machine to use this skill.
 
 Keep the durable models separate:
 
@@ -55,7 +70,7 @@ Use `node ~/.codex/skills/_shared/scripts/learning-view.mjs --workspace <workspa
 - Read [verification](references/verify.md) only when about to close a child or root, or record a verification attempt that may affect closure.
 - Read [persistence](references/persistence.md) only when the turn will create, reuse, or revise a KnowledgeNote, or reconcile Journey `note_refs`.
 - Read [teaching tactics](references/teach.md) only when concept gates, hint independence, repeated explanation failure, or a modality change would help.
-- For review of an existing KnowledgeTarget, use the independent `$review` skill; Learning does not own ReviewItem or ReviewAttempt state.
-- For application through coding, debugging, or design, use the independent `$practice` skill; Learning does not own PracticeTask or PracticeAttempt state.
+- If the learner wants retained-knowledge review, tell them to invoke `Learning: Review` (`/learning-review`); do not perform ReviewItem or ReviewAttempt work inside this skill.
+- If the learner wants application through coding, debugging, or design, tell them to invoke `Learning: Practice` (`/learning-practice`); do not perform PracticeTask or PracticeAttempt work inside this skill.
 - For a requested whole-picture recap or OVERVIEW refresh, read [overview](references/overview.md).
 - For approved note maintenance, read [curate](references/curate.md).

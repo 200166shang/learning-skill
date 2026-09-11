@@ -6,8 +6,8 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
-test("primary skill owns the execution spine and keeps real branches optional", () => {
-  const skill = readFileSync(path.join(root, "learning", "SKILL.md"), "utf8");
+test("Learning: Learn owns the execution spine and keeps internal branches optional", () => {
+  const skill = readFileSync(path.join(root, "learning-learn", "SKILL.md"), "utf8");
   assert.match(skill, /no broken arrow/i);
   assert.match(skill, /PUSH[\s\S]*LEARN[\s\S]*VERIFY[\s\S]*POP[\s\S]*RESUME[\s\S]*IDLE/);
   assert.match(skill, /only when[^\n]*KnowledgeNote/i);
@@ -21,12 +21,27 @@ test("primary skill owns the execution spine and keeps real branches optional", 
   assert.match(skill, /normally 1–3 candidate Root Questions/);
   assert.match(skill, /Persist only questions the learner explicitly accepts/);
   assert.match(skill, /question-first fast path/);
-  assert.equal(existsSync(path.join(root, "learning", "references", "route.md")), false);
-  assert.equal(existsSync(path.join(root, "learning", "references", "review.md")), false);
+  assert.match(skill, /runtime concepts, not learner commands/i);
+  assert.match(skill, /current question[\s\S]*why it matters[\s\S]*what happens next/i);
+  assert.equal(existsSync(path.join(root, "learning-learn", "references", "route.md")), false);
+  assert.equal(existsSync(path.join(root, "learning-learn", "references", "review.md")), false);
 });
 
-test("review is an independent retrieval-first skill", () => {
-  const skill = readFileSync(path.join(root, "review", "SKILL.md"), "utf8");
+test("Learning: Ask is a read-only router over public learner intents", () => {
+  const skill = readFileSync(path.join(root, "learning-ask", "SKILL.md"), "utf8");
+  assert.match(skill, /read-only router/i);
+  assert.match(skill, /one primary next action/i);
+  assert.match(skill, /\$learning-learn/);
+  assert.match(skill, /\$learning-review/);
+  assert.match(skill, /\$learning-practice/);
+  assert.match(skill, /\$learning-view/);
+  assert.match(skill, /Never create, update, close, promote, schedule/i);
+  assert.match(skill, /Do not run workspace upgrade\/migration/i);
+  assert.match(skill, /Do not invoke another public skill automatically/i);
+});
+
+test("Learning: Review is an independent retrieval-first skill", () => {
+  const skill = readFileSync(path.join(root, "learning-review", "SKILL.md"), "utf8");
   assert.match(skill, /retrieval-first/i);
   assert.match(skill, /recall[^\n]*explain[^\n]*transfer/i);
   assert.match(skill, /cannot write Journey, State/i);
@@ -37,11 +52,20 @@ test("review is an independent retrieval-first skill", () => {
   assert.match(skill, /decides when an existing item reappears, never what the learner should learn next/i);
 });
 
-test("practice is independent and stores only observable application results", () => {
-  const skill = readFileSync(path.join(root, "practice", "SKILL.md"), "utf8");
+test("Learning: Practice is independent and stores only observable application results", () => {
+  const skill = readFileSync(path.join(root, "learning-practice", "SKILL.md"), "utf8");
   assert.match(skill, /coding[^\n]*debugging[^\n]*design/i);
   assert.match(skill, /pass \| partial \| fail/);
   assert.match(skill, /merely reading\/listing a task must never execute/i);
   assert.match(skill, /cannot write Learning State/i);
   assert.match(skill, /Review schedule/i);
+});
+
+test("Learning: View owns native-window routing but not learning state", () => {
+  const skill = readFileSync(path.join(root, "learning-view", "SKILL.md"), "utf8");
+  assert.match(skill, /native Desktop Learning Companion/i);
+  assert.match(skill, /Do \*\*not\*\* substitute Mermaid/i);
+  assert.match(skill, /find and focus an already-running Learning Companion/i);
+  assert.match(skill, /_learning-viewer/);
+  assert.match(skill, /must not mutate `\.learning` domain state/i);
 });
