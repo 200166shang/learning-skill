@@ -14,5 +14,7 @@ test("primary skill owns the execution spine and keeps real branches optional", 
   assert.match(skill, /only when[^\n]*(close|verification)/i);
   assert.match(skill, /exactly one root KnowledgeTarget/i);
   assert.match(skill, /closed child remains Journey-only by default/i);
+  assert.match(skill, /learning-view\.mjs/);
+  assert.match(skill, /view is read-only and never routing authority/i);
   assert.equal(existsSync(path.join(root, "learning", "references", "route.md")), false);
 });

@@ -35,6 +35,8 @@ Only learner-asked or learner-accepted questions enter Journey; recommendations 
 
 KnowledgeTargets stay selective: a closed child remains Journey-only by default. Suggest explicit `promote_target` only when that child became independently reusable knowledge; never promote every recursive gap. Target creation or editing must not change the focus stack.
 
+Use `node ~/.codex/skills/_shared/scripts/learning-view.mjs --workspace <workspace> --format text` after context loss, when the learner asks where they are or why the current gap matters, or when recursive depth becomes hard to follow. JSON is available for machine consumers and Mermaid for a bounded local path. The view is read-only and never routing authority; do not run it on every turn or use it to select or create questions.
+
 ## Conditional branches
 
 - Read [verification](references/verify.md) only when about to close a child or root, or record a verification attempt that may affect closure.
