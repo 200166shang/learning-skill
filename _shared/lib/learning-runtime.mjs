@@ -36,8 +36,15 @@ export function executeLearningTransition(workspace, intent) {
   if (!intent || typeof intent !== "object") throw new Error("transition intent is required");
   let snapshot = load(workspace, intent.type);
   if (intent.type === "start") {
+    const hasQuestion = typeof intent.question === "string" && intent.question.trim().length > 0;
+    const hasGoalId = typeof intent.goalId === "string" && intent.goalId.trim().length > 0;
+    const hasRootIntentId = typeof intent.rootIntentId === "string" && intent.rootIntentId.trim().length > 0;
+    if ((hasGoalId || hasRootIntentId) && hasQuestion) throw new Error("start accepts either question or goalId/rootIntentId, not both");
+    if (hasGoalId !== hasRootIntentId) throw new Error("goal-backed start requires both goalId and rootIntentId");
+    if (!hasGoalId && !hasQuestion) throw new Error("direct start requires a question");
+
     let question = intent.question, selectedRoot = null;
-    if (intent.goalId || intent.rootIntentId) {
+    if (hasGoalId) {
       const goal = snapshot.goals.goals.find((candidate) => candidate.id === intent.goalId);
       if (!goal) throw new Error(`goal not found: ${intent.goalId}`); if (goal.closedAt) throw new Error(`goal is closed: ${intent.goalId}`);
       selectedRoot = goal.rootIntents.find((candidate) => candidate.id === intent.rootIntentId);
