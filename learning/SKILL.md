@@ -42,8 +42,9 @@ When State is IDLE and the learner supplies a broad objective plus sources but c
 2. Survey cheap structure first: filenames, headings, entry points, imports, and chapter titles. Selectively deepen only enough to identify the module's role, execution entry, boundaries, and end-to-end chain. State unavailable-source uncertainty.
 3. Give a compact goal restatement, provisional source-grounded system picture, source-role map, and normally 1–3 candidate Root Questions. Candidates remain ephemeral.
 4. Persist only questions the learner explicitly accepts, using one `add_roots` command. If several are accepted without a selection, show them and stop at the selection boundary.
+5. Start only the Root Intent the learner explicitly chooses, using the normal transition with `{"type":"start","goalId":"gNNN","rootIntentId":"rqNNN",...}`. The runtime resolves its stored wording and atomically links the Episode.
 
-If the learner already supplies a concrete root question, use the question-first fast path. Do not force Orientation, create a Goal, or turn several roots into one Episode. Phase 3 owns starting an Episode from an accepted Root Intent.
+If the learner already supplies a concrete root question, use the question-first fast path. Do not force Orientation, create a Goal, or turn several roots into one Episode. After a Goal-backed Episode closes, pending roots may be shown but none is automatically selected.
 
 KnowledgeTargets stay selective: a closed child remains Journey-only by default. Suggest explicit `promote_target` only when that child became independently reusable knowledge; never promote every recursive gap. Target creation or editing must not change the focus stack.
 
