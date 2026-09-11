@@ -18,7 +18,7 @@ test("Learning: Learn owns the execution spine while branch mechanics stay discl
   const skill = read("learning-learn", "SKILL.md");
   const agent = read("learning-learn", "agents", "openai.yaml");
   assert.match(skill, /no broken arrow/i);
-  assert.match(skill, /PUSH[\s\S]*LEARN[\s\S]*VERIFY[\s\S]*POP[\s\S]*RESUME[\s\S]*IDLE/);
+  assert.match(skill, /RESOLVE[\s\S]*ANSWER \/ TEACH[\s\S]*DOCUMENT RECONCILE[\s\S]*PUSH[\s\S]*VERIFY[\s\S]*POP \/ RESUME[\s\S]*IDLE/);
   assert.match(skill, /exactly one root KnowledgeTarget/i);
   assert.match(skill, /closed child remains Journey-only by default/i);
   assert.match(skill, /runtime concepts, not learner commands/i);

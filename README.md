@@ -35,25 +35,29 @@ $learning-ask I have notes and a repository but I do not know where to start.
 
 For a fresh idle workspace, this routes the broad request to `Learning: Learn`, which inspects the supplied material, offers source-grounded starting questions, and waits for a choice before creating learning state.
 
-For a concrete question:
+Start a normal learning conversation:
+
+```text
+$learning-learn
+我想理解小沫机器人的 MCU 模块。
+```
+
+Ask questions naturally. `Learning: Learn` keeps the recursive main line coherent while durable understanding is continuously organized into a primary Topic/Module document and reusable Concept documents. It revises existing documents when possible and only writes after substantive learning—not after every conversational turn.
+
+You can also begin with a concrete question or a broad topic plus sources:
 
 ```text
 $learning-learn I want to understand why PWM can control motor speed.
-```
-
-For a broad topic plus sources:
-
-```text
 $learning-learn I need to learn the robot LLM module from these notes, repository, and transcripts. I do not yet know what questions to ask; I need to explain the concepts, source code, and complete chain in an interview.
 ```
 
-For a document-first learning flow:
+If you explicitly want an initial source-grounded map before discussion, ask for it naturally:
 
 ```text
 $learning-learn First build a complete source-grounded knowledge map in my learning workspace. Then teach and verify me against that document.
 ```
 
-This creates or updates the written artifact before teach-back questions. The document supports learning but does not count as mastery evidence or close the active question.
+This is an alternate starting sequence within the same continuous document lifecycle, not a separate mode to remember. Documents support learning but do not count as mastery evidence or close the active question.
 
 After a learning question is closed, Review and Practice are explicit phase boundaries rather than hidden automatic mode switches:
 
@@ -106,7 +110,7 @@ The installer places the five public skills under `~/.codex/skills`, installs th
 
 ## Desktop Learning Companion
 
-The native Tauri window shows Goal → Root → recursive Question relationships and refreshes from the canonical read-only JSON projection. Select a node to see why it is needed, its resume checkpoint, and its return destination. The Pin control keeps the window above Codex or other apps.
+The native Tauri window shows Goal → Root → recursive Question relationships and refreshes from the canonical read-only JSON projection. Select a node to see why it is needed, its related learning documents, resume checkpoint, and return destination. The Pin control keeps the window above Codex or other apps.
 
 `Learning: View` is only an adapter for opening/focusing/pinning this application. The viewer never becomes routing authority and never mutates Learning state.
 

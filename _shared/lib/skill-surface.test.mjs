@@ -13,7 +13,7 @@ const userInvoked = [
 ];
 const modelInvoked = [["learning-view", "Learning: View"]];
 const skills = [...userInvoked, ...modelInvoked];
-const internalPhaseNames = ["orient", "verify", "push", "pop", "resume", "overview", "note", "curate"];
+const internalPhaseNames = ["orient", "verify", "push", "pop", "resume", "overview", "note", "document", "documents", "curate"];
 
 function frontmatter(source) {
   const match = source.match(/^---\n([\s\S]*?)\n---/);

@@ -38,10 +38,8 @@ relations:
 
 ## Storage and ownership
 
-```text
-notes/<specific-question>.md
-```
+Store KnowledgeNotes under `notes/` with stable, descriptive paths. Each note keeps one coherent knowledge scope and uses a causal explanation.
 
-The note should keep one coherent concept scope and use a causal explanation. Several Journey questions may reference it, and one Journey question may reference several notes. Learning provenance lives in [Learning Journey](learning-journey.md), not in new note relations.
+Several Journey questions may reference one note, and one Journey question may reference several notes. Learning provenance lives in [Learning Journey](learning-journey.md), not in new note relations.
 
 Evidence sources may support note content, but learner verification, reviews, and expressed misconceptions live only in `.learning/evidence.yaml`. Note creation or revision never closes a question or routes learning.

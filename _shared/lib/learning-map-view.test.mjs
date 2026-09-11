@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -27,6 +27,9 @@ test("projects Goal roots and the complete historical Episode tree", () => {
   executeLearningTransition(root, { type: "push", question: "First child?", whyNeeded: "First gap", resumeCheckpoint: "Resume root", accepted: true, relationship: "blocking", createdAt: at(5) });
   executeLearningTransition(root, { type: "verify", result: "pass", independence: "unaided", demonstrated: ["connection"], gaps: [], createdAt: at(6) });
   executeLearningTransition(root, { type: "push", question: "Sibling child?", whyNeeded: "Second gap", resumeCheckpoint: "Resume dispatch", accepted: true, relationship: "blocking", createdAt: at(7) });
+  mkdirSync(path.join(root, "notes"), { recursive: true });
+  writeFileSync(path.join(root, "notes", "dispatch.md"), "---\ntitle: Dispatch\n---\nBody\n");
+  executeLearningTransition(root, { type: "set_note_refs", questionId: "q004", noteRefs: ["notes/dispatch.md"] });
 
   const before = snapshot(root), result = project(root);
   assert.deepEqual(result.roots.map((item) => item.status), ["completed", "active", "pending"]);
@@ -39,6 +42,8 @@ test("projects Goal roots and the complete historical Episode tree", () => {
   assert.equal(result.current.whyNeeded, "Second gap");
   assert.equal(result.current.resumeCheckpoint, "Resume dispatch");
   assert.equal(result.current.popDestinationQuestionId, "q002");
+  assert.deepEqual(result.current.noteRefs, ["notes/dispatch.md"]);
+  assert.deepEqual(result.graph.nodes.find((node) => node.questionId === "q004").noteRefs, ["notes/dispatch.md"]);
   assert.equal(result.graph.nodes.find((node) => node.questionId === "q003").status, "completed");
   assert.deepEqual(snapshot(root), before);
   assert.deepEqual(project(root), result);
@@ -70,6 +75,7 @@ test("direct question-first Episode works without Goal context", () => {
   assert.equal(result.current.questionId, "q001");
   assert.equal(result.graph.nodes[0].kind, "question");
   assert.deepEqual(result.availableGoals, []);
+  assert.deepEqual(result.current.noteRefs, []);
 });
 
 test("invalid cross-model links fail canonical inspection before projection", () => {

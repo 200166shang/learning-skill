@@ -51,7 +51,7 @@ function showDetails(node) {
   const copy = copyFor(language);
   const data = node.data();
   const parent = data.parentQuestionId || (latest?.current?.questionId === data.questionId ? latest.current.popDestinationQuestionId : null);
-  details.innerHTML = `<p class="eyebrow">${escapeHtml(copy.kinds[data.kind] || data.kind)} · ${escapeHtml(copy.statuses[data.status] || data.status)}</p><h2>${escapeHtml(data.title)}</h2>${value(copy.whyNeeded, data.whyNeeded)}${value(copy.afterPass, parent ? `POP → ${parent}` : data.kind === "question" ? copy.rootCloses : null)}${value(copy.resume, data.resumeCheckpoint)}${value(copy.episode, data.episodeId)}${value(copy.targets, data.targetIds?.join(", "))}${value(copy.objective, data.objective)}`;
+  details.innerHTML = `<p class="eyebrow">${escapeHtml(copy.kinds[data.kind] || data.kind)} · ${escapeHtml(copy.statuses[data.status] || data.status)}</p><h2>${escapeHtml(data.title)}</h2>${value(copy.whyNeeded, data.whyNeeded)}${value(copy.documents, data.noteRefs?.join("\n"))}${value(copy.afterPass, parent ? `POP → ${parent}` : data.kind === "question" ? copy.rootCloses : null)}${value(copy.resume, data.resumeCheckpoint)}${value(copy.episode, data.episodeId)}${value(copy.targets, data.targetIds?.join(", "))}${value(copy.objective, data.objective)}`;
 }
 
 function showGoalChoices(viewModel) {

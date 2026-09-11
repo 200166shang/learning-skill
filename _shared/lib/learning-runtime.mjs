@@ -1,8 +1,8 @@
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { emptyLearningEvidence, writeLearningEvidence } from "./learning-evidence.mjs";
-import { nextEpisodeId, nextJourneyQuestionId, startEpisode, writeLearningJourney } from "./learning-journey.mjs";
+import { nextEpisodeId, nextJourneyQuestionId, setJourneyQuestionNoteRefs, startEpisode, writeLearningJourney } from "./learning-journey.mjs";
 import { closeVerifiedQuestion, pushAcceptedBlockingQuestion, recordVerification } from "./learning-loop.mjs";
 import { idleLearningState, writeLearningState } from "./learning-state.mjs";
 import { createKnowledgeTarget, emptyLearningTargets, nextKnowledgeTargetId, updateKnowledgeTarget, writeLearningTargets } from "./learning-targets.mjs";
@@ -11,6 +11,28 @@ import { inspectLearningWorkspace, validateCanonicalSnapshot, writeWorkspaceMani
 
 const files = ["workspace.yaml", "journey.yaml", "evidence.yaml", "state.yaml", "targets.yaml", "goals.yaml"];
 const nextId = (items, prefix) => { const used = new Set(items.map((item) => item.id)); let number = Math.max(0, ...[...used].filter((id) => new RegExp(`^${prefix}\\d+$`).test(id)).map((id) => Number(id.slice(1)))); do number += 1; while (used.has(`${prefix}${String(number).padStart(3, "0")}`)); return `${prefix}${String(number).padStart(3, "0")}`; };
+
+function normalizeNoteRef(workspace, value, { mustExist = true } = {}) {
+  if (typeof value !== "string") throw new Error("note ref must be a string");
+  const ref = path.posix.normalize(value.trim().replaceAll("\\", "/"));
+  if (!ref.startsWith("notes/") || ref === "notes/" || !ref.endsWith(".md") || path.posix.isAbsolute(ref) || ref.includes("../")) {
+    throw new Error(`note ref must be a workspace-relative notes/*.md path: ${value}`);
+  }
+  const notesRoot = path.resolve(workspace, "notes");
+  const target = path.resolve(workspace, ref);
+  if (target !== notesRoot && !target.startsWith(`${notesRoot}${path.sep}`)) throw new Error(`note ref escapes notes/: ${value}`);
+  if (mustExist && (!existsSync(target) || !statSync(target).isFile())) throw new Error(`note ref does not exist: ${ref}`);
+  return ref;
+}
+
+function normalizeNoteRefs(workspace, refs) {
+  if (!Array.isArray(refs)) throw new Error("noteRefs must be an array");
+  return [...new Set(refs.map((ref) => normalizeNoteRef(workspace, ref)))];
+}
+
+function replaceRefs(refs, replacements) {
+  return [...new Set(refs.map((ref) => replacements.get(ref) ?? ref))];
+}
 
 function load(workspace, type) {
   const inspection = inspectLearningWorkspace(workspace);
@@ -62,7 +84,7 @@ export function executeLearningTransition(workspace, intent) {
     snapshot.state = { version: 2, mode: "active", activeEpisodeId: episodeId, focusStack: [questionId] };
     if (selectedRoot) snapshot.goals = linkRootIntent(snapshot.goals, intent.goalId, selectedRoot.id, episodeId);
   } else if (intent.type === "push") {
-    const result = pushAcceptedBlockingQuestion(snapshot.journey, snapshot.state, { id: nextJourneyQuestionId(snapshot.journey), episodeId: snapshot.state.activeEpisodeId, parentId: snapshot.state.focusStack.at(-1), question: intent.question, whyNeeded: intent.whyNeeded, resumeCheckpoint: intent.resumeCheckpoint, openedAt: intent.createdAt, noteRefs: intent.noteRefs || [] }, { accepted: intent.accepted, relationship: intent.relationship });
+    const result = pushAcceptedBlockingQuestion(snapshot.journey, snapshot.state, { id: nextJourneyQuestionId(snapshot.journey), episodeId: snapshot.state.activeEpisodeId, parentId: snapshot.state.focusStack.at(-1), question: intent.question, whyNeeded: intent.whyNeeded, resumeCheckpoint: intent.resumeCheckpoint, openedAt: intent.createdAt, noteRefs: normalizeNoteRefs(workspace, intent.noteRefs || []) }, { accepted: intent.accepted, relationship: intent.relationship });
     snapshot = { ...snapshot, ...result };
   } else if (intent.type === "verify") {
     if (snapshot.state.mode !== "active") throw new Error("verification requires an active Episode");
@@ -73,7 +95,7 @@ export function executeLearningTransition(workspace, intent) {
       if (isRoot && !intent.target) throw new Error("root closure requires KnowledgeTarget metadata");
       snapshot = { ...snapshot, ...closeVerifiedQuestion(snapshot.journey, snapshot.evidence, snapshot.state, verification) };
       if (isRoot) {
-        const target = { id: nextKnowledgeTargetId(snapshot.targets), title: intent.target.title, kind: intent.target.kind, origin: { episodeId: episode.id, questionIds: [questionId] }, noteRefs: intent.target.noteRefs || [], sourceRefs: intent.target.sourceRefs || [], createdAt: intent.createdAt };
+        const target = { id: nextKnowledgeTargetId(snapshot.targets), title: intent.target.title, kind: intent.target.kind, origin: { episodeId: episode.id, questionIds: [questionId] }, noteRefs: normalizeNoteRefs(workspace, intent.target.noteRefs || []), sourceRefs: intent.target.sourceRefs || [], createdAt: intent.createdAt };
         const created = createKnowledgeTarget(snapshot.targets, target, snapshot.journey, snapshot.evidence); snapshot.targets = created.model;
         snapshot.evidence = { ...snapshot.evidence, verifications: snapshot.evidence.verifications.map((item) => item.id === verification.id ? { ...item, targetId: created.target.id } : item) };
       }
@@ -81,9 +103,25 @@ export function executeLearningTransition(workspace, intent) {
   } else if (intent.type === "promote_target") {
     const question = snapshot.journey.questions.find((candidate) => candidate.id === intent.questionId);
     if (!question || question.status !== "closed") throw new Error("target promotion requires a closed question");
-    const target = { id: nextKnowledgeTargetId(snapshot.targets), title: intent.title, kind: intent.kind, origin: { episodeId: question.episodeId, questionIds: [question.id] }, noteRefs: intent.noteRefs || [], sourceRefs: intent.sourceRefs || [], createdAt: intent.createdAt || null };
+    const target = { id: nextKnowledgeTargetId(snapshot.targets), title: intent.title, kind: intent.kind, origin: { episodeId: question.episodeId, questionIds: [question.id] }, noteRefs: normalizeNoteRefs(workspace, intent.noteRefs || []), sourceRefs: intent.sourceRefs || [], createdAt: intent.createdAt || null };
     snapshot.targets = createKnowledgeTarget(snapshot.targets, target, snapshot.journey, snapshot.evidence).model;
-  } else if (intent.type === "update_target") snapshot.targets = updateKnowledgeTarget(snapshot.targets, intent.targetId, intent, snapshot.journey);
+  } else if (intent.type === "update_target") {
+    const changes = intent.noteRefs === undefined ? intent : { ...intent, noteRefs: normalizeNoteRefs(workspace, intent.noteRefs) };
+    snapshot.targets = updateKnowledgeTarget(snapshot.targets, intent.targetId, changes, snapshot.journey);
+  } else if (intent.type === "set_note_refs") {
+    snapshot.journey = setJourneyQuestionNoteRefs(snapshot.journey, intent.questionId, normalizeNoteRefs(workspace, intent.noteRefs));
+  } else if (intent.type === "replace_note_refs") {
+    if (!Array.isArray(intent.replacements) || intent.replacements.length === 0) throw new Error("replace_note_refs requires replacements");
+    const replacements = new Map();
+    for (const item of intent.replacements) {
+      const from = normalizeNoteRef(workspace, item?.from, { mustExist: false });
+      const to = normalizeNoteRef(workspace, item?.to);
+      if (replacements.has(from) && replacements.get(from) !== to) throw new Error(`conflicting note ref replacement: ${from}`);
+      replacements.set(from, to);
+    }
+    snapshot.journey = { ...snapshot.journey, questions: snapshot.journey.questions.map((question) => ({ ...question, noteRefs: replaceRefs(question.noteRefs, replacements) })) };
+    snapshot.targets = { ...snapshot.targets, targets: snapshot.targets.targets.map((target) => ({ ...target, noteRefs: replaceRefs(target.noteRefs, replacements) })) };
+  }
   else throw new Error(`unknown transition type: ${intent.type}`);
   persistAtomically(workspace, snapshot); return inspectLearningWorkspace(workspace);
 }

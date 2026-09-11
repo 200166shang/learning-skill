@@ -12,6 +12,8 @@ All state changes go through the appropriate deterministic runtime command; neve
 
 Goal, Root Intent, and Target operations must not corrupt or implicitly replace the active focus stack. Target promotion remains explicit.
 
+Question note refs are set explicitly on an existing Question. Structural document merge/rename/replacement uses an explicit old→new mapping that atomically rewrites affected Journey Question and KnowledgeTarget refs without changing State, Evidence, or Question status. Referenced notes must resolve inside the workspace `notes/` tree before they are attached or used for root closure.
+
 ## Read-only recovery and inspection
 
 Use the read-only projection after context loss, when the learner asks where they are or why the current gap matters, or when recursive depth is hard to follow. A read-only projection reports persisted state but is not routing authority and cannot authorize a mutation.
