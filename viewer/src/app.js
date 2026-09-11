@@ -31,14 +31,14 @@ const graph = cytoscape({
   maxZoom: 1.5,
   wheelSensitivity: 0.22,
   style: [
-    { selector: "node", style: { "background-color": "#e8e5dd", color: "#282923", label: "data(label)", width: "data(nodeWidth)", height: "data(nodeHeight)", shape: "round-rectangle", "font-size": 12, "font-family": "Avenir Next, PingFang SC, sans-serif", "font-weight": 600, "line-height": 1.35, "text-wrap": "wrap", "text-max-width": "data(labelMaxWidth)", "text-valign": "center", "text-halign": "center", "border-width": 1, "border-color": "#c9c5ba" } },
-    { selector: "node[kind = 'goal']", style: { "background-color": "#26352d", color: "#fbfaf6", "border-color": "#26352d", "font-weight": 700 } },
-    { selector: "node[kind = 'root']", style: { "background-color": "#dce7de", "border-color": "#8aa18d" } },
+    { selector: "node", style: { "background-color": "#f3eee4", color: "#302b26", label: "data(label)", width: "data(nodeWidth)", height: "data(nodeHeight)", shape: "round-rectangle", "font-size": 12, "font-family": "Avenir Next, PingFang SC, sans-serif", "font-weight": 600, "line-height": 1.45, "text-wrap": "wrap", "text-max-width": "data(labelMaxWidth)", "text-valign": "center", "text-halign": "center", "border-width": 1.5, "border-color": "#c9bda9" } },
+    { selector: "node[kind = 'goal']", style: { "background-color": "#30463b", color: "#fffaf2", "border-color": "#30463b", "font-weight": 700 } },
+    { selector: "node[kind = 'root']", style: { "background-color": "#dfeae2", "border-color": "#8ca995" } },
     { selector: "node[status = 'completed']", style: { opacity: 0.52, "border-style": "dashed" } },
-    { selector: "node[status = 'active-path']", style: { "background-color": "#f1dfb5", "border-color": "#c29442", "border-width": 2 } },
-    { selector: "node[status = 'current']", style: { "background-color": "#e56745", color: "#24150f", "border-color": "#9f3822", "border-width": 3, "font-weight": 700 } },
-    { selector: "edge", style: { width: 1.5, "line-color": "#aaa69b", "target-arrow-color": "#aaa69b", "target-arrow-shape": "triangle", "curve-style": "bezier" } },
-    { selector: ":selected", style: { "overlay-color": "#e56745", "overlay-opacity": 0.12, "overlay-padding": 7 } },
+    { selector: "node[status = 'active-path']", style: { "background-color": "#f2dfb8", "border-color": "#c29442", "border-width": 2 } },
+    { selector: "node[status = 'current']", style: { "background-color": "#d96a4e", color: "#2a1712", "border-color": "#a94a35", "border-width": 2.5, "font-weight": 700 } },
+    { selector: "edge", style: { width: 1.5, "line-color": "#9b968b", "target-arrow-color": "#9b968b", "target-arrow-shape": "triangle", "curve-style": "bezier" } },
+    { selector: ":selected", style: { "overlay-color": "#c85b43", "overlay-opacity": 0.14, "overlay-padding": 8 } },
   ],
 });
 

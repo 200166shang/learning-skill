@@ -15,11 +15,11 @@ test("ViewModel JSON adapts directly to Cytoscape without persisted schema knowl
 });
 
 test("node dimensions grow with wrapped title lines and stay bounded", () => {
-  assert.deepEqual(nodeDimensions("短标题", "question"), { nodeWidth: 196, nodeHeight: 54 });
+  assert.deepEqual(nodeDimensions("短标题", "question"), { nodeWidth: 196, nodeHeight: 62 });
   const long = nodeDimensions("如何从概念、系统架构和源码调用链完整理解小沫机器人的大模型模块，并能在面试中流畅解释其设计、数据流、关键实现与取舍？", "question");
   assert.equal(long.nodeWidth, 220);
-  assert.equal(long.nodeHeight, 92);
-  assert.equal(nodeDimensions("x".repeat(500), "question").nodeHeight, 92);
+  assert.equal(long.nodeHeight, 104);
+  assert.equal(nodeDimensions("x".repeat(500), "question").nodeHeight, 104);
 });
 
 test("long unspaced titles receive explicit bounded line breaks", () => {
@@ -39,7 +39,7 @@ test("graph styles keep labels centered, wrapped, high-contrast, and zoom-bounde
   assert.match(source, /"text-wrap":\s*"wrap"/);
   assert.match(source, /width:\s*"data\(nodeWidth\)"/);
   assert.match(source, /height:\s*"data\(nodeHeight\)"/);
-  assert.match(source, /node\[status = 'current'\][^\n]*color:\s*"#24150f"/);
+  assert.match(source, /node\[status = 'current'\][^\n]*color:\s*"#2a1712"/);
 });
 
 test("identical polling snapshots do not duplicate or redraw elements", async () => {

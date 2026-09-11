@@ -3,7 +3,7 @@ export function nodeDimensions(title, kind) {
   const nodeWidth = kind === "goal" ? 228 : length > 18 ? 220 : 196;
   const charactersPerLine = nodeWidth >= 220 ? 18 : 16;
   const lines = Math.max(1, Math.min(4, Math.ceil(length / charactersPerLine)));
-  return { nodeWidth, nodeHeight: Math.max(54, 20 + lines * 18) };
+  return { nodeWidth, nodeHeight: Math.max(62, 24 + lines * 20) };
 }
 
 export function wrapLabel(title, charactersPerLine, maxLines = 4) {
@@ -23,7 +23,7 @@ export function toCytoscapeElements(viewModel) {
   const nodes = viewModel.graph.nodes.map((node) => {
     const dimensions = nodeDimensions(node.title, node.kind);
     const charactersPerLine = dimensions.nodeWidth >= 220 ? 18 : 16;
-    return { data: { ...node, ...dimensions, label: wrapLabel(node.title, charactersPerLine), labelMaxWidth: dimensions.nodeWidth - 28 } };
+    return { data: { ...node, ...dimensions, label: wrapLabel(node.title, charactersPerLine), labelMaxWidth: dimensions.nodeWidth - 36 } };
   });
   const edges = viewModel.graph.edges.map((edge, index) => ({ data: { ...edge, id: `${edge.kind}:${edge.source}:${edge.target}:${index}` } }));
   return [...nodes, ...edges];

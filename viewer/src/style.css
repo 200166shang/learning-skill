@@ -1,8 +1,8 @@
-:root { color: #292a25; background: #f5f2ea; font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", sans-serif; font-synthesis: none; }
+:root { color: #292a25; background: #f1eee6; font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", sans-serif; font-synthesis: none; }
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 360px; min-height: 520px; background: radial-gradient(circle at 12% 0%, #fffdf7 0, #f5f2ea 42%, #ece8de 100%); }
+body { margin: 0; min-width: 360px; min-height: 520px; background: radial-gradient(circle at 8% -8%, #fffdf7 0, rgba(255,253,247,.82) 28%, transparent 52%), linear-gradient(145deg, #f3f0e8 0%, #ebece4 56%, #e4ebe4 100%); }
 #app { height: 100vh; display: grid; grid-template-rows: auto auto auto minmax(220px, 1fr) minmax(170px, auto); }
-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 22px 22px 18px; border-bottom: 1px solid rgba(55, 59, 51, .13); }
+header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 22px 22px 18px; border-bottom: 1px solid rgba(55, 59, 51, .13); background: rgba(255, 253, 247, .3); }
 h1, h2, p { margin: 0; }
 h1 { margin-top: 4px; font-family: ui-serif, Georgia, serif; font-size: 23px; line-height: 1.12; letter-spacing: -.02em; }
 h2 { margin: 5px 0 12px; font-family: ui-serif, Georgia, serif; font-size: 19px; line-height: 1.25; }
@@ -18,7 +18,7 @@ h2 { margin: 5px 0 12px; font-family: ui-serif, Georgia, serif; font-size: 19px;
 .goal-list { padding: 14px 18px 0; }
 .goal-list button { width: 100%; display: flex; flex-direction: column; gap: 3px; margin-top: 8px; padding: 11px 12px; text-align: left; border: 1px solid #d2cec3; border-radius: 9px; background: rgba(255,255,255,.56); cursor: pointer; }
 .goal-list button span { color: #77766e; font-size: 11px; }
-.details { overflow: auto; padding: 18px 22px 22px; border-top: 1px solid rgba(55, 59, 51, .13); background: rgba(255, 253, 247, .72); }
+.details { overflow: auto; padding: 22px 24px 26px; border-top: 1px solid rgba(55, 59, 51, .13); background: rgba(255, 253, 247, .82); box-shadow: 0 -10px 24px rgba(69, 76, 66, .04); }
 .fact { display: grid; grid-template-columns: 82px 1fr; gap: 9px; padding: 6px 0; border-top: 1px solid rgba(55, 59, 51, .08); font-size: 12px; line-height: 1.4; }
 .fact span { color: #8a8173; }
 .fact p { color: #3d3d37; }
