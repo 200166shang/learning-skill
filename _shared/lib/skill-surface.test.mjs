@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -13,6 +13,13 @@ const userInvoked = [
 ];
 const modelInvoked = [["learning-view", "Learning: View"]];
 const skills = [...userInvoked, ...modelInvoked];
+const internalPhaseNames = ["orient", "verify", "push", "pop", "resume", "overview", "note", "curate"];
+
+function frontmatter(source) {
+  const match = source.match(/^---\n([\s\S]*?)\n---/);
+  assert.ok(match, "SKILL.md should have frontmatter");
+  return match[1];
+}
 
 test("public Learning Suite skill surface is namespaced and discoverable", () => {
   for (const [name, displayName] of skills) {
@@ -28,7 +35,9 @@ test("public Learning Suite skill surface is namespaced and discoverable", () =>
   }
 
   for (const [name] of userInvoked) {
+    const skill = readFileSync(resolve(repo, name, "SKILL.md"), "utf8");
     const agent = readFileSync(resolve(repo, name, "agents/openai.yaml"), "utf8");
+    assert.match(frontmatter(skill), /^disable-model-invocation: true$/m, `${name} should be user-invoked across harnesses`);
     assert.equal(agent.includes("allow_implicit_invocation: false"), true, `${name} should remain user-invoked in Codex`);
   }
 
@@ -41,6 +50,37 @@ test("public Learning Suite skill surface is namespaced and discoverable", () =>
   for (const legacy of ["learning", "review", "practice"]) {
     assert.equal(existsSync(resolve(repo, legacy)), false, `legacy ${legacy}/ skill directory should be removed`);
   }
+});
+
+test("public surface stays exactly five skills and keeps runtime phases internal", () => {
+  const publicSkillDirectories = readdirSync(repo, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && existsSync(resolve(repo, entry.name, "SKILL.md")))
+    .map((entry) => entry.name)
+    .sort();
+
+  assert.deepEqual(publicSkillDirectories, skills.map(([name]) => name).sort());
+  for (const phase of internalPhaseNames) {
+    assert.equal(
+      publicSkillDirectories.some((name) => name === phase || name === `learning-${phase}`),
+      false,
+      `${phase} should remain an internal Learning: Learn phase`,
+    );
+  }
+});
+
+test("public skills retain distinct ownership contracts", () => {
+  const contracts = Object.fromEntries(
+    skills.map(([name]) => [name, readFileSync(resolve(repo, name, "SKILL.md"), "utf8")]),
+  );
+
+  assert.match(contracts["learning-ask"], /read-only router/i);
+  assert.match(contracts["learning-learn"], /Every closed question requires persisted passing Evidence/);
+  assert.match(contracts["learning-review"], /retrieval-first/i);
+  assert.match(contracts["learning-review"], /Scheduling belongs only to ReviewItems/);
+  assert.match(contracts["learning-practice"], /Practice applies selected knowledge in artifacts/);
+  assert.match(contracts["learning-practice"], /observable results/i);
+  assert.match(contracts["learning-view"], /thin UI adapter/i);
+  assert.match(contracts["learning-view"], /must not mutate `\.learning` domain state/i);
 });
 
 test("installer exposes the suite and keeps the desktop viewer internal", () => {

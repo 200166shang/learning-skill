@@ -1,6 +1,7 @@
 ---
 name: learning-review
 description: "Retrieve, explain, or transfer previously learned KnowledgeTargets and record review outcomes."
+disable-model-invocation: true
 ---
 
 # Learning: Review
