@@ -1,6 +1,4 @@
 interface:
   display_name: "Learning: View"
   short_description: "Open or control the native Learning Companion"
-  default_prompt: "Use $learning-view to open or focus my native Learning Companion for the current workspace; do not replace it with Mermaid or a text diagram."
-policy:
-  allow_implicit_invocation: false
+  default_prompt: "Use $learning-view to open or focus my native Learning Companion for the current workspace; keep this as a native-window operation."

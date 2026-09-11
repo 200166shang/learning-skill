@@ -1,18 +1,27 @@
 # Learning Skill Suite
 
-A small, evidence-backed personal learning runtime for Codex with a discoverable user-facing skill surface.
+A small, evidence-backed personal learning runtime for Codex with a discoverable skill surface.
 
 ## Public skills
+
+### User-invoked
+
+These are deliberate learning phase choices. The learner enters them explicitly; `Learning: Ask` is the one router to remember when unsure.
 
 ```text
 $learning-ask       I do not know which learning mode to use or what to do next.
 $learning-learn     I want to understand a question or broad topic.
 $learning-review    I want to retrieve and verify something I learned before.
 $learning-practice  I want to apply learned knowledge through coding/debugging/design.
-$learning-view      I want to open or control the native desktop learning map.
 ```
 
-The public skills share one namespace so they are easy to find in the skill index. Their display names are `Learning: Ask`, `Learning: Learn`, `Learning: Review`, `Learning: Practice`, and `Learning: View`.
+### Model-invoked (also directly user-reachable)
+
+```text
+$learning-view      Open/focus/pin the native desktop Learning Companion.
+```
+
+`Learning: View` may be reached automatically from natural requests such as “open the learning window” because it is a read-only UI action rather than a learning phase decision.
 
 The learner does **not** operate internal state-machine phases directly. Orientation, recursive prerequisite descent, verification, return-to-parent, persistence, and runtime transitions stay inside `Learning: Learn`.
 
@@ -43,11 +52,13 @@ $learning-review Test whether I still understand the MCU/Linux control boundary.
 $learning-practice Give me a debugging task that applies this KnowledgeTarget.
 ```
 
-To open the native learning map:
+For the native learning map, natural language is enough when model invocation is available:
 
 ```text
-$learning-view Open the learning window for this workspace and keep it on top.
+Open the learning window for this workspace and keep it on top.
 ```
+
+Direct `$learning-view` invocation remains available too.
 
 ## Learning runtime
 
@@ -81,7 +92,7 @@ Those terms are implementation vocabulary for the agent/runtime, not commands th
 ./install.sh
 ```
 
-The installer places the five public skills under `~/.codex/skills`, installs the shared deterministic runtime, and copies the optional Desktop Learning Companion to `~/.codex/skills/_learning-viewer`. Viewer dependencies remain lazy and can be installed on first use.
+The installer places the five public skills under `~/.codex/skills`, installs the shared deterministic runtime, and copies the optional Desktop Learning Companion to `~/.codex/skills/_learning-viewer`. Viewer dependencies remain lazy and are handled by the `Learning: View` launch adapter on first launch.
 
 ## Desktop Learning Companion
 
