@@ -6,6 +6,10 @@ A small, evidence-backed personal learning runtime for Codex, exposed as `$learn
 learner question → Episode → PUSH / LEARN / VERIFY / POP / RESUME
                                   ↓
                          root teach-back → CLOSED → IDLE
+
+topic + goal + sources → ORIENT → candidate roots → learner accepts and chooses
+                                                        ↓
+                                                     Episode
 ```
 
 ## Install or update
@@ -23,6 +27,7 @@ learner question → Episode → PUSH / LEARN / VERIFY / POP / RESUME
   evidence.yaml    verification and misconception evidence
   state.yaml       active Episode and focus ID stack, or IDLE
   targets.yaml     stable reusable KnowledgeTarget identities
+  goals.yaml       optional LearningGoals, source refs, and accepted Root Intents
 notes/*.md         reusable knowledge
 OVERVIEW.md        optional whole-picture projection
 ```
@@ -39,9 +44,15 @@ V7 intentionally has no Web observer, generated learning map, database, automati
 node _shared/scripts/upgrade-learning-workspace.mjs <workspace>
 node _shared/scripts/learning-status.mjs <workspace>
 node _shared/scripts/learning-transition.mjs <workspace> < intent.json
+node _shared/scripts/learning-goal.mjs <workspace> < intent.json
 node _shared/scripts/learning-view.mjs --workspace <workspace> --format text|json|mermaid
+node _shared/scripts/learning-view.mjs --workspace <workspace> --goals|--goal g001 --format text|json
 node _shared/scripts/review.mjs <workspace> < intent.json
 node _shared/scripts/review.mjs <workspace> due <ISO-now> [target-id]
 node _shared/scripts/practice.mjs <workspace> < intent.json
 npm test --prefix _shared
 ```
+
+Question-first stays direct: `$learning I want to understand why PWM can control motor speed.`
+
+Topic-first also works: `$learning I need to learn the robot LLM module from these notes, repository, and transcripts. I don't yet know what questions to ask; I need to explain the concepts, source code, and complete chain in an interview.` The skill selectively orients to the sources, proposes a few roots, persists only accepted roots, and starts only the root the learner chooses.
