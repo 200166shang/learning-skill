@@ -74,6 +74,7 @@ export function projectLearningMap({ goals, journey, evidence, state, targets },
       parentQuestionId: question.parentId,
       whyNeeded: question.whyNeeded,
       resumeCheckpoint: question.resumeCheckpoint,
+      noteRefs: question.noteRefs,
       targetIds: targetIdsForQuestion(targets, question.id),
     });
     if (question.parentId) edges.push({ source: `question:${question.parentId}`, target: `question:${question.id}`, kind: "blocking-child" });
@@ -101,6 +102,7 @@ export function projectLearningMap({ goals, journey, evidence, state, targets },
       whyNeeded: currentQuestion.whyNeeded,
       popDestinationQuestionId: state.focusStack.at(-2) || null,
       resumeCheckpoint: currentQuestion.resumeCheckpoint,
+      noteRefs: currentQuestion.noteRefs,
     } : null,
   };
 }

@@ -2,10 +2,6 @@
 
 Follow the canonical [KnowledgeNote contract](../../_shared/knowledge-note.md).
 
-Before writing, search `notes/**/*.md` by concept, mechanism, tags, and vocabulary. Choose:
+The [document lifecycle](documents.md) owns when and where to write. This reference owns KnowledgeNote format and persistence invariants.
 
-- **Reuse** an existing note and attach its path to the question.
-- **Revise** the same stable concept in place.
-- **Create** a note only when the knowledge has an independent reusable scope.
-
-Questions and notes are many-to-many. `note_refs: []` is valid. Notes describe knowledge; they never close questions or Episodes. Learning history belongs in Journey and demonstrated understanding in Evidence.
+Questions and notes are many-to-many. `note_refs: []` is valid. After writing the document, maintain Question and KnowledgeTarget refs through deterministic runtime operations rather than direct YAML edits. Notes describe knowledge; they never close questions or Episodes. Learning history belongs in Journey and demonstrated understanding in Evidence.

@@ -4,14 +4,23 @@ import test from "node:test";
 import { copyFor, otherLanguage, preferredLanguage } from "../src/i18n.js";
 import { createRefreshController, nodeDimensions, toCytoscapeElements, togglePin, wrapLabel } from "../src/viewer-model.js";
 
-const map = (status = "current") => ({ graph: { nodes: [{ id: "question:q001", kind: "question", title: "Why?", status }], edges: [{ source: "root:rq001", target: "question:q001", kind: "episode-root" }] } });
+const map = (status = "current", noteRefs = []) => ({ graph: { nodes: [{ id: "question:q001", kind: "question", title: "Why?", status, noteRefs }], edges: [{ source: "root:rq001", target: "question:q001", kind: "episode-root" }] } });
 
 test("ViewModel JSON adapts directly to Cytoscape without persisted schema knowledge", () => {
   const elements = toCytoscapeElements(JSON.parse(JSON.stringify(map())));
   assert.equal(elements[0].data.label, "Why?");
+  assert.deepEqual(elements[0].data.noteRefs, []);
   assert.equal(elements[1].data.source, "root:rq001");
   const source = readFileSync(new URL("../src/viewer-model.js", import.meta.url), "utf8");
   assert.doesNotMatch(source, /\.learning|yaml|journey|state\.yaml/i);
+});
+
+test("question nodes preserve related document refs without requiring them", () => {
+  assert.deepEqual(toCytoscapeElements(map("current", ["notes/mcu.md"]))[0].data.noteRefs, ["notes/mcu.md"]);
+  assert.deepEqual(toCytoscapeElements(map())[0].data.noteRefs, []);
+  const source = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+  assert.match(source, /copy\.documents/);
+  assert.match(source, /noteRefs/);
 });
 
 test("node dimensions grow with wrapped title lines and stay bounded", () => {

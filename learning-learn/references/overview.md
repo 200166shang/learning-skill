@@ -1,6 +1,6 @@
 # Overview
 
-`OVERVIEW.md` organizes already-supported notes into a coherent whole picture. Refresh it when the learner requests an overview/update or after closing a root Episode whose learning materially changes the whole picture—not after every child.
+`OVERVIEW.md` is a map/index over supported Topic/Module and Concept documents, not the default detailed article. Refresh it when the learner requests an overview/update or when the document map materially changes—not after every conversational turn or child.
 
 Connect mechanisms and link supporting notes. It may describe scope boundaries, extensions, and out-of-scope areas. Do not call those “unresolved,” “broken arrows,” or “next gaps” after an Episode closes.
 

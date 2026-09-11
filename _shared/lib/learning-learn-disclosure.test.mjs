@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
@@ -8,16 +8,24 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..")
 const main = readFileSync(path.join(root, "learning-learn", "SKILL.md"), "utf8");
 const orient = readFileSync(path.join(root, "learning-learn", "references", "orient.md"), "utf8");
 const runtime = readFileSync(path.join(root, "learning-learn", "references", "runtime.md"), "utf8");
-const documentFirst = readFileSync(path.join(root, "learning-learn", "references", "document-first.md"), "utf8");
+const documentsPath = path.join(root, "learning-learn", "references", "documents.md");
+const documents = existsSync(documentsPath) ? readFileSync(documentsPath, "utf8") : "";
 
 test("Learning: Learn keeps the invariant and completion gates in the primary skill", () => {
   assert.match(main, /no broken arrow/i);
-  assert.match(main, /PUSH[\s\S]*LEARN[\s\S]*VERIFY[\s\S]*POP[\s\S]*RESUME[\s\S]*IDLE/);
+  assert.match(main, /RESOLVE[\s\S]*ANSWER \/ TEACH[\s\S]*DOCUMENT RECONCILE[\s\S]*PUSH[\s\S]*VERIFY[\s\S]*POP \/ RESUME[\s\S]*IDLE/);
   assert.match(main, /PUSH[^\n]*only after the learner asks or accepts/i);
   assert.match(main, /exact `resume_checkpoint`/i);
   assert.match(main, /Every closed question requires persisted passing Evidence/i);
   assert.match(main, /child[\s\S]*passing Evidence[\s\S]*saved checkpoint/i);
   assert.match(main, /root pass[\s\S]*exactly one root KnowledgeTarget[\s\S]*State[^\n]*IDLE/i);
+});
+
+test("normal conversation reconciles durable documents before closure", () => {
+  assert.match(main, /ANSWER|TEACH/);
+  assert.match(main, /DOCUMENT RECONCILE/);
+  assert.match(main, /Verification is a closure gate, not the default conversational cadence/i);
+  assert.match(main, /FINAL DOCUMENT RECONCILE[\s\S]*root pass/i);
 });
 
 test("topic orientation is disclosed only behind its branch pointer", () => {
@@ -46,16 +54,18 @@ test("runtime implementation mechanics have one disclosed home", () => {
 });
 
 test("main skill points precisely to conditional references", () => {
-  for (const pointer of ["document-first workflow", "verification", "persistence", "teaching tactics", "overview", "curate"]) {
+  for (const pointer of ["document lifecycle", "verification", "persistence", "teaching tactics", "overview", "curate"]) {
     assert.match(main, new RegExp(`read \\[${pointer}\\]`, "i"));
   }
 });
 
-test("document-first learning produces a source-grounded artifact before questioning without claiming mastery", () => {
-  assert.match(main, /Document-first request:[^\n]*read \[document-first workflow\]/i);
-  assert.match(documentFirst, /complete, navigable knowledge document/i);
-  assert.match(documentFirst, /module boundaries[\s\S]*end-to-end[\s\S]*key classes[\s\S]*data formats[\s\S]*concurrency[\s\S]*tradeoffs[\s\S]*interview/i);
-  assert.match(documentFirst, /write or update the document before beginning teach-back questions/i);
-  assert.match(documentFirst, /does not prove mastery/i);
-  assert.match(documentFirst, /active question/i);
+test("one document lifecycle owns continuous reconciliation and optional write-first initialization", () => {
+  assert.equal(existsSync(path.join(root, "learning-learn", "references", "document-first.md")), false);
+  assert.match(documents, /Default flow/i);
+  assert.match(documents, /Explicit write-first flow/i);
+  assert.match(documents, /Topic\/Module document/i);
+  assert.match(documents, /Concept document/i);
+  assert.match(documents, /many-to-many/i);
+  assert.match(documents, /substantive learning/i);
+  assert.doesNotMatch(main, /document-first/i);
 });
