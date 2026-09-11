@@ -1,6 +1,6 @@
 ---
 name: learning-ask
-description: "Use when the learner is unsure how to use the Learning Suite, wants to know current learning status, or needs help choosing between learning, review, practice, and the desktop view."
+description: "Route the learner to the right Learning Suite skill and explain current status or next step without changing learning state."
 ---
 
 # Learning: Ask
@@ -14,6 +14,7 @@ Be the read-only router for the Learning Suite. The learner should not need to r
 - Recommend **one primary next action** when the evidence is clear, with concise alternatives when useful.
 - Name the public skill to use next: `$learning-learn`, `$learning-review`, `$learning-practice`, or `$learning-view`.
 - Explain the recommendation in terms of the learner's intent: understand something new, retrieve retained knowledge, apply knowledge, or see the desktop learning map.
+- Before asserting detailed prerequisites, side effects, or exact behavior of another public skill beyond this routing summary, read that skill's current `SKILL.md`; do not infer its contract from memory.
 
 ## Read-only boundary
 

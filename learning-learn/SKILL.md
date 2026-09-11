@@ -1,6 +1,6 @@
 ---
 name: learning-learn
-description: "Use when a learner wants to understand one concrete question or a broad topic through evidence-backed recursive learning, including topic orientation, active-session resume, gap repair, verification, and closure."
+description: "Understand one learner-chosen question or broad topic through recursive, evidence-backed learning and verification."
 ---
 
 # Learning: Learn
@@ -70,7 +70,7 @@ Use `node ~/.codex/skills/_shared/scripts/learning-view.mjs --workspace <workspa
 - Read [verification](references/verify.md) only when about to close a child or root, or record a verification attempt that may affect closure.
 - Read [persistence](references/persistence.md) only when the turn will create, reuse, or revise a KnowledgeNote, or reconcile Journey `note_refs`.
 - Read [teaching tactics](references/teach.md) only when concept gates, hint independence, repeated explanation failure, or a modality change would help.
-- For review of an existing KnowledgeTarget, use the independent `$learning-review` skill; Learning: Learn does not own ReviewItem or ReviewAttempt state.
-- For application through coding, debugging, or design, use the independent `$learning-practice` skill; Learning: Learn does not own PracticeTask or PracticeAttempt state.
+- If the learner wants retained-knowledge review, tell them to invoke `Learning: Review` (`/learning-review`); do not perform ReviewItem or ReviewAttempt work inside this skill.
+- If the learner wants application through coding, debugging, or design, tell them to invoke `Learning: Practice` (`/learning-practice`); do not perform PracticeTask or PracticeAttempt work inside this skill.
 - For a requested whole-picture recap or OVERVIEW refresh, read [overview](references/overview.md).
 - For approved note maintenance, read [curate](references/curate.md).

@@ -1,6 +1,6 @@
 ---
 name: learning-view
-description: "Use when the learner wants to open, focus, inspect, or pin the native Desktop Learning Companion window or asks to see the current learning map in the desktop app."
+description: "Open, focus, inspect, or pin the native Desktop Learning Companion for the current learning workspace."
 ---
 
 # Learning: View

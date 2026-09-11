@@ -1,6 +1,6 @@
 ---
 name: learning-practice
-description: "Use when a learner wants to apply an existing KnowledgeTarget through a coding, debugging, or design task and record observable results."
+description: "Apply an existing KnowledgeTarget through coding, debugging, or design and record observable results."
 ---
 
 # Learning: Practice

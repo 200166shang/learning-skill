@@ -1,6 +1,6 @@
 ---
 name: learning-review
-description: "Use when a learner wants to retrieve, explain, or transfer a previously learned KnowledgeTarget, including manual review and recording review outcomes."
+description: "Retrieve, explain, or transfer previously learned KnowledgeTargets and record review outcomes."
 ---
 
 # Learning: Review
