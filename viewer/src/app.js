@@ -1,6 +1,7 @@
 import cytoscape from "cytoscape";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { copyFor, otherLanguage, preferredLanguage } from "./i18n.js";
 import { createRefreshController, toCytoscapeElements, togglePin } from "./viewer-model.js";
 import "./style.css";
 
@@ -9,8 +10,11 @@ const details = document.querySelector("#details");
 const notice = document.querySelector("#notice");
 const goalList = document.querySelector("#goal-list");
 const pin = document.querySelector("#pin");
+const languageButton = document.querySelector("#language");
 let selectedGoalId = null;
 let latest = null;
+let latestError = null;
+let language = preferredLanguage(navigator.language, localStorage.getItem("learning-companion-language"));
 
 const escapeHtml = (value) => String(value ?? "")
   .replaceAll("&", "&amp;")
@@ -25,7 +29,7 @@ const graph = cytoscape({
   layout: { name: "breadthfirst", directed: true, padding: 28, spacingFactor: 1.15 },
   wheelSensitivity: 0.22,
   style: [
-    { selector: "node", style: { "background-color": "#e8e5dd", color: "#282923", label: "data(label)", width: 118, height: 42, shape: "round-rectangle", "font-size": 11, "font-family": "Inter, system-ui, sans-serif", "text-wrap": "ellipsis", "text-max-width": 98, "border-width": 1, "border-color": "#c9c5ba" } },
+    { selector: "node", style: { "background-color": "#e8e5dd", color: "#282923", label: "data(label)", width: 118, height: 42, shape: "round-rectangle", "font-size": 11, "font-family": "Avenir Next, PingFang SC, sans-serif", "text-wrap": "ellipsis", "text-max-width": 98, "border-width": 1, "border-color": "#c9c5ba" } },
     { selector: "node[kind = 'goal']", style: { "background-color": "#26352d", color: "#fbfaf6", width: 132, "border-color": "#26352d", "font-weight": 650 } },
     { selector: "node[kind = 'root']", style: { "background-color": "#dce7de", "border-color": "#8aa18d" } },
     { selector: "node[status = 'completed']", style: { opacity: 0.52, "border-style": "dashed" } },
@@ -42,23 +46,27 @@ function value(label, content) {
 }
 
 function showDetails(node) {
+  const copy = copyFor(language);
   const data = node.data();
   const parent = data.parentQuestionId || (latest?.current?.questionId === data.questionId ? latest.current.popDestinationQuestionId : null);
-  details.innerHTML = `<p class="eyebrow">${escapeHtml(data.kind.toUpperCase())} · ${escapeHtml(data.status)}</p><h2>${escapeHtml(data.title)}</h2>${value("Why needed", data.whyNeeded)}${value("After pass", parent ? `POP → ${parent}` : data.kind === "question" ? "Root closes → IDLE" : null)}${value("Resume", data.resumeCheckpoint)}${value("Episode", data.episodeId)}${value("Targets", data.targetIds?.join(", "))}${value("Objective", data.objective)}`;
+  details.innerHTML = `<p class="eyebrow">${escapeHtml(copy.kinds[data.kind] || data.kind)} · ${escapeHtml(copy.statuses[data.status] || data.status)}</p><h2>${escapeHtml(data.title)}</h2>${value(copy.whyNeeded, data.whyNeeded)}${value(copy.afterPass, parent ? `POP → ${parent}` : data.kind === "question" ? copy.rootCloses : null)}${value(copy.resume, data.resumeCheckpoint)}${value(copy.episode, data.episodeId)}${value(copy.targets, data.targetIds?.join(", "))}${value(copy.objective, data.objective)}`;
 }
 
 function showGoalChoices(viewModel) {
+  const copy = copyFor(language);
   const shouldShow = !viewModel.goal && !viewModel.current && viewModel.availableGoals.length;
   goalList.hidden = !shouldShow;
   if (!shouldShow) return;
-  goalList.innerHTML = `<p class="eyebrow">CHOOSE A GOAL TO VIEW</p>${viewModel.availableGoals.map((goal) => `<button type="button" data-goal="${escapeHtml(goal.id)}"><strong>${escapeHtml(goal.title)}</strong><span>${goal.counts.completed} complete · ${goal.counts.active} active · ${goal.counts.pending} pending</span></button>`).join("")}`;
+  goalList.innerHTML = `<p class="eyebrow">${copy.chooseGoal}</p>${viewModel.availableGoals.map((goal) => `<button type="button" data-goal="${escapeHtml(goal.id)}"><strong>${escapeHtml(goal.title)}</strong><span>${goal.counts.completed} ${copy.complete} · ${goal.counts.active} ${copy.active} · ${goal.counts.pending} ${copy.pending}</span></button>`).join("")}`;
 }
 
 function render(viewModel) {
+  const copy = copyFor(language);
   latest = viewModel;
+  latestError = null;
   notice.hidden = true;
-  document.querySelector("#goal-title").textContent = viewModel.goal?.title || (viewModel.current ? "Direct learning episode" : "Learning Companion");
-  document.querySelector("#goal-objective").textContent = viewModel.goal?.objective || (viewModel.current ? "Question-first learning" : "Select a Goal to inspect its map");
+  document.querySelector("#goal-title").textContent = viewModel.goal?.title || (viewModel.current ? copy.directEpisode : copy.companion);
+  document.querySelector("#goal-objective").textContent = viewModel.goal?.objective || (viewModel.current ? copy.questionFirst : copy.selectGoalHint);
   showGoalChoices(viewModel);
   graph.elements().remove();
   graph.add(toCytoscapeElements(viewModel));
@@ -66,15 +74,31 @@ function render(viewModel) {
   if (graph.nodes().length) graph.fit(undefined, 28);
   const current = viewModel.current && graph.getElementById(`question:${viewModel.current.questionId}`);
   if (current?.length) { current.select(); showDetails(current); }
-  else details.innerHTML = `<p class="eyebrow">STATUS</p><h2>${viewModel.mode === "idle" ? "No active question" : "Select a node"}</h2><p class="muted">${viewModel.mode === "idle" ? "The Learning runtime is idle." : "Question context will appear here."}</p>`;
+  else details.innerHTML = `<p class="eyebrow">${copy.status}</p><h2>${viewModel.mode === "idle" ? copy.noActive : copy.selectNode}</h2><p class="muted">${viewModel.mode === "idle" ? copy.runtimeIdle : copy.contextHere}</p>`;
 }
 
 function showError(error) {
+  const copy = copyFor(language);
+  latestError = error;
   notice.hidden = false;
   const message = String(error).replace(/^Error:\s*/, "");
   notice.textContent = /workspace is empty/i.test(message)
-    ? "No learning workspace found. Start learning in Codex first."
+    ? copy.noWorkspace
     : message;
+}
+
+function applyLanguage() {
+  const copy = copyFor(language);
+  document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
+  document.title = copy.appTitle;
+  document.querySelector("#map-label").textContent = copy.mapLabel;
+  languageButton.textContent = copy.languageButton;
+  languageButton.setAttribute("aria-label", copy.switchLanguage);
+  const pinned = pin.getAttribute("aria-pressed") === "true";
+  pin.textContent = pinned ? copy.pinned : copy.pin;
+  pin.title = copy.pinTitle;
+  if (latest) render(latest);
+  else if (latestError) showError(latestError);
 }
 
 const refresh = createRefreshController({
@@ -90,7 +114,16 @@ goalList.addEventListener("click", (event) => {
   selectedGoalId = button.dataset.goal;
   refresh(selectedGoalId);
 });
-pin.addEventListener("click", () => togglePin(getCurrentWindow(), pin).catch(showError));
+pin.addEventListener("click", () => {
+  const copy = copyFor(language);
+  togglePin(getCurrentWindow(), pin, { on: copy.pinned, off: copy.pin }).catch(showError);
+});
+languageButton.addEventListener("click", () => {
+  language = otherLanguage(language);
+  localStorage.setItem("learning-companion-language", language);
+  applyLanguage();
+});
 
+applyLanguage();
 await refresh(selectedGoalId);
 setInterval(() => refresh(selectedGoalId), 750);

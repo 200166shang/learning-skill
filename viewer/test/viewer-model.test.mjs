@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
+import { copyFor, otherLanguage, preferredLanguage } from "../src/i18n.js";
 import { createRefreshController, toCytoscapeElements, togglePin } from "../src/viewer-model.js";
 
 const map = (status = "current") => ({ graph: { nodes: [{ id: "question:q001", kind: "question", title: "Why?", status }], edges: [{ source: "root:rq001", target: "question:q001", kind: "episode-root" }] } });
@@ -38,6 +39,15 @@ test("Pin delegates to the native always-on-top API and updates local UI", async
   assert.deepEqual(calls, [true]);
   assert.equal(button.textContent, "Pinned");
   assert.equal(attributes.get("aria-pressed"), "true");
+});
+
+test("language selection follows saved preference then system language", () => {
+  assert.equal(preferredLanguage("zh-CN"), "zh");
+  assert.equal(preferredLanguage("en-US"), "en");
+  assert.equal(preferredLanguage("en-US", "zh"), "zh");
+  assert.equal(otherLanguage("zh"), "en");
+  assert.equal(copyFor("zh").noActive, "当前没有活跃问题");
+  assert.equal(copyFor("en").noActive, "No active question");
 });
 
 test("viewer code exposes no Learning mutation command path", () => {

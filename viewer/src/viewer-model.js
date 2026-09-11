@@ -25,10 +25,10 @@ export function createRefreshController({ load, onUpdate, onError }) {
   };
 }
 
-export async function togglePin(windowApi, button) {
+export async function togglePin(windowApi, button, labels = { on: "Pinned", off: "Pin" }) {
   const next = button.getAttribute("aria-pressed") !== "true";
   await windowApi.setAlwaysOnTop(next);
   button.setAttribute("aria-pressed", String(next));
-  button.textContent = next ? "Pinned" : "Pin";
+  button.textContent = next ? labels.on : labels.off;
   return next;
 }

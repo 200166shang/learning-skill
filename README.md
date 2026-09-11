@@ -70,6 +70,6 @@ npm run viewer -- --workspace /path/to/learning/workspace
 
 Optionally select a Goal at launch with `--goal g001`. When no Goal is supplied, the companion derives it only from an active Episode; while idle it offers the available Goals without changing Learning state.
 
-The native Tauri window shows the Goal → Root → recursive Question tree and refreshes every 750 ms. Select a node to see why it is needed, its resume checkpoint, and its POP destination. The Pin button keeps the window above Codex or other apps.
+The native Tauri window shows the Goal → Root → recursive Question tree and refreshes every 750 ms. Select a node to see why it is needed, its resume checkpoint, and its POP destination. The Pin button keeps the window above Codex or other apps. The interface follows the system's Chinese/English language on first launch and provides a header toggle; the preference is remembered locally.
 
 The companion is strictly a display adapter. It reads the canonical JSON projection from the existing Node runtime; all Learning mutations still happen through `$learning`, and the desktop app remains optional.

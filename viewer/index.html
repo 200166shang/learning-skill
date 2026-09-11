@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,19 +9,22 @@
     <main id="app">
       <header>
         <div>
-          <p class="eyebrow">LEARNING MAP</p>
-          <h1 id="goal-title">Learning Companion</h1>
-          <p id="goal-objective" class="subtitle">Connecting to the Learning workspace…</p>
+          <p id="map-label" class="eyebrow">学习地图</p>
+          <h1 id="goal-title">学习伴侣</h1>
+          <p id="goal-objective" class="subtitle">正在连接学习工作区…</p>
         </div>
-        <button id="pin" type="button" aria-pressed="false" title="Keep this window above other apps">Pin</button>
+        <div class="header-actions">
+          <button id="language" type="button" aria-label="切换至 English">EN</button>
+          <button id="pin" type="button" aria-pressed="false" title="让窗口保持在其他应用上方">置顶</button>
+        </div>
       </header>
       <section id="notice" class="notice" hidden></section>
       <section id="goal-list" class="goal-list" hidden></section>
       <section id="graph" aria-label="Learning question tree"></section>
       <section id="details" class="details" aria-live="polite">
-        <p class="eyebrow">CURRENT</p>
-        <h2>Select a node</h2>
-        <p class="muted">Question context will appear here.</p>
+        <p class="eyebrow">当前节点</p>
+        <h2>选择一个节点</h2>
+        <p class="muted">问题背景会显示在这里。</p>
       </section>
     </main>
     <script type="module" src="/src/app.js"></script>
