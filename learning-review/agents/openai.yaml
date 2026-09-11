@@ -1,0 +1,6 @@
+interface:
+  display_name: "Learning: Review"
+  short_description: "Retrieve and verify previously learned knowledge"
+  default_prompt: "Use $learning-review to test my retained understanding of a previously learned KnowledgeTarget without teaching me the answer first."
+policy:
+  allow_implicit_invocation: false

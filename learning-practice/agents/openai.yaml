@@ -1,0 +1,6 @@
+interface:
+  display_name: "Learning: Practice"
+  short_description: "Apply learned knowledge in an observable task"
+  default_prompt: "Use $learning-practice to give me a coding, debugging, or design task for a KnowledgeTarget and record only observable results."
+policy:
+  allow_implicit_invocation: false

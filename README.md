@@ -1,24 +1,57 @@
-# Learning Skill V7
+# Learning Skill Suite
 
-A small, evidence-backed personal learning runtime for Codex, exposed as `$learning`, `$review`, and `$practice`.
+A small, evidence-backed personal learning runtime for Codex with a discoverable user-facing skill surface.
+
+## Public skills
 
 ```text
-learner question → Episode → PUSH / LEARN / VERIFY / POP / RESUME
-                                  ↓
-                         root teach-back → CLOSED → IDLE
-
-topic + goal + sources → ORIENT → candidate roots → learner accepts and chooses
-                                                        ↓
-                                                     Episode
+$learning-ask       I do not know which learning mode to use or what to do next.
+$learning-learn     I want to understand a question or broad topic.
+$learning-review    I want to retrieve and verify something I learned before.
+$learning-practice  I want to apply learned knowledge through coding/debugging/design.
+$learning-view      I want to open or control the native desktop learning map.
 ```
 
-## Install or update
+The public skills share one namespace so they are easy to find in the skill index. Their display names are `Learning: Ask`, `Learning: Learn`, `Learning: Review`, `Learning: Practice`, and `Learning: View`.
 
-```bash
-./install.sh
+The learner does **not** operate internal state-machine phases directly. Orientation, recursive prerequisite descent, verification, return-to-parent, persistence, and runtime transitions stay inside `Learning: Learn`.
+
+## User workflow
+
+When you are unsure, start with:
+
+```text
+$learning-ask I have notes and a repository but I do not know where to start.
 ```
 
-## Workspace
+For a concrete question:
+
+```text
+$learning-learn I want to understand why PWM can control motor speed.
+```
+
+For a broad topic plus sources:
+
+```text
+$learning-learn I need to learn the robot LLM module from these notes, repository, and transcripts. I do not yet know what questions to ask; I need to explain the concepts, source code, and complete chain in an interview.
+```
+
+After a learning question is closed, Review and Practice are explicit phase boundaries rather than hidden automatic mode switches:
+
+```text
+$learning-review Test whether I still understand the MCU/Linux control boundary.
+$learning-practice Give me a debugging task that applies this KnowledgeTarget.
+```
+
+To open the native learning map:
+
+```text
+$learning-view Open the learning window for this workspace and keep it on top.
+```
+
+## Learning runtime
+
+`Learning: Learn` keeps the durable models separate:
 
 ```text
 .learning/
@@ -34,11 +67,41 @@ OVERVIEW.md        optional whole-picture projection
 
 Only questions the learner asks or accepts are durable. A question closes only with passing verification evidence. A root pass creates one stable KnowledgeTarget, closes the Episode, and returns the workspace to IDLE. Closed children are promoted only explicitly. OVERVIEW may describe knowledge boundaries but cannot start or route learning.
 
-`_shared/knowledge-note.md` is the single current KnowledgeNote contract. Journey owns learning provenance, Evidence owns demonstrated understanding, and notes never prove mastery or route the next question.
+Internally the finite learning loop is:
 
-V7 intentionally has no Web observer, generated learning map, database, automatic review scheduler, or numeric mastery model.
+```text
+PUSH → LEARN → VERIFY → POP → RESUME → root VERIFY → IDLE
+```
 
-## Commands
+Those terms are implementation vocabulary for the agent/runtime, not commands the learner must remember.
+
+## Install or update
+
+```bash
+./install.sh
+```
+
+The installer places the five public skills under `~/.codex/skills`, installs the shared deterministic runtime, and copies the optional Desktop Learning Companion to `~/.codex/skills/_learning-viewer`. Viewer dependencies remain lazy and can be installed on first use.
+
+## Desktop Learning Companion
+
+The native Tauri window shows Goal → Root → recursive Question relationships and refreshes from the canonical read-only JSON projection. Select a node to see why it is needed, its resume checkpoint, and its return destination. The Pin control keeps the window above Codex or other apps.
+
+`Learning: View` is only an adapter for opening/focusing/pinning this application. The viewer never becomes routing authority and never mutates Learning state.
+
+Manual development launch from this repository remains available:
+
+```bash
+npm ci --prefix _shared
+npm install --prefix viewer
+npm run viewer -- --workspace /path/to/learning/workspace
+```
+
+Optionally select a Goal at launch with `--goal g001`.
+
+## Internal runtime commands
+
+These are for implementation/debugging, not the normal learner interface:
 
 ```bash
 node _shared/scripts/upgrade-learning-workspace.mjs <workspace>
@@ -54,22 +117,4 @@ node _shared/scripts/practice.mjs <workspace> < intent.json
 npm test --prefix _shared
 ```
 
-Question-first stays direct: `$learning I want to understand why PWM can control motor speed.`
-
-Topic-first also works: `$learning I need to learn the robot LLM module from these notes, repository, and transcripts. I don't yet know what questions to ask; I need to explain the concepts, source code, and complete chain in an interview.` The skill selectively orients to the sources, proposes a few roots, persists only accepted roots, and starts only the root the learner chooses.
-
-## Desktop Learning Companion
-
-Install the optional desktop dependencies once, then start the read-only companion for a Learning workspace:
-
-```bash
-npm ci --prefix _shared
-npm install --prefix viewer
-npm run viewer -- --workspace /path/to/learning/workspace
-```
-
-Optionally select a Goal at launch with `--goal g001`. When no Goal is supplied, the companion derives it only from an active Episode; while idle it offers the available Goals without changing Learning state.
-
-The native Tauri window shows the Goal → Root → recursive Question tree and refreshes every 750 ms. Select a node to see why it is needed, its resume checkpoint, and its POP destination. The Pin button keeps the window above Codex or other apps. The interface follows the system's Chinese/English language on first launch and provides a header toggle; the preference is remembered locally.
-
-The companion is strictly a display adapter. It reads the canonical JSON projection from the existing Node runtime; all Learning mutations still happen through `$learning`, and the desktop app remains optional.
+`_shared/knowledge-note.md` is the current KnowledgeNote contract. Journey owns learning provenance, Evidence owns demonstrated understanding, and notes never prove mastery or route the next question.
