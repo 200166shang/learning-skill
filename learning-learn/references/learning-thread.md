@@ -111,6 +111,51 @@ and uncertain lineage visible. Resume is complete when the next explanation adva
 the same deepest path and, when routing was repaired, that repair has also been
 disclosed and persisted.
 
+## Upgrade an existing V4 document when touched
+
+Treat a V4 Living Learning Document as readable input. Do not scan workspaces for old
+documents and do not rewrite one merely because the skill was installed, updated, or
+asked to inspect it. Lazily upgrade only the active document selected for resume,
+correction, or a substantive learning edit. A completed V4 document stays byte-for-
+byte unchanged unless a correction reopens that same thread; an unrelated active
+document and every other completed document remain untouched.
+
+Recognize V4 routing by its compact `当前学习位置` and arrow-style `活动路径`. Before
+the first checkpoint write, preserve the article prose and every readable routing
+fact. Resume, correction, or a substantive learning edit is the touch that triggers
+this decision; do not defer it merely because the turn also repairs the current gap.
+When the existing path order, Root Question, current question, Return Points, and
+necessary blocking reasons each have exactly one reading in that document, convert
+the arrow path to the numbered V5 Active Path in that checkpoint. This conversion is
+required when all of those facts are unambiguous, not an optional cleanup:
+
+- retain the existing Root Question, source boundary, status, current gap, and Return
+  Point wording rather than restating them from general knowledge;
+- create Question Lineage only from questions visibly established by that active path
+  or elsewhere in the document, using only their established current or suspended
+  states; do not infer previously completed children or missing history. Conversion
+  alone never marks a child `[已回填]`. If the substantive turn itself repairs and
+  integrates that child, apply the normal return contract in the same edit: remove it
+  from the Active Path before marking it `[已回填]`. A child must never remain in the
+  Active Path while its lineage says `[已回填]`;
+- keep all existing prose in place. Add or reshape Causal Chain content only for a
+  connection already supported by that prose or established by the new learning turn;
+- add a local Source Fragment only for an affected connection when the supporting
+  source was actually inspected. Preserve the existing source inventory and do not
+  manufacture source status or citations;
+- do not create a Completion Basis, completed state, Concept, Memory Target,
+  `REVIEW.md`, projection, or other artifact as part of upgrading.
+
+After conversion, use only the V5 routing states and shapes defined below. Do not
+invent an intermediate status such as “upgraded” or “checkpoint established”; keep
+the thread `学习中` while work continues, or `暂停` when the learner stops.
+
+When any path segment, Return Point, blocking reason, or status has several plausible
+readings, leave the old routing text intact, present the small ambiguity, and ask the
+learner. Do not partially convert an ambiguous path. Once the route is unambiguous,
+combine the V5 routing conversion and the turn's stable learning changes into the one
+checkpoint edit required by this workflow.
+
 ## Correct prior understanding
 
 Identify the challenged proposition or causal edge. Read only its local prose,
