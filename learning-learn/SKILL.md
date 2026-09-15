@@ -1,6 +1,6 @@
 ---
 name: learning-learn
-description: "Start, resume, or correct one source-grounded Learning Thread and reuse its independent Concepts."
+description: "Start, resume, or correct one source-grounded Learning Thread, reuse its independent Concepts, and promote selected understanding for review."
 disable-model-invocation: true
 ---
 
@@ -24,11 +24,18 @@ on any of these entries:
   deepest question.
 - **Correction:** identify and recheck the challenged causal edge; reopen its smallest
   affected path; update prose, Causal Chain, Question Lineage, Completion Basis, and
-  existing affected Memory Target references together; then check only the repaired
-  connection and its downstream effect.
+  existing affected Memory Target links together; when such links exist, also read
+  [the review instructions](references/review.md) to update their canonical queue
+  entries; then check only the repaired connection and its downstream effect.
 - **Reusable Concept:** after an explanation is stable, create one only on learner
   request or for a clearly independent boundary; search existing Concepts first, then
   link or revise an equivalent Concept instead of duplicating it.
+
+Read [the review instructions](references/review.md) for **Memory Target promotion**:
+propose only stable integrated understanding that passes every eligibility test, keep
+the checkpoint to at most three proposals, and wait for the learner to accept, edit,
+or reject each one unless they explicitly delegated that decision. An accepted target
+enters the workspace's single human-readable `REVIEW.md`; equivalent targets merge.
 
 Maintain exactly one Active Path. Treat supplied readable material as the default
 Source Boundary, and write stable understanding directly into one Living Learning

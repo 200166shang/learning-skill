@@ -133,12 +133,15 @@ When the correction changes a completed answer:
    lineage.
 3. At one stable checkpoint, update the affected prose, the changed Causal Chain edge
    and its downstream consequences, Question Lineage states, and removal of the old
-   Completion Basis together. Update every related Memory Target reference already in
-   the Learning Thread so none assert the superseded connection: mark each
-   `需要修订` when its expected connection is not yet stable, or revise its wording
-   and source link when the corrected connection is stable. Memory Target handling in
-   this workflow is limited to existing references; Review Queue and scheduling
-   behavior remain outside it.
+   Completion Basis together. For every related Memory Target link already in the
+   Learning Thread, follow it to the canonical `REVIEW.md` entry so none continue to
+   assert the superseded connection: set its visible status to `needs-revision` when
+   the expected connection is not yet stable, or revise its prompt, expected
+   connection, and source-thread link when the correction is stable. If the prompt
+   heading changes, read that canonical entry's complete `来源线程` list and update the
+   ordinary Memory Target link in every listed source thread, not only the thread being
+   corrected. Preserve all sources and the existing schedule. Do not select due items
+   or change interval stages, dates, or review results during correction.
 4. Check only the corrected connection and its effect on the parent chain. Keep the
    thread open until the learner answers. After the repair is integrated and no child
    remains, close through the normal root contract and write a new concise Completion
