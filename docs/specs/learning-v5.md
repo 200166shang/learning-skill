@@ -1,6 +1,6 @@
 # Learning V5 Product Specification
 
-> Status: In progress; Concept discovery and V4 migration accepted
+> Status: Wayfinding decision-complete; ready for `to-spec` synthesis
 > Wayfinder map: [Define a small question-led personal learning V5](https://github.com/200166shang/learning-skill/issues/110)
 
 ## 1. Product sentence
@@ -783,19 +783,140 @@ The V5 implementation is releasable when:
 
 ## 10. Acceptance
 
-Representative end-to-end acceptance scenarios will be decided after the upstream
-contracts settle in
-[Define representative V5 acceptance scenarios](https://github.com/200166shang/learning-skill/issues/120).
+V5 is accepted through six end-to-end manual scenarios. Use temporary learner
+workspaces and small representative fixtures. Run them with the lowest-reasoning model
+the skill intends to support; inspect both the conversation and resulting Markdown.
 
-At minimum, the eventual scenarios must cover concrete-question entry, broad-scope
-orientation, nested Blocking Gaps and ordered return, a Pending Question that does
-not steal focus, cross-session resume, selective Memory Target promotion, and one
-due-review interaction.
+For each scenario, record the invocation, relevant response excerpt, files changed,
+and a short pass or failure note. Do not commit full chat replays or prompt snapshots.
 
-## 11. Next decisions
+### Scenario A: Concrete question through recursive return
 
-The first frontier is accepted: document shape, orientation, recursive inquiry,
-Question Lineage, Causal Chain, one public skill, and the external media handoff are
-normative. The next specification pass must decide:
+**Given** a small controller source file and design note, and the learner asks why
+measured over-current reduces PWM duty cycle.
 
-1. Define the representative end-to-end acceptance scenarios.
+**When** Learning starts, encounters one genuine missing ADC-to-current connection,
+opens a child that needs a smaller stack or numeric prerequisite, and the learner also
+asks one interesting but non-blocking tangent.
+
+**Pass when**:
+
+- the first response begins the relevant causal explanation without setup commands;
+- only relevant Source Fragments support the important causal edges;
+- the Active Path reaches two child levels and every child has its own Return Point;
+- the tangent enters Pending Questions without becoming active;
+- each repaired child is integrated into its parent in reverse order;
+- Question Lineage retains the pursued children while the Active Path returns to root;
+- one end-to-end Completion Check closes the Root Question with a concise basis;
+- one Living Learning Document remains readable as an article rather than a transcript.
+
+### Scenario B: Broad mixed-source orientation
+
+**Given** prepared video chapter notes, a readable PDF, and a repository module, but no
+learner question.
+
+**When** Learning orients to the scope and the learner accepts its recommendation.
+
+**Pass when**:
+
+- it scans only cheap source structure;
+- it recommends one connecting Root Question and no more than two genuinely different
+  alternatives;
+- it does not download media, run OCR, summarize everything, or generate a curriculum;
+- it waits for the learner unless choice was explicitly delegated;
+- after acceptance, the resulting thread records the agreed Source Boundary and begins
+  the first useful connection.
+
+### Scenario C: Resume, damaged routing, and correction
+
+**Given** one active V5 document with a three-level Active Path, one unambiguously
+renamed Return Point heading, and one completed document whose central source later
+conflicts with a stronger supplied source.
+
+**When** a fresh session resumes the active document and later corrects the completed
+one.
+
+**Pass when**:
+
+- it reads the routing block and relevant sections rather than reprocessing the vault;
+- it resumes at the deepest question and repairs the renamed Return Point explicitly;
+- it asks the learner only if more than one return location is genuinely plausible;
+- the conflicting sources are both visible and the affected causal edge is named;
+- the completed thread reopens along the smallest repair path;
+- prose, Causal Chain, Question Lineage, Completion Basis, and affected Memory Targets
+  agree after correction;
+- no hidden file or plugin state is created.
+
+### Scenario D: Reuse an existing Concept
+
+**Given** a new Learning Thread that needs negative feedback and an existing Concept
+document with the same boundary.
+
+**When** the repaired explanation becomes stable.
+
+**Pass when**:
+
+- Learning finds the existing Concept by name, heading, or related terms;
+- it links or revises that Concept instead of creating a duplicate;
+- the Learning Thread retains its own Question Lineage and links at the sentence that
+  uses the Concept;
+- the Concept stays independently readable and contains no active learning state;
+- ordinary links and Obsidian backlinks are sufficient for discovery.
+
+### Scenario E: Promote and review one Memory Target
+
+**Given** a coherently closed Learning Thread with several useful statements.
+
+**When** Learning proposes targets, the learner accepts one mechanism target, reviews
+it once successfully, once effortfully, once unsuccessfully, and then discovers its
+expected connection needs correction.
+
+**Pass when**:
+
+- no more than three qualifying targets are proposed and trivial facts are excluded;
+- accepting the first target lazily creates one `REVIEW.md`;
+- review shows the prompt before the expected connection and selects the oldest due;
+- `顺利想起`, `费力想起`, and `未想起` visibly produce the specified ladder changes;
+- `需要修订` removes the target from due selection until its source is repaired;
+- each answer causes one readable Markdown update with no score or hidden parameter;
+- an empty due queue produces no filler exercise.
+
+### Scenario F: Upgrade and install without reviving the platform
+
+**Given** the V4 repository, a temporary installation directory, one active V4
+document using the arrow-style path, and one completed V4 document.
+
+**When** V5 is installed and only the active document is resumed.
+
+**Pass when**:
+
+- installation copies one public skill plus its prompt references and does not touch
+  learner documents;
+- the active document upgrades in place without losing prose or inventing completed
+  Question Lineage;
+- the completed document remains byte-for-byte unchanged;
+- no existing note is automatically promoted into `REVIEW.md`;
+- the repository and installation contain no learning runtime, viewer, schema,
+  migration program, compatibility alias, or new package dependency.
+
+### Cross-scenario failure conditions
+
+Any scenario fails if Learning:
+
+- advances more than one Active Path;
+- treats generated output or saved notes as proof of completion;
+- cites a source it did not inspect or hides a material conflict;
+- requires Obsidian, a viewer, a database, or machine-only state to resume;
+- creates a Concept or Memory Target for every child by default;
+- rewrites unrelated learner documents during install or migration;
+- performs media acquisition inside the core learning workflow.
+
+All six scenarios and the cross-scenario checks must pass before implementation is
+called V5. Failures change the smallest relevant contract; they do not justify adding
+a general runtime unless a new wayfinding decision explicitly changes the destination.
+
+## 11. Decision status
+
+The product boundary, domain language, learning and review behavior, document
+contracts, migration policy, and acceptance scenarios are decided. No product decision
+remains open before `to-spec` condenses this decision record into the build contract.
