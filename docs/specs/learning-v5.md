@@ -1,6 +1,6 @@
 # Learning V5 Product Specification
 
-> Status: In progress; source and completion contracts accepted
+> Status: In progress; memory promotion and resume contracts accepted
 > Wayfinder map: [Define a small question-led personal learning V5](https://github.com/200166shang/learning-skill/issues/110)
 
 ## 1. Product sentence
@@ -455,24 +455,139 @@ accessible copy instead of taking ownership of conversion infrastructure.
 
 ## 7. Review contract
 
-This section is intentionally not yet normative. It will be decided through:
+### 7.1 Memory Target promotion contract
 
-- [Define selective Memory Target promotion](https://github.com/200166shang/learning-skill/issues/116)
-- [Prototype the minimal Markdown Review Queue](https://github.com/200166shang/learning-skill/issues/117)
+A Memory Target is a small future retrieval target distilled from stable integrated
+understanding. It is neither the explanation itself nor a record that the learner has
+permanently mastered it.
 
-Confirmed constraints:
+Learning may propose a target only after the relevant Blocking Gap has been returned
+and integrated, or when the Root Question is closing. The learner accepts, edits, or
+rejects the proposal. If the learner explicitly delegates promotion, Learning applies
+the same criteria without another confirmation.
 
-- not every answer or note becomes a Memory Target;
-- a target must be worth retrieving, likely to be forgotten, and independently checkable;
-- review is learner-invoked in V5;
-- Markdown is the durable representation;
-- full FSRS and automatic notifications are outside the V5 core.
+Every promoted target must satisfy all of these tests:
+
+1. **Durable value**: recalling it later would materially help reasoning or action.
+2. **Forgetting risk**: it is plausible that the learner will forget or confuse it.
+3. **Atomic retrieval**: one short prompt can test one causal link, distinction,
+   constraint, or procedure in roughly two minutes or less.
+4. **Stable answer**: the expected connection is already supported and integrated in
+   the Living Learning Document.
+5. **Independent context**: the prompt contains enough context to make sense outside
+   the original conversation.
+
+Do not promote:
+
+- unresolved or source-conflicted claims;
+- entire articles, Root Questions, or long multi-step explanations as one target;
+- facts that are cheaper to look up than memorize;
+- temporary project details with no expected future value;
+- every child question merely because it was pursued;
+- wording trivia when the causal connection is what matters.
+
+Prefer one of three target shapes:
+
+| Shape | Prompt asks for | Expected response preserves |
+|---|---|---|
+| Mechanism | Why or how one state produces another | cause, mechanism, consequence |
+| Distinction | When two similar concepts or cases differ | decision boundary and counterexample |
+| Application cue | What to predict or do in a small situation | triggering conditions and action |
+
+Before entering the Review Queue, a proposal appears in the Learning Thread:
+
+```markdown
+## 建议记忆目标
+
+- 提示：为什么测量电流超过目标时，控制器会降低 PWM 占空比？
+  - 应能回忆：测量值形成负向误差，限幅分支降低占空比请求，平均电压下降使电流回落。
+  - 来源解释：[限流闭环](#限流闭环)
+  - 推荐理由：这是根问题的核心控制因果链，容易只记住结论而忘记中间机制。
+```
+
+At one checkpoint, propose no more than three targets. Prefer revising or merging an
+existing equivalent target over adding a duplicate. A later correction to the source
+explanation must mark the target for revision before further review.
+
+The exact Review Queue representation, due selection, and rescheduling policy remain
+open in [Prototype the minimal Markdown Review Queue](https://github.com/200166shang/learning-skill/issues/117).
 
 ## 8. Resume, correction, and recovery
 
-This section remains open until the Learning Thread document and Source Fragment
-contracts are validated. It will be decided in
-[Define cross-session resume, correction, and recovery](https://github.com/200166shang/learning-skill/issues/118).
+### 8.1 Normal resume contract
+
+The learner supplies the Living Learning Document or asks to resume a scope with one
+clear matching document. When several documents plausibly match, Learning asks which
+one rather than guessing.
+
+Read in this order:
+
+1. `当前学习位置` for status, Root Question, Source Boundary, complete Active Path,
+   deepest Blocking Gap, and every Return Point;
+2. the explanatory section named by the deepest Return Point;
+3. the current-question section and its cited Source Fragments;
+4. `问题脉络` only as needed to understand already returned questions;
+5. the rest of the article only when the resumed connection depends on it.
+
+Before continuing, verify:
+
+- the Active Path begins with the Root Question;
+- every non-root question has a readable Return Point;
+- exactly one deepest question is current;
+- every Return Point resolves to an existing heading or sufficiently exact sentence;
+- the deepest Blocking Gap explains why the parent cannot continue.
+
+If the document is consistent, Learning gives one short orientation sentence and
+continues the deepest question. It does not regenerate the curriculum, repeat the
+whole article, or begin with an unsolicited test.
+
+### 8.2 Pause and completed-thread entry
+
+A paused thread retains its full Active Path. An explicit resume invocation is enough
+to continue; no separate state transition or confirmation is required.
+
+For a completed thread:
+
+- a correction to the same Root Question reopens that thread;
+- a deeper question that changes the original answer reopens that thread;
+- a non-blocking extension or different Root Question starts a new Learning Thread,
+  with a link back to the earlier explanation when useful.
+
+### 8.3 Correction contract
+
+When the learner or new evidence challenges existing understanding, Learning:
+
+1. identifies the affected proposition or causal edge;
+2. rechecks its Source Fragments and labels any conflict or inference;
+3. changes the thread status to `学习中` when the correction affects a completed answer;
+4. builds the smallest Active Path needed to repair that edge and records its Return
+   Point in the existing explanation;
+5. revises the Causal Chain, prose, Question Lineage status, and affected Memory
+   Targets together at the next stable checkpoint;
+6. uses a new Completion Check only for the corrected connection and its downstream
+   effect.
+
+History is preserved through the corrected Question Lineage and version control, not
+by keeping contradictory prose in the current article.
+
+### 8.4 Recovery without hidden state
+
+When the routing block is inconsistent, preserve readable explanation first and repair
+only what can be established from the document. Use this recovery order:
+
+| Problem | Recovery |
+|---|---|
+| `当前学习位置` is missing but one unfinished lineage path is unambiguous | Propose that path from Question Lineage and nearby prose, then continue after stating the reconstruction |
+| Several unfinished paths are plausible | Present the small set of candidates and ask the learner which one was active |
+| A Return Point heading was renamed | Resolve it from the saved sentence or causal connection and update the link |
+| A Return Point is genuinely ambiguous or gone | Keep the child current and ask where its result should rejoin |
+| A source moved or changed | Mark the citation stale, relocate it when possible, and block only if the causal edge can no longer be supported |
+| Markdown is partially malformed | Preserve valid prose and Source Fragments; reconstruct the smallest readable routing block from unambiguous facts |
+| An accepted Memory Target conflicts with corrected prose | Mark it for revision and exclude it from due review until repaired |
+
+Recovery never invents completed questions, silently closes a gap, or infers a path
+through several plausible branches. No database, write-ahead log, or duplicate plugin
+state is introduced.
 
 ## 9. Acceptance
 
@@ -491,5 +606,4 @@ The first frontier is accepted: document shape, orientation, recursive inquiry,
 Question Lineage, Causal Chain, one public skill, and the external media handoff are
 normative. The next specification pass must decide:
 
-1. Define Memory Target promotion and the minimal Review Queue.
-2. Define cross-session resume, correction, and recovery.
+1. Prototype and decide the minimal Review Queue.

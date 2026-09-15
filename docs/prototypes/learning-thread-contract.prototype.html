@@ -242,14 +242,63 @@
       return lines.join("\n");
     }
 
-    return { blank, reduce, markdown };
+    function resume(documentText) {
+      const lines = documentText.split(/\r?\n/);
+      const valueAfter = prefix => lines.find(line => line.startsWith(prefix))?.slice(prefix.length).trim() || "";
+      const status = valueAfter("- 状态：");
+      const rootQuestion = valueAfter("- 主问题：");
+      const currentBlocking = valueAfter("- 当前阻塞：");
+      const path = [];
+      let readingPath = false;
+
+      for (const line of lines) {
+        if (line === "- 活动路径：") { readingPath = true; continue; }
+        if (!readingPath) continue;
+        const match = line.match(/^\s+\d+\.\s+(.+)$/);
+        if (!match) {
+          if (line && !line.startsWith(" ")) readingPath = false;
+          continue;
+        }
+        let question = match[1];
+        let returnPoint = "";
+        const splitAt = question.indexOf("（回到：");
+        if (splitAt >= 0 && question.endsWith("）")) {
+          returnPoint = question.slice(splitAt + 4, -1);
+          question = question.slice(0, splitAt);
+        }
+        path.push({ question, returnPoint });
+      }
+
+      const warnings = [];
+      if (!status) warnings.push("缺少状态。");
+      if (!rootQuestion) warnings.push("缺少主问题。");
+      if (status !== "已完成" && !path.length) warnings.push("活动线程缺少活动路径。");
+      if (path.length && rootQuestion && path[0].question !== rootQuestion) warnings.push("活动路径不是从主问题开始。");
+      path.slice(1).forEach((item, index) => {
+        if (!item.returnPoint) warnings.push(`第 ${index + 2} 层问题缺少返回点。`);
+      });
+      if (path.length > 1 && !currentBlocking) warnings.push("最深问题缺少当前阻塞说明。");
+
+      return {
+        status: status || "无法判断",
+        rootQuestion: rootQuestion || "无法判断",
+        depth: path.length,
+        deepestQuestion: path.at(-1)?.question || "无活动问题",
+        returnPoint: path.at(-1)?.returnPoint || "无",
+        currentBlocking: currentBlocking || "无",
+        warnings
+      };
+    }
+
+    return { blank, reduce, markdown, resume };
   })();
 
   const actions = [
     ["载入广泛资源", "LOAD_BROAD_SCOPE"], ["推荐根问题", "RECOMMEND_ROOT"], ["接受推荐", "ACCEPT_ROOT"],
     ["用具体问题开始", "START_CONCRETE"], ["内联补齐", "INLINE_REPAIR"], ["打开阻塞子问题", "OPEN_CHILD"],
     ["停放 Box 旁支", "PARK_QUESTION"], ["修复最深问题", "REPAIR_DEEPEST"], ["返回一层", "RETURN_ONE"],
-    ["写入稳定检查点", "CHECKPOINT"], ["重建根因果链", "RECONSTRUCT_ROOT"], ["关闭线程", "CLOSE"], ["重置", "RESET"]
+    ["写入稳定检查点", "CHECKPOINT"], ["模拟新会话恢复", "SIMULATE_RESUME"], ["模拟返回点缺失", "SIMULATE_MISSING_RETURN"],
+    ["重建根因果链", "RECONSTRUCT_ROOT"], ["关闭线程", "CLOSE"], ["重置", "RESET"]
   ];
 
   const scenarios = [
@@ -272,14 +321,34 @@
       name: "拒绝错误关闭",
       copy: "观察仍有子问题或没有完成依据时，关闭动作不会破坏当前状态。",
       steps: [["开始根问题", "ACCEPT_ROOT"], ["打开阻塞子问题", "OPEN_CHILD"], ["尝试提前关闭", "CLOSE"], ["修复子问题", "REPAIR_DEEPEST"], ["回到根问题", "RETURN_ONE"], ["再次提前关闭", "CLOSE"], ["学习者重建因果链", "RECONSTRUCT_ROOT"], ["正确关闭", "CLOSE"]]
+    },
+    {
+      name: "跨会话恢复",
+      copy: "观察新会话只解析当前 Markdown 就能找到最深问题、阻塞原因和准确返回点；缺失返回点会被明确报告。",
+      steps: [["开始根问题", "ACCEPT_ROOT"], ["打开第一层阻塞", "OPEN_CHILD"], ["再打开更小阻塞", "OPEN_CHILD"], ["写入稳定检查点", "CHECKPOINT"], ["从文档恢复", "SIMULATE_RESUME"], ["模拟文档丢失一个返回点", "SIMULATE_MISSING_RETURN"]]
     }
   ];
 
   let state = LearningThread.blank();
   let currentScenario = 0;
   let completedSteps = 0;
+  let recoveryReport = null;
 
-  function dispatch(type) { state = LearningThread.reduce(state, { type }); render(); }
+  function perform(type) {
+    if (type === "SIMULATE_RESUME") {
+      recoveryReport = LearningThread.resume(LearningThread.markdown(state));
+      return;
+    }
+    if (type === "SIMULATE_MISSING_RETURN") {
+      const damaged = LearningThread.markdown(state).replace(/（回到：[^）]+）/, "");
+      recoveryReport = LearningThread.resume(damaged);
+      return;
+    }
+    state = LearningThread.reduce(state, { type });
+    if (type === "RESET") recoveryReport = null;
+  }
+
+  function dispatch(type) { perform(type); render(); }
 
   function render() {
     const path = state.activePath.length
@@ -294,7 +363,13 @@
       <div class="field wide"><strong>核心因果链（有向连接）</strong>${state.causalChain.length ? state.causalChain.map(x => `${x.from} →〔${x.through}〕→ ${x.to}`).join("<br>") : "无"}</div>
       <div class="field wide"><strong>当前阻塞</strong>${state.currentBlocking || "无"}</div>
       <div class="field"><strong>待探索</strong>${state.pendingQuestions.length ? state.pendingQuestions.map(x => x.question).join("<br>") : "无"}</div>
-      <div class="field"><strong>完成依据</strong>${state.completion || "无"}</div>`;
+      <div class="field"><strong>完成依据</strong>${state.completion || "无"}</div>
+      <div class="field wide"><strong>新会话恢复报告</strong>${recoveryReport ? [
+        `最深问题：${recoveryReport.deepestQuestion}`,
+        `返回点：${recoveryReport.returnPoint}`,
+        `当前阻塞：${recoveryReport.currentBlocking}`,
+        recoveryReport.warnings.length ? `警告：${recoveryReport.warnings.join("；")}` : "警告：无"
+      ].join("<br>") : "尚未模拟恢复"}</div>`;
     document.querySelector("#change").textContent = state.lastChange;
     document.querySelector("#error").innerHTML = state.error ? `<div class="error">${state.error}</div>` : "";
     document.querySelector("#markdown").textContent = LearningThread.markdown(state);
@@ -304,10 +379,10 @@
     const scenario = scenarios[currentScenario];
     document.querySelector("#scenario-copy").textContent = scenario.copy;
     document.querySelector("#steps").innerHTML = scenario.steps.map(([label, type], i) => `<button data-step="${i}" class="${i < completedSteps ? "done" : ""}" ${i !== completedSteps ? "disabled" : ""}>${i + 1}. ${label}</button>`).join("");
-    document.querySelectorAll("[data-step]").forEach(button => button.onclick = () => { const [, type] = scenario.steps[completedSteps]; state = LearningThread.reduce(state, { type }); completedSteps++; render(); });
+    document.querySelectorAll("[data-step]").forEach(button => button.onclick = () => { const [, type] = scenario.steps[completedSteps]; perform(type); completedSteps++; render(); });
   }
 
-  function startScenario(index) { currentScenario = index; completedSteps = 0; state = LearningThread.blank(); render(); }
+  function startScenario(index) { currentScenario = index; completedSteps = 0; state = LearningThread.blank(); recoveryReport = null; render(); }
 
   document.querySelector("#freeplay").innerHTML = actions.map(([label, type], i) => `<button class="${i === 0 ? "primary" : ""}" data-action="${type}">${label}</button>`).join("");
   document.querySelectorAll("[data-action]").forEach(button => button.onclick = () => dispatch(button.dataset.action));
