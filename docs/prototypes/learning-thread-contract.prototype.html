@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Learning V5 线程契约原型</title>
+  <style>
+    :root { color-scheme: light; --ink:#172033; --muted:#697386; --paper:#f6f3ed; --card:#fff; --line:#ddd7cc; --accent:#315c4c; --warn:#9b3d30; }
+    * { box-sizing: border-box; }
+    body { margin:0; font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"PingFang SC",sans-serif; color:var(--ink); background:var(--paper); }
+    main { max-width:1120px; margin:auto; padding:44px 24px 80px; }
+    h1 { margin:0 0 8px; font-size:30px; letter-spacing:-.02em; }
+    h2 { margin:0 0 14px; font-size:18px; }
+    p { margin:6px 0; }
+    .notice { color:var(--muted); max-width:850px; }
+    .question { margin:20px 0 28px; padding:16px 18px; background:#e8efe9; border-left:4px solid var(--accent); }
+    .grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(360px,.9fr); gap:18px; align-items:start; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px; box-shadow:0 4px 18px #2d35260a; }
+    .state-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .field { padding:10px 12px; background:#faf9f6; border-radius:8px; }
+    .field strong { display:block; margin-bottom:3px; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+    .wide { grid-column:1/-1; }
+    ol, ul { margin:6px 0; padding-left:22px; }
+    button { border:1px solid var(--line); border-radius:8px; padding:8px 11px; color:var(--ink); background:#fff; cursor:pointer; text-align:left; }
+    button:hover { border-color:var(--accent); }
+    button.primary { color:#fff; background:var(--accent); border-color:var(--accent); }
+    button:disabled { opacity:.42; cursor:not-allowed; }
+    .buttons { display:flex; flex-wrap:wrap; gap:8px; }
+    .tabs { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+    .tabs button.active { color:#fff; background:var(--ink); border-color:var(--ink); }
+    .steps { display:grid; gap:8px; }
+    .steps button.done { text-decoration:line-through; color:var(--muted); }
+    .error { margin-top:12px; padding:10px 12px; color:var(--warn); background:#fff0ed; border-radius:8px; }
+    .change { margin-top:12px; color:var(--accent); font-weight:600; }
+    pre { margin:0; max-height:660px; overflow:auto; padding:16px; border-radius:9px; background:#18201d; color:#e8efe9; white-space:pre-wrap; font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .section { margin-top:18px; }
+    @media (max-width:850px) { .grid { grid-template-columns:1fr; } .state-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Learning V5：学习线程契约原型</h1>
+  <p class="notice">一次性逻辑原型，不是产品界面，也不会保存数据。点击按钮观察：一个 Markdown 文档能否同时承载资源入口、递归问题、返回点、旁支停放和跨会话恢复。</p>
+  <div class="question"><strong>要回答的问题：</strong>保持一条活动路径、完整返回点和少量可读状态，是否足以支撑真实递归学习，而不需要问题树或隐藏运行时？</div>
+
+  <div class="grid">
+    <div>
+      <section class="card">
+        <h2>当前完整状态</h2>
+        <div id="state" class="state-grid"></div>
+        <div id="change" class="change"></div>
+        <div id="error"></div>
+      </section>
+
+      <section class="card section">
+        <h2>自由操作</h2>
+        <div id="freeplay" class="buttons"></div>
+      </section>
+
+      <section class="card section">
+        <h2>引导场景</h2>
+        <div id="tabs" class="tabs"></div>
+        <p id="scenario-copy" class="notice"></p>
+        <div id="steps" class="steps"></div>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2>此状态写成的 Markdown</h2>
+      <pre id="markdown"></pre>
+    </section>
+  </div>
+</main>
+
+<script>
+  // Pure prototype module: state and transitions contain no DOM dependencies.
+  const LearningThread = (() => {
+    const blank = () => ({
+      status: "未开始",
+      sourceBoundary: [],
+      candidates: [],
+      rootQuestion: "",
+      activePath: [],
+      questionLineage: [],
+      currentBlocking: "",
+      pendingQuestions: [],
+      causalChain: [],
+      stableExplanation: [],
+      completion: "",
+      lastChange: "等待输入。",
+      error: ""
+    });
+
+    const withMessage = (state, patch, message) => ({ ...state, ...patch, lastChange: message, error: "" });
+    const reject = (state, message) => ({ ...state, error: message, lastChange: "状态没有改变。" });
+
+    function reduce(state, action) {
+      switch (action.type) {
+        case "RESET": return blank();
+        case "LOAD_BROAD_SCOPE":
+          return withMessage(blank(), {
+            status: "定向中",
+            sourceBoundary: ["video-notes/ownership.md（已准备的章节笔记）", "src/borrow.rs"]
+          }, "已载入可读资源范围；尚未创建问题树。");
+        case "RECOMMEND_ROOT":
+          if (state.status !== "定向中") return reject(state, "只有广泛资源范围需要推荐根问题。");
+          return withMessage(state, {
+            candidates: [
+              "推荐：为什么借用检查能阻止悬垂引用？",
+              "替代：生命周期标注如何约束函数接口？",
+              "替代：所有权转移为何不需要垃圾回收？"
+            ]
+          }, "形成一个推荐问题和两个真正不同的路线；仍等待学习者选择。");
+        case "ACCEPT_ROOT": {
+          const root = "为什么借用检查能阻止悬垂引用？";
+          return withMessage(state, {
+            status: "学习中",
+            rootQuestion: root,
+            candidates: [],
+            activePath: [{ question: root, returnPoint: "", repaired: false }],
+            questionLineage: [{ depth: 0, question: root, status: "当前" }]
+          }, "学习者接受根问题；现在只有一条活动路径。");
+        }
+        case "START_CONCRETE": {
+          const root = "为什么电流升高时控制器会降低 PWM 占空比？";
+          return withMessage(blank(), {
+            status: "学习中",
+            sourceBoundary: ["src/motor.ts", "docs/control.md"],
+            rootQuestion: root,
+            activePath: [{ question: root, returnPoint: "", repaired: false }],
+            questionLineage: [{ depth: 0, question: root, status: "当前" }]
+          }, "具体问题直接开始，没有先生成课程或完整摘要。");
+        }
+        case "INLINE_REPAIR":
+          if (state.status !== "学习中") return reject(state, "需要先开始一个学习线程。");
+          return withMessage(state, {
+            stableExplanation: [...state.stableExplanation, "内联补齐：占空比决定一个周期内电机承受电压的时间比例。"],
+            causalChain: [...state.causalChain, { from: "PWM 占空比降低", through: "一个周期内施加电压的时间比例下降", to: "电机平均电压下降" }]
+          }, "一个很短的连接已就地补齐，没有创建子问题。");
+        case "OPEN_CHILD": {
+          if (state.status !== "学习中" || !state.activePath.length) return reject(state, "没有可被阻塞的活动问题。");
+          if (state.activePath.at(-1).repaired) return reject(state, "当前连接已经修复，应先返回父问题。");
+          const depth = state.activePath.length;
+          const child = depth === 1
+            ? { question: "引用何时会比它指向的栈数据活得更久？", returnPoint: "继续解释：借用检查器比较引用与被引用值的有效范围。", repaired: false }
+            : { question: "函数返回后栈帧发生了什么？", returnPoint: "继续解释：局部值的有效范围何时结束。", repaired: false };
+          return withMessage(state, {
+            activePath: [...state.activePath, child],
+            questionLineage: [
+              ...state.questionLineage.map(item => item.status === "当前" ? { ...item, status: "暂停" } : item),
+              { depth, question: child.question, status: "当前" }
+            ],
+            currentBlocking: depth === 1 ? "还无法说明生命周期比较为何能发现悬垂引用。" : "还无法说明局部值为何在函数返回后失效。"
+          }, `打开第 ${depth} 层阻塞问题，并保存这一层自己的返回点。`);
+        }
+        case "PARK_QUESTION":
+          if (state.status !== "学习中") return reject(state, "需要先开始一个学习线程。");
+          if (state.pendingQuestions.some(x => x.question.includes("Box"))) return reject(state, "这个旁支已经在待探索中。");
+          return withMessage(state, {
+            pendingQuestions: [...state.pendingQuestions, { question: "Box 为什么把值放到堆上？", context: "讨论栈帧时想到；不阻塞当前生命周期连接。" }]
+          }, "旁支已停放；活动路径没有改变。");
+        case "REPAIR_DEEPEST": {
+          if (state.status !== "学习中" || !state.activePath.length) return reject(state, "没有活动问题。");
+          const path = state.activePath.map((item, index) => index === state.activePath.length - 1 ? { ...item, repaired: true } : item);
+          return withMessage(state, {
+            activePath: path,
+            questionLineage: state.questionLineage.map(item => item.question === path.at(-1).question ? { ...item, status: "待回填" } : item),
+            currentBlocking: "",
+            causalChain: [...state.causalChain, { from: "函数返回", through: "栈帧释放使局部值有效范围结束", to: "指向该值的引用将悬垂" }],
+            stableExplanation: [...state.stableExplanation, `已建立：${path.at(-1).question}`]
+          }, "最深问题的缺失连接已经可用；若它是子问题，下一步应回到父层。");
+        }
+        case "RETURN_ONE": {
+          if (state.activePath.length < 2) return reject(state, "当前没有可返回的父问题。");
+          if (!state.activePath.at(-1).repaired) return reject(state, "必须先修复最深阻塞，不能跳回父问题。");
+          const child = state.activePath.at(-1);
+          const parent = state.activePath.at(-2);
+          return withMessage(state, {
+            activePath: state.activePath.slice(0, -1),
+            questionLineage: state.questionLineage.map(item => item.question === child.question
+              ? { ...item, status: "已回填" }
+              : item.question === parent.question ? { ...item, status: "当前" } : item),
+            currentBlocking: "",
+            stableExplanation: [...state.stableExplanation, `已回填父层：${child.returnPoint}`]
+          }, `返回父层并在原位置继续：${child.returnPoint}`);
+        }
+        case "CHECKPOINT":
+          if (state.status !== "学习中") return reject(state, "没有可写入的活动学习线程。");
+          return withMessage(state, state, "稳定理解与当前路径已合并成一次 Markdown 更新。");
+        case "RECONSTRUCT_ROOT":
+          if (state.activePath.length !== 1) return reject(state, "仍有阻塞子问题，不能检查根问题。");
+          return withMessage(state, {
+            completion: "学习者能解释：值先失效时，仍指向它的引用将悬垂；借用检查通过生命周期约束拒绝这种关系。",
+            activePath: [{ ...state.activePath[0], repaired: true }],
+            questionLineage: state.questionLineage.map(item => item.depth === 0 ? { ...item, status: "待关闭" } : item)
+          }, "学习者已经重建根问题的关键因果链。");
+        case "CLOSE":
+          if (state.activePath.length !== 1) return reject(state, "还有活动子问题；必须按返回点逐层回去。");
+          if (!state.completion) return reject(state, "还没有完成依据，不能关闭学习线程。");
+          return withMessage(state, {
+            status: "已完成",
+            activePath: [],
+            questionLineage: state.questionLineage.map(item => item.depth === 0 ? { ...item, status: "已完成" } : item),
+            currentBlocking: ""
+          }, "根问题已关闭；临时活动路径从成稿中移除，问题脉络继续保留。");
+        default: return reject(state, `未知操作：${action.type}`);
+      }
+    }
+
+    function markdown(state) {
+      const lines = ["# 借用检查与悬垂引用", ""];
+      if (state.status === "已完成") {
+        lines.push("## 学习结果", `- 状态：${state.status}`, `- 主问题：${state.rootQuestion}`, `- 完成依据：${state.completion || "尚无"}`, "");
+      } else if (state.rootQuestion) {
+        lines.push("## 当前学习位置", `- 状态：${state.status}`, `- 主问题：${state.rootQuestion}`);
+        if (state.sourceBoundary.length) lines.push(`- 资源范围：${state.sourceBoundary.join("；")}`);
+        lines.push("- 活动路径：");
+        state.activePath.forEach((item, i) => lines.push(`  ${i + 1}. ${item.question}${item.returnPoint ? `（回到：${item.returnPoint}）` : ""}`));
+        if (state.currentBlocking) lines.push(`- 当前阻塞：${state.currentBlocking}`);
+        lines.push("");
+      } else {
+        lines.push("## 当前学习位置", `- 状态：${state.status}`);
+        if (state.sourceBoundary.length) lines.push(`- 资源范围：${state.sourceBoundary.join("；")}`);
+        if (state.candidates.length) lines.push("", "候选根问题：", ...state.candidates.map(x => `- ${x}`));
+        lines.push("");
+      }
+      lines.push("## 解释", "", ...(state.stableExplanation.length ? state.stableExplanation.map(x => `- ${x}`) : ["尚未形成稳定解释。"]), "");
+      if (state.pendingQuestions.length) {
+        lines.push("## 待探索", "", ...state.pendingQuestions.map(x => `- ${x.question}（${x.context}）`), "");
+      }
+      if (state.questionLineage.length) {
+        lines.push("## 问题脉络", "", ...state.questionLineage.map(x => `${"  ".repeat(x.depth)}- [${x.status}] ${x.question}`), "");
+      }
+      if (state.causalChain.length) {
+        lines.push("## 核心因果链", "", ...state.causalChain.flatMap((x, i) => [
+          `${i + 1}. ${x.from}`,
+          `   - 通过：${x.through}`,
+          `   - 导致：${x.to}`
+        ]), "");
+      }
+      if (state.sourceBoundary.length) lines.push("## 来源", "", ...state.sourceBoundary.map(x => `- ${x}`));
+      return lines.join("\n");
+    }
+
+    return { blank, reduce, markdown };
+  })();
+
+  const actions = [
+    ["载入广泛资源", "LOAD_BROAD_SCOPE"], ["推荐根问题", "RECOMMEND_ROOT"], ["接受推荐", "ACCEPT_ROOT"],
+    ["用具体问题开始", "START_CONCRETE"], ["内联补齐", "INLINE_REPAIR"], ["打开阻塞子问题", "OPEN_CHILD"],
+    ["停放 Box 旁支", "PARK_QUESTION"], ["修复最深问题", "REPAIR_DEEPEST"], ["返回一层", "RETURN_ONE"],
+    ["写入稳定检查点", "CHECKPOINT"], ["重建根因果链", "RECONSTRUCT_ROOT"], ["关闭线程", "CLOSE"], ["重置", "RESET"]
+  ];
+
+  const scenarios = [
+    {
+      name: "从资源定向",
+      copy: "观察系统只推荐问题并等待选择，不预生成课程；接受后才形成 Learning Thread。",
+      steps: [["载入两份可读资源", "LOAD_BROAD_SCOPE"], ["形成三个不同路线", "RECOMMEND_ROOT"], ["学习者接受推荐", "ACCEPT_ROOT"], ["写入首个检查点", "CHECKPOINT"]]
+    },
+    {
+      name: "递归并回溯",
+      copy: "观察每一层保存自己的返回点，最深问题修复后只能逐层返回。",
+      steps: [["直接开始根问题", "ACCEPT_ROOT"], ["打开第一层阻塞", "OPEN_CHILD"], ["再打开更小阻塞", "OPEN_CHILD"], ["修复最深连接", "REPAIR_DEEPEST"], ["回到第一层", "RETURN_ONE"], ["修复第一层", "REPAIR_DEEPEST"], ["回到根问题", "RETURN_ONE"]]
+    },
+    {
+      name: "旁支不抢主线",
+      copy: "Box 是有价值的问题，但不阻塞生命周期解释，因此只进入待探索。",
+      steps: [["开始根问题", "ACCEPT_ROOT"], ["打开生命周期阻塞", "OPEN_CHILD"], ["记录 Box 旁支", "PARK_QUESTION"], ["修复生命周期连接", "REPAIR_DEEPEST"], ["返回根问题", "RETURN_ONE"]]
+    },
+    {
+      name: "拒绝错误关闭",
+      copy: "观察仍有子问题或没有完成依据时，关闭动作不会破坏当前状态。",
+      steps: [["开始根问题", "ACCEPT_ROOT"], ["打开阻塞子问题", "OPEN_CHILD"], ["尝试提前关闭", "CLOSE"], ["修复子问题", "REPAIR_DEEPEST"], ["回到根问题", "RETURN_ONE"], ["再次提前关闭", "CLOSE"], ["学习者重建因果链", "RECONSTRUCT_ROOT"], ["正确关闭", "CLOSE"]]
+    }
+  ];
+
+  let state = LearningThread.blank();
+  let currentScenario = 0;
+  let completedSteps = 0;
+
+  function dispatch(type) { state = LearningThread.reduce(state, { type }); render(); }
+
+  function render() {
+    const path = state.activePath.length
+      ? `<ol>${state.activePath.map(x => `<li>${x.question}${x.returnPoint ? `<br><small>回到：${x.returnPoint}</small>` : ""}${x.repaired ? " ✓" : ""}</li>`).join("")}</ol>`
+      : "无";
+    document.querySelector("#state").innerHTML = `
+      <div class="field"><strong>状态</strong>${state.status}</div>
+      <div class="field"><strong>主问题</strong>${state.rootQuestion || "尚未选择"}</div>
+      <div class="field wide"><strong>资源范围</strong>${state.sourceBoundary.length ? state.sourceBoundary.join("<br>") : "无"}</div>
+      <div class="field wide"><strong>活动路径</strong>${path}</div>
+      <div class="field wide"><strong>问题脉络（供思维导图投影）</strong>${state.questionLineage.length ? state.questionLineage.map(x => `${"　".repeat(x.depth)}[${x.status}] ${x.question}`).join("<br>") : "无"}</div>
+      <div class="field wide"><strong>核心因果链（有向连接）</strong>${state.causalChain.length ? state.causalChain.map(x => `${x.from} →〔${x.through}〕→ ${x.to}`).join("<br>") : "无"}</div>
+      <div class="field wide"><strong>当前阻塞</strong>${state.currentBlocking || "无"}</div>
+      <div class="field"><strong>待探索</strong>${state.pendingQuestions.length ? state.pendingQuestions.map(x => x.question).join("<br>") : "无"}</div>
+      <div class="field"><strong>完成依据</strong>${state.completion || "无"}</div>`;
+    document.querySelector("#change").textContent = state.lastChange;
+    document.querySelector("#error").innerHTML = state.error ? `<div class="error">${state.error}</div>` : "";
+    document.querySelector("#markdown").textContent = LearningThread.markdown(state);
+
+    document.querySelector("#tabs").innerHTML = scenarios.map((s, i) => `<button class="${i === currentScenario ? "active" : ""}" data-tab="${i}">${s.name}</button>`).join("");
+    document.querySelectorAll("[data-tab]").forEach(button => button.onclick = () => startScenario(Number(button.dataset.tab)));
+    const scenario = scenarios[currentScenario];
+    document.querySelector("#scenario-copy").textContent = scenario.copy;
+    document.querySelector("#steps").innerHTML = scenario.steps.map(([label, type], i) => `<button data-step="${i}" class="${i < completedSteps ? "done" : ""}" ${i !== completedSteps ? "disabled" : ""}>${i + 1}. ${label}</button>`).join("");
+    document.querySelectorAll("[data-step]").forEach(button => button.onclick = () => { const [, type] = scenario.steps[completedSteps]; state = LearningThread.reduce(state, { type }); completedSteps++; render(); });
+  }
+
+  function startScenario(index) { currentScenario = index; completedSteps = 0; state = LearningThread.blank(); render(); }
+
+  document.querySelector("#freeplay").innerHTML = actions.map(([label, type], i) => `<button class="${i === 0 ? "primary" : ""}" data-action="${type}">${label}</button>`).join("");
+  document.querySelectorAll("[data-action]").forEach(button => button.onclick = () => dispatch(button.dataset.action));
+  render();
+</script>
+</body>
+</html>
