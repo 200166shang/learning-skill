@@ -1,6 +1,7 @@
 # Learning V5 Product Specification
 
-> Status: Wayfinding decision-complete; ready for `to-spec` synthesis
+> Status: Archived Wayfinding decision record; synthesized into the formal build spec
+> Formal spec: [Learning V5: Question-led learning threads with transparent review](https://github.com/200166shang/learning-skill/issues/123)
 > Wayfinder map: [Define a small question-led personal learning V5](https://github.com/200166shang/learning-skill/issues/110)
 
 ## 1. Product sentence
@@ -918,5 +919,5 @@ a general runtime unless a new wayfinding decision explicitly changes the destin
 ## 11. Decision status
 
 The product boundary, domain language, learning and review behavior, document
-contracts, migration policy, and acceptance scenarios are decided. No product decision
-remains open before `to-spec` condenses this decision record into the build contract.
+contracts, migration policy, and acceptance scenarios are decided. They have been
+condensed into the formal tracker specification linked above.
