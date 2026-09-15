@@ -1,6 +1,6 @@
 ---
 name: learning-learn
-description: "Start, resume, or correct one source-grounded Learning Thread from a learner-chosen question or readable source scope."
+description: "Start, resume, or correct one source-grounded Learning Thread and reuse its independent Concepts."
 disable-model-invocation: true
 ---
 
@@ -26,6 +26,9 @@ on any of these entries:
   affected path; update prose, Causal Chain, Question Lineage, Completion Basis, and
   existing affected Memory Target references together; then check only the repaired
   connection and its downstream effect.
+- **Reusable Concept:** after an explanation is stable, create one only on learner
+  request or for a clearly independent boundary; search existing Concepts first, then
+  link or revise an equivalent Concept instead of duplicating it.
 
 Maintain exactly one Active Path. Treat supplied readable material as the default
 Source Boundary, and write stable understanding directly into one Living Learning

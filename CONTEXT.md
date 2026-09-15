@@ -48,6 +48,10 @@ _Avoid_: Generated question tree, curriculum, Active Path
 An ordered explanation of how conditions, mechanisms, and consequences connect the propositions that resolve a question.
 _Avoid_: Question hierarchy, table of contents, topic list
 
+**Concept**:
+An independently readable, source-supported explanation with a reusable boundary, stored as ordinary Markdown and linked from Learning Threads.
+_Avoid_: Every child question, learning-progress container, graph node
+
 **Learning Projection**:
 A read-only rendering derived from canonical learning Markdown, such as an Obsidian mind map of Question Lineage.
 _Avoid_: Second state store, routing authority

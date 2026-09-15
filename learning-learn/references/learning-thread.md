@@ -214,13 +214,69 @@ learner-stated unresolved dependency into an inline answer merely because the so
 contains a short result. Keep side questions durable without letting them steal the
 main line.
 
+## Reuse an independent Concept
+
+Keep explanations inside their Living Learning Document by default. Consider a
+separate Concept only after the explanation is stable and either the learner asks for
+one or the explanation has a clearly independent reusable boundary. A child question
+does not become a Concept merely because it was pursued or repaired. The boundary is
+independent only when the explanation can stand on its own outside this thread without
+its Active Path, Return Points, or other learning-route context.
+
+Before creating any Concept, inspect the workspace's single visible `concepts/`
+directory. Search its descriptive file names, Markdown headings, one-sentence
+boundaries, and relevant terms, then read the plausible matches. Compare the reusable
+explanation's boundary, not just its wording:
+
+- If one existing Concept has the same boundary, link it as-is when it already
+  contains the stable explanation, or revise that file at the checkpoint when the new
+  supported explanation materially improves it. Never create a second Concept for an
+  equivalent boundary.
+- If several Concepts plausibly overlap, show their descriptive paths and boundaries
+  and let the learner choose before changing them or creating another.
+- Only when no equivalent exists, create one Markdown file under `concepts/` with a
+  descriptive human-readable file name. Do not use a numeric, generated, or opaque ID.
+
+Start every new Concept with a descriptive heading and exactly one plain sentence
+that states what the explanation covers and, when useful, where it stops:
+
+```markdown
+# Negative feedback control
+
+> 概念边界：系统如何用测量误差反向改变输入，使输出回到目标附近。
+
+## 核心因果链
+
+<a self-contained explanation>
+
+## 来源
+
+<precise Source Fragments supporting the reusable explanation>
+```
+
+Keep the Concept independently readable and source-supported. It contains no
+`当前学习位置`, Active Path, Question Lineage, Blocking Gap, Return Point, Completion
+Basis, Memory Target, or review schedule. All progress and routing state stays in the
+Learning Thread. A later Learning Thread may use a Concept document after the learner
+accepts it into that thread's Source Boundary; cite the precise Concept heading as the
+Source Fragment. When stable evidence corrects that reusable explanation, revise the
+same Concept at a checkpoint while the later thread keeps its own Question Lineage and
+Completion Basis.
+
+At the explanatory sentence that uses the Concept, add one ordinary relative Markdown
+link to the relevant heading in the selected Concept. That link, ordinary search, and
+renderer-provided backlinks are the complete discovery mechanism. Do not maintain a
+central Concept index, reciprocal-link list, graph database, tag ontology, or other
+relationship state. Obsidian or another renderer may derive a read-only Learning
+Projection from canonical Markdown; edits to a projection never update or override
+learning state.
+
 ## Maintain one living document
 
 Use one Living Learning Document per Learning Thread by default. Organize it in
 explanatory order, revising earlier prose when understanding changes. Put a child into
-the relevant subsection or parent paragraph. Create a separate reusable Concept
-document only when the learner explicitly asks, or when it has a clearly independent
-reusable scope.
+the relevant subsection or parent paragraph. Apply the Concept reuse contract above
+only when a stable explanation crosses its independent-boundary threshold.
 
 Apply the document choice above at the first stable checkpoint. A stable checkpoint
 is one of:
