@@ -1,6 +1,6 @@
 # Learning V5 Product Specification
 
-> Status: In progress; first decision frontier accepted  
+> Status: In progress; source and completion contracts accepted
 > Wayfinder map: [Define a small question-led personal learning V5](https://github.com/200166shang/learning-skill/issues/110)
 
 ## 1. Product sentence
@@ -82,8 +82,69 @@ be established from the current boundary. It may continue with the supported par
 while marking uncertainty; it must not silently substitute unsupported general
 knowledge for source-grounded claims.
 
-The exact citation and conflict behavior remains open in
-[Define Source Fragment citations and evidence boundaries](https://github.com/200166shang/learning-skill/issues/112).
+The proposed citation and conflict contract is defined in section 3.4 and awaits
+learner acceptance.
+
+### 3.4 Source Fragment contract
+
+A source list answers “what material is in scope.” A Source Fragment answers “what
+supports this particular proposition or causal connection.” V5 records both without
+copying the same source text into every question.
+
+#### Addressing
+
+Use the most precise locator the source naturally provides:
+
+| Source | Minimum useful locator |
+|---|---|
+| Markdown or official web documentation | file or URL plus heading |
+| PDF | file or URL plus one-based page and, when useful, section |
+| Prepared video transcript or chapter notes | note path plus chapter and timestamp range |
+| Repository code | workspace-relative path plus symbol; line range only when it is stable enough to help |
+
+The citation is placed immediately after the supported proposition or causal edge.
+A compact human-readable form is:
+
+```markdown
+3. 控制器降低 PWM 占空比请求，使电机平均电压下降。
+   - 通过：电流误差进入限幅控制分支。
+   - 依据：[control.md：Current limiting](../docs/control.md#current-limiting)；
+           `src/motor.ts` 中的 `updateDutyCycle`
+```
+
+The `来源` section remains a low-resolution inventory. It does not replace local
+citations. One Source Fragment may support several explanations by reference; its
+content is not duplicated merely to preserve question lineage.
+
+#### Evidence boundary
+
+The supplied readable sources are the default evidence boundary. Learning may use
+general knowledge to explain ordinary background, but must distinguish it from claims
+attributed to the supplied material. It expands the source boundary only when the
+learner asks or agrees to add another source.
+
+For material outside the boundary or unavailable in the current environment:
+
+- do not imply that it was inspected;
+- name the unsupported connection precisely;
+- request an accessible copy only when that connection blocks the main line;
+- otherwise preserve it as uncertainty or a Pending Question.
+
+#### Claim status
+
+Use plain-language labels only when the distinction matters:
+
+- **来源支持**: a Source Fragment directly establishes the claim;
+- **推断**: the claim follows by reasoning across cited fragments but is not stated;
+- **未解决**: current material cannot establish the required connection;
+- **来源冲突**: relevant fragments support materially incompatible accounts.
+
+When sources conflict, show the competing claims and the consequence for the Root
+Question. Learning does not silently choose a winner. The learner may narrow the
+boundary, add a stronger source, or continue with an explicitly conditional answer.
+
+Do not cite every sentence mechanically. Cite where a claim is contestable, source-
+specific, central to a causal edge, or needed for later verification.
 
 ## 4. Learning Thread document contract
 
@@ -152,8 +213,7 @@ When the Root Question closes:
 The temporary Active Path and Blocking Gap are removed. The final article remains
 readable without understanding the learning process that produced it.
 
-The definition of sufficient Completion Checks remains open in
-[Define completion checks and Learning Thread closure](https://github.com/200166shang/learning-skill/issues/115).
+The closure policy is defined in section 5.6.
 
 ### 4.4 Durable-write policy
 
@@ -286,6 +346,71 @@ Pending Questions have no generated prerequisites, schedule, priority tree, or
 automatic promotion. The learner may later choose one as the Root Question of a new
 Learning Thread.
 
+### 5.6 Completion Check and closure contract
+
+A Completion Check tests whether the repaired causal connection is available to the
+learner. It is not a score, a transcript archive, or proof that every related topic
+has been mastered.
+
+#### When to check
+
+- An inline repair normally needs no separate check.
+- Before returning from a substantial Blocking Gap, use a check when the child-to-
+  parent connection would otherwise remain uncertain.
+- Before closing the Root Question, always use one end-to-end check.
+- After a material correction, re-check only the corrected connection and its effect
+  on the parent chain.
+
+Use one check at a time. Choose the least costly form that matches the understanding:
+
+| Form | Learner action | Best for |
+|---|---|---|
+| Reconstruct | Explain the causal connection in their own words | Mechanisms and conceptual chains |
+| Discriminate | Explain why a plausible alternative or counterexample differs | Boundaries and misconceptions |
+| Apply | Predict, debug, calculate, or use the mechanism once | Operational understanding |
+
+#### Interpret the result
+
+A check is sufficient when the learner preserves the essential cause, mechanism,
+consequence, and any limitation needed by the parent explanation. Exact terminology
+and polished wording are unnecessary.
+
+If the connection is incomplete:
+
+1. keep the current question active;
+2. identify the smallest missing part;
+3. repair it inline, or open a child only if it is itself a Blocking Gap;
+4. check the repaired connection again at the next natural boundary.
+
+If the learner declines or pauses before the check, save the thread as `暂停`; do not
+mark it `已完成`. Pausing does not discard stable explanation or Question Lineage.
+
+#### Return and close
+
+A child receives `[已回填]` only after its repaired connection is visibly integrated
+at the saved Return Point. No separate durable score is required for each child.
+
+The Root Question may close only when:
+
+1. no child remains on the Active Path;
+2. the Living Learning Document contains a coherent end-to-end answer;
+3. the learner completes one end-to-end reconstruction or small application;
+4. remaining uncertainties and Pending Questions are visible rather than hidden.
+
+The document records one concise completion basis, not the full exchange:
+
+```markdown
+## 学习结果
+- 状态：已完成
+- 主问题：为什么电流升高时控制器会降低 PWM？
+- 完成依据：学习者根据一次过流场景，正确解释了采样、误差、占空比和电流回落的完整链条。
+- 保留的不确定性：低速反电动势对该链条的影响尚未解决。
+```
+
+A later correction may reopen the Root Question. V5 changes the status back to
+`学习中`, records the corrected Blocking Gap and Return Point, and revises the article;
+completion is not an irreversible badge.
+
 ## 6. Public skill surface and source handoff
 
 ### 6.1 Recommended V5 surface
@@ -366,7 +491,5 @@ The first frontier is accepted: document shape, orientation, recursive inquiry,
 Question Lineage, Causal Chain, one public skill, and the external media handoff are
 normative. The next specification pass must decide:
 
-1. Source Fragment addressing, attribution, uncertainty, and conflict behavior.
-2. Completion Checks and Learning Thread closure.
-3. Memory Target promotion and the minimal Review Queue.
-4. Cross-session resume, correction, and recovery.
+1. Define Memory Target promotion and the minimal Review Queue.
+2. Define cross-session resume, correction, and recovery.

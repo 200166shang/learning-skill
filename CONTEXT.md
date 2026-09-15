@@ -32,6 +32,10 @@ _Avoid_: Transcript, chat log, knowledge dump
 The smallest addressable part of a supplied source that supports a specific explanation, such as a page, chapter, timestamp, section, or code location.
 _Avoid_: Whole-resource attachment, duplicated excerpt
 
+**Source Boundary**:
+The collection of readable sources the learner has agreed may ground a Learning Thread.
+_Avoid_: Everything the agent knows, silently discovered material
+
 **Pending Question**:
 A non-blocking question preserved for later without joining the Active Path.
 _Avoid_: Active branch, generated curriculum item
@@ -51,6 +55,10 @@ _Avoid_: Second state store, routing authority
 **Completion Check**:
 A small demonstration that the learner can reconstruct the important causal connection or apply it once.
 _Avoid_: Content generated, notes saved, all sources consumed
+
+**Completion Basis**:
+The concise record of the learner demonstration that justified closing a Root Question.
+_Avoid_: Score, full test transcript, permanent mastery claim
 
 **Memory Target**:
 A selectively promoted idea that is worth retrieving over time, is likely to be forgotten, and can be checked independently.
