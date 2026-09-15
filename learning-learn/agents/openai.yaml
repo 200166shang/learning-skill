@@ -1,6 +1,6 @@
 interface:
   display_name: "Learning: Learn"
-  short_description: "Learn one question along a coherent main line"
-  default_prompt: "Use $learning-learn to help me understand this question or source scope and keep the stable explanation in one living Markdown document."
+  short_description: "Learn from sources and review selected understanding"
+  default_prompt: "Use $learning-learn to help me understand this question or readable source scope, keep the stable explanation in one Living Learning Document, selectively promote eligible understanding when I ask, and review due Memory Targets only when I explicitly request it."
 policy:
   allow_implicit_invocation: false

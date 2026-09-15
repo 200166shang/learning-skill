@@ -21,6 +21,12 @@ then
 fi
 
 rm -rf "$target_dir"
-cp -R "$repo_dir/learning-learn" "$target_dir"
+mkdir -p "$target_dir/agents" "$target_dir/references"
+cp "$repo_dir/learning-learn/SKILL.md" "$target_dir/SKILL.md"
+cp "$repo_dir/learning-learn/agents/openai.yaml" "$target_dir/agents/openai.yaml"
+cp "$repo_dir/learning-learn/references/learning-thread.md" \
+  "$target_dir/references/learning-thread.md"
+cp "$repo_dir/learning-learn/references/review.md" \
+  "$target_dir/references/review.md"
 
 echo "Installed learning-learn to $target_dir"
