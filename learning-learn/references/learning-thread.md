@@ -1,6 +1,7 @@
 # Learning thread
 
-Follow this workflow for a concrete question, broad-scope orientation, or resume.
+Follow this workflow for a concrete question, broad-scope orientation, resume, or
+correction.
 
 ## Start
 
@@ -21,9 +22,16 @@ Choose the matching entry:
   create a curriculum. Begin only after the learner chooses, or use the recommendation
   when the learner delegates the choice. “Do not choose for me” means recommend and
   then wait: a recommendation is not acceptance and does not establish the thread.
-- **Resume:** read the article's `当前学习位置` section, start at the deepest current
-  question, then follow its saved return points one level at a time. Resume is complete
-  when the next explanation advances that active path without skipping an ancestor.
+- **Resume:** use the resume and recovery contract below. Start at the deepest current
+  question and follow saved Return Points one level at a time.
+- **Correction:** treat a challenge to an existing explanation as a repair of that
+  Learning Thread, not as a new concrete-question start. Recheck the affected causal
+  edge and use the correction contract below.
+
+Choose the Living Learning Document once for every entry: use the learner-supplied
+path directly; otherwise reuse the single existing primary document that clearly
+matches the topic. For a new thread with no match, choose a sensible workspace path.
+Ask only when several existing candidates risk selecting the wrong document.
 
 Treat supplied readable files, links, and prepared notes as the default Source
 Boundary. Ask before expanding it. Ask for missing readable material only when the
@@ -53,6 +61,93 @@ Show materially conflicting fragments together and state how the conflict change
 limits the answer to the Root Question; never silently choose the convenient account.
 Cite contestable, source-specific, central, or later-verifiable connections rather
 than citing every sentence.
+
+## Resume and recover from Markdown
+
+Use only that Living Learning Document and the relevant sources named by its current
+connection. Its Markdown is the complete durable state across fresh sessions.
+
+Read the smallest sufficient context, in this order:
+
+1. `当前学习位置`: status, Root Question, Source Boundary, the complete Active Path,
+   every per-level blocking reason and Return Point, and the deepest current question;
+2. the explanatory section named by the deepest Return Point;
+3. the current-question section and only its relevant Source Fragments;
+4. Question Lineage only when returned history affects the current connection;
+5. wider prose or sources only when that connection depends on them.
+
+Verify that the path begins at the Root Question, every non-root level has a readable
+Return Point, exactly one deepest question is current, each Return Point resolves, and
+the deepest blocking reason explains the immediate parent dependency. For a consistent
+paused document, set `状态：学习中`, give one short orientation sentence, and continue
+the deepest question. Keep the orientation to that sentence and the next deepest-path
+explanation, leaving wider article content and shallower questions unchanged.
+
+Resolve routing from the document structure before reading sources or teaching. Match
+the saved sentence or causal connection, its immediate parent question, and nearby
+prose. When more than one structurally plausible location remains, preserve status and
+Markdown while the learner chooses; topical similarity alone does not resolve it.
+
+If routing is damaged, preserve readable prose and Source Fragments and use only
+facts that are unique in the Markdown:
+
+- When a Return Point heading was renamed, reconstruct it only if the saved exact
+  sentence or causal connection, immediate parent, and nearby prose identify exactly
+  one structurally plausible current location. Update the locator, explicitly report
+  the old and reconstructed Return Point, then continue.
+- When `当前学习位置` is missing but Question Lineage and nearby prose establish
+  exactly one unfinished root-to-current path and Return Point, reconstruct only that
+  path and state what was rebuilt.
+- When two or more Active Paths or Return Points remain plausible, present the small
+  set of candidates, keep the deepest question current, and ask the learner which was
+  intended while preserving the document unchanged.
+- When a cited source moved, mark the citation stale and relocate it only when the
+  same fragment is unambiguous; block the path only if the affected edge loses support.
+- When Markdown is partly malformed, retain valid article content and rebuild only
+  the smallest routing block established by the remaining text.
+
+Recovery retains only pursued questions and established states, leaving every open gap
+and uncertain lineage visible. Resume is complete when the next explanation advances
+the same deepest path and, when routing was repaired, that repair has also been
+disclosed and persisted.
+
+## Correct prior understanding
+
+Identify the challenged proposition or causal edge. Read only its local prose,
+its cited Source Fragments and the new evidence, the nearest parent and affected
+downstream connections, and the related Question Lineage, Completion Basis, and
+Memory Target references already present in that document. Apply the source-conflict
+rule above, adding an explicit comparison of the fragments' applicability or authority.
+
+When the correction changes a completed answer:
+
+1. Reopen the same thread by replacing the complete `学习结果` block with exactly one
+   `当前学习位置` block at `状态：学习中`. A Completion Basis belongs only to the
+   completed state and is replaced after the new check succeeds.
+2. Build only the Active Path needed to repair the affected edge: the existing Root
+   Question plus the smallest current repair question, with its blocking reason and
+   an exact Return Point at the affected sentence or causal arrow. Preserve unrelated
+   explanation, Pending Questions, sources, and pursued history. In Question Lineage,
+   mark the Root Question `[暂停]` and only that repair question `[当前]`; reuse an
+   existing pursued question when it names the same repair, and do not fabricate other
+   lineage.
+3. At one stable checkpoint, update the affected prose, the changed Causal Chain edge
+   and its downstream consequences, Question Lineage states, and removal of the old
+   Completion Basis together. Update every related Memory Target reference already in
+   the Learning Thread so none assert the superseded connection: mark each
+   `需要修订` when its expected connection is not yet stable, or revise its wording
+   and source link when the corrected connection is stable. Memory Target handling in
+   this workflow is limited to existing references; Review Queue and scheduling
+   behavior remain outside it.
+4. Check only the corrected connection and its effect on the parent chain. Keep the
+   thread open until the learner answers. After the repair is integrated and no child
+   remains, close through the normal root contract and write a new concise Completion
+   Basis from that answer.
+
+If the challenge is only a non-blocking extension or asks a different Root Question,
+leave the completed thread closed and start a separate Learning Thread when the
+learner chooses. Current prose, Question Lineage, source status, and version control
+preserve the correction history.
 
 ## Follow the main line
 
@@ -127,11 +222,8 @@ the relevant subsection or parent paragraph. Create a separate reusable Concept
 document only when the learner explicitly asks, or when it has a clearly independent
 reusable scope.
 
-At the first stable checkpoint, use the article path the learner supplied. Otherwise,
-reuse the single existing primary document that clearly matches the topic. If neither
-exists, choose a sensible path within the learner's workspace. Ask only when multiple
-existing candidates create a real risk of overwriting the wrong document. A stable
-checkpoint is one of:
+Apply the document choice above at the first stable checkpoint. A stable checkpoint
+is one of:
 
 - a coherent part of the main chain has been established;
 - a blocking child has been repaired and merged into its parent;

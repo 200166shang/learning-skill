@@ -1,6 +1,6 @@
 ---
 name: learning-learn
-description: "Start or continue one source-grounded Learning Thread from a learner-chosen question or readable source scope."
+description: "Start, resume, or correct one source-grounded Learning Thread from a learner-chosen question or readable source scope."
 disable-model-invocation: true
 ---
 
@@ -19,8 +19,13 @@ on any of these entries:
 - **Concrete question:** begin the relevant source-grounded causal explanation.
 - **Broad scope without a useful question:** recommend one connecting question and
   at most two genuinely different alternatives.
-- **Resume:** read `当前学习位置`, advance the deepest question, and return through
-  saved parent return points in order.
+- **Resume:** read the Active Path and deepest Return Point; reconstruct and disclose
+  routing only when one location is plausible, otherwise ask; then advance that same
+  deepest question.
+- **Correction:** identify and recheck the challenged causal edge; reopen its smallest
+  affected path; update prose, Causal Chain, Question Lineage, Completion Basis, and
+  existing affected Memory Target references together; then check only the repaired
+  connection and its downstream effect.
 
 Maintain exactly one Active Path. Treat supplied readable material as the default
 Source Boundary, and write stable understanding directly into one Living Learning
