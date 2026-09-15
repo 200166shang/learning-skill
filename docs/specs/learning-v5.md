@@ -1,6 +1,6 @@
 # Learning V5 Product Specification
 
-> Status: In progress; minimal Review Queue accepted
+> Status: In progress; Concept discovery and V4 migration accepted
 > Wayfinder map: [Define a small question-led personal learning V5](https://github.com/200166shang/learning-skill/issues/110)
 
 ## 1. Product sentence
@@ -288,6 +288,52 @@ renders causality, it should derive a labelled directed chain from `核心因果
 Markdown remains the source of truth. The plugin must not require private IDs, keep a
 second copy of statuses, or become necessary for resume.
 
+### 4.6 Reusable Concept discovery
+
+A Concept document is created only when the learner asks for one or when an explanation
+has a clearly independent reusable scope. It is not a second document automatically
+created for every child question.
+
+Store Concept documents under one visible `concepts/` directory in the learner's
+workspace, using descriptive human-readable file names. A Concept document contains:
+
+```markdown
+# Negative feedback control
+
+> 概念边界：系统如何用测量误差反向改变输入，使输出回到目标附近。
+
+## 核心因果链
+
+<a self-contained explanation>
+
+## 来源
+
+<Source Fragments that support the reusable explanation>
+```
+
+It has no `当前学习位置`, Active Path, Question Lineage, Completion Basis, or review
+schedule. Those belong to Learning Threads and `REVIEW.md`.
+
+Before creating a Concept document, Learning searches `concepts/` by file name,
+heading, and relevant terms. If one existing document has the same boundary, revise or
+link it rather than creating a duplicate. If several documents plausibly overlap,
+present them to the learner before choosing.
+
+Learning Threads link to Concepts at the explanatory sentence that uses them:
+
+```markdown
+这里用到[负反馈控制](../concepts/negative-feedback-control.md)：测量值升高会使控制输入向相反方向变化。
+```
+
+Those ordinary links plus search and Obsidian backlinks are the discovery mechanism.
+There is no maintained central index, relation database, tag ontology, or plugin-owned
+graph. Question provenance stays in the source Learning Thread; a Concept remains
+independently readable.
+
+A later Learning Thread may use a Concept as a source. Stable corrections flow back to
+the Concept at a checkpoint, while the new thread keeps its own Question Lineage and
+Completion Basis.
+
 ## 5. Recursive inquiry contract
 
 ### 5.1 Classify the gap
@@ -452,6 +498,24 @@ $learning-learn Using <path to the resulting notes>, help me understand <questio
 
 If a PDF or web page is unreadable in the current environment, Learning requests an
 accessible copy instead of taking ownership of conversion infrastructure.
+
+### 6.3 Skill packaging
+
+V5 keeps one installed public directory and no runtime dependency:
+
+```text
+learning-learn/
+  SKILL.md
+  agents/openai.yaml
+  references/
+    learning-thread.md
+    review.md
+```
+
+`SKILL.md` contains the short routing spine, entry behaviors, leading vocabulary, and
+core one-path invariant. It reads `learning-thread.md` only for learning, resume, or
+correction, and `review.md` only for promotion or review. These references are prompt
+instructions, not schemas or executable runtimes.
 
 ## 7. Review contract
 
@@ -664,7 +728,60 @@ Recovery never invents completed questions, silently closes a gap, or infers a p
 through several plausible branches. No database, write-ahead log, or duplicate plugin
 state is introduced.
 
-## 9. Acceptance
+## 9. V4-to-V5 migration and release boundary
+
+### 9.1 Repository and installation
+
+V5 evolves the existing `$learning-learn` skill in place. It does not add a public
+alias, restore retired V3 skills, or introduce a new installation command. The existing
+installer continues to copy only the `learning-learn` directory to the selected skills
+location.
+
+The implementation may split the longer contract into the two references in section
+6.3 for progressive disclosure. It adds no package manager, application build,
+database, migration executable, or prompt-snapshot test suite.
+
+Installing V5 must not scan, rewrite, move, or delete learner documents or Obsidian
+vault files. Repository history and the existing pre-simplification tag remain the
+compatibility layer for the retired platform.
+
+### 9.2 Existing V4 Living Learning Documents
+
+V4 documents remain readable inputs. There is no bulk migration. Upgrade one document
+only when it is resumed, corrected, or substantively edited:
+
+1. preserve the existing article and `当前学习位置` content;
+2. convert an active arrow path into the V5 numbered Active Path when unambiguous;
+3. create Question Lineage only from the active path and questions visibly established
+   by the document—never invent missing history;
+4. introduce explicit Causal Chain structure only where stable explanation already
+   supports it or new learning establishes it;
+5. add local Source Fragment citations when the affected explanation is touched, not
+   through a whole-document citation rewrite;
+6. preserve ambiguous old routing text and ask the learner rather than guessing.
+
+Completed V4 documents remain unchanged until reopened. If reopened for correction,
+they receive V5 status, the smallest repair path, and a new Completion Check.
+
+### 9.3 Review creation
+
+Create `REVIEW.md` lazily when the learner accepts the first Memory Target. Existing
+notes and completed questions are never bulk-promoted. The learner may later request
+candidate promotion from one old document, using the V5 eligibility tests.
+
+### 9.4 Release boundary
+
+The V5 implementation is releasable when:
+
+- the one public skill routes concrete learning, orientation, resume, correction,
+  promotion, and review into the appropriate instructions;
+- a V4 active document upgrades in place without losing prose or inventing lineage;
+- the installer copies the skill and references without touching learner content;
+- the representative acceptance scenarios pass by direct manual evaluation;
+- the final tree contains no runtime, viewer, dependency, schema, migration program,
+  compatibility alias, or generated artifact.
+
+## 10. Acceptance
 
 Representative end-to-end acceptance scenarios will be decided after the upstream
 contracts settle in
@@ -675,12 +792,10 @@ orientation, nested Blocking Gaps and ordered return, a Pending Question that do
 not steal focus, cross-session resume, selective Memory Target promotion, and one
 due-review interaction.
 
-## 10. Next decisions
+## 11. Next decisions
 
 The first frontier is accepted: document shape, orientation, recursive inquiry,
 Question Lineage, Causal Chain, one public skill, and the external media handoff are
 normative. The next specification pass must decide:
 
-1. Decide discovery for independently reusable Concept documents.
-2. Define the V4-to-V5 migration and release boundary.
-3. Define the representative end-to-end acceptance scenarios.
+1. Define the representative end-to-end acceptance scenarios.
