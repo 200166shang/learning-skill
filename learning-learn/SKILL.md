@@ -1,6 +1,6 @@
 ---
 name: learning-learn
-description: "Start, resume, or correct one source-grounded Learning Thread, reuse its independent Concepts, and promote selected understanding for review."
+description: "Start, resume, or correct one source-grounded Learning Thread, reuse its independent Concepts, and promote or review selected understanding."
 disable-model-invocation: true
 ---
 
@@ -30,6 +30,9 @@ on any of these entries:
 - **Reusable Concept:** after an explanation is stable, create one only on learner
   request or for a clearly independent boundary; search existing Concepts first, then
   link or revise an equivalent Concept instead of duplicating it.
+- **Explicit review:** when the learner asks to review due Memory Targets, read
+  [the review instructions](references/review.md), resolve the workspace's canonical
+  `REVIEW.md`, and run its due-review workflow one target at a time.
 
 Read [the review instructions](references/review.md) for **Memory Target promotion**:
 propose only stable integrated understanding that passes every eligibility test, keep

@@ -137,11 +137,13 @@ When the correction changes a completed answer:
    Learning Thread, follow it to the canonical `REVIEW.md` entry so none continue to
    assert the superseded connection: set its visible status to `needs-revision` when
    the expected connection is not yet stable, or revise its prompt, expected
-   connection, and source-thread link when the correction is stable. If the prompt
-   heading changes, read that canonical entry's complete `来源线程` list and update the
-   ordinary Memory Target link in every listed source thread, not only the thread being
-   corrected. Preserve all sources and the existing schedule. Do not select due items
-   or change interval stages, dates, or review results during correction.
+   connection, and source-thread link when the correction is stable. Apply the
+   [canonical suspension or re-entry transition](review.md#suspend-repair-and-re-enter)
+   whenever the target leaves or returns to due selection. If the prompt heading
+   changes, read that canonical entry's complete `来源线程` list and update the ordinary
+   Memory Target link in every listed source thread, not only the thread being
+   corrected. Preserve all sources. Outside the linked transition, preserve the
+   existing schedule. Do not select due items during correction.
 4. Check only the corrected connection and its effect on the parent chain. Keep the
    thread open until the learner answers. After the repair is integrated and no child
    remains, close through the normal root contract and write a new concise Completion
