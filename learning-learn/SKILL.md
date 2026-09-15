@@ -1,14 +1,15 @@
 ---
 name: learning-learn
-description: "Learn one learner-chosen question or source scope through a coherent recursive explanation and one living Markdown document."
+description: "Start or continue one source-grounded Learning Thread from a learner-chosen question or readable source scope."
 disable-model-invocation: true
 ---
 
 # Learning: Learn
 
-Build one source-grounded explanation around the learner's chosen scope. Keep a
-single **main line**; descend only into a **blocking gap**; resume at an explicit
-**return point**. Fold stable understanding into one readable Markdown article.
+Build one **Learning Thread** around a **Root Question** and its agreed **Source
+Boundary**. Keep exactly one **Active Path**; descend only into a **Blocking Gap**;
+resume at an explicit **Return Point**. Fold stable understanding into one **Living
+Learning Document**.
 
 ## Route
 
@@ -21,5 +22,6 @@ on any of these entries:
 - **Resume:** read `当前学习位置`, advance the deepest question, and return through
   saved parent return points in order.
 
-Maintain exactly one active path. Treat supplied readable material as the learning
-boundary, and write stable understanding directly into one living Markdown document.
+Maintain exactly one Active Path. Treat supplied readable material as the default
+Source Boundary, and write stable understanding directly into one Living Learning
+Document whose Active Path, Question Lineage, and Causal Chain remain distinct.
