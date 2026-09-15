@@ -62,29 +62,62 @@ For each turn:
    helps establish the next connection. State uncertainty where the sources do not
    settle a claim. This step is complete when the learner can see how the current
    connection advances the main line.
-2. Repair a small missing connection inline when a brief explanation is sufficient.
-3. Work from the deepest current question. At that level, open at most one child only
-   when a missing connection blocks further explanation. The child may later open its
-   own necessary child, so one active path can recurse through multiple levels. Keep
-   every ancestor suspended with its return point; create no sibling frontier. For
-   each new child, say in plain language:
-   - the blocking gap;
-   - why the main line cannot continue without it;
-   - the exact parent sentence or connection that is the return point.
+2. Classify an interruption by dependency, not by difficulty or topic size:
+   - **Inline repair:** a brief supported bridge is enough for the learner to use the
+     next causal connection. Explain it in place and continue; normally do not create
+     a question or a separate check.
+   - **Blocking Gap:** the learner cannot yet use a missing connection that the current
+     explanation needs next. Open one child and suspend its parent.
+   - **Pending Question:** the question is useful but the next connection does not
+     depend on it. Preserve it under `待探索` with the context in which it arose, and
+     leave the Active Path unchanged.
+3. Work from the deepest current question. At that level, open at most one child for
+   a Blocking Gap. A child may later open its own necessary child, so one Active Path
+   can recurse through multiple levels. Keep every ancestor suspended; create no
+   sibling frontier. For each new child, say and record in plain language:
+   - the child question and missing connection it repairs;
+   - why that connection blocks the immediate parent;
+   - the exact parent sentence or causal arrow that is its Return Point.
+   Append only that child to the Active Path and Question Lineage. Mark its parent
+   suspended and the child current; do not advance, check, or open a child at any
+   shallower level while a deeper question remains active.
+   If the missing connection needs its own teaching plus a later learner reply or
+   check before the parent can resume, it is a Blocking Gap: expose the routing triple
+   before teaching it rather than treating the whole exchange as an inline repair.
+   When the response ends waiting for the learner at this new deepest question,
+   persist the full new path without changing `状态：学习中`; otherwise a fresh
+   session could not know which question was opened. Ordinary turn-taking is not a
+   learner pause.
 4. Teach the child until the missing connection is available. At a natural boundary,
    use the smallest useful check: ask for the child-to-parent link, inspect a tiny
    example, or apply the mechanism once. A check is complete when that link is
    established; verification is not required on every reply.
-5. Return immediately to the nearest parent's return point. Rewrite or continue that
-   explanation with the repaired link visible, then repeat upward one level at a time.
-   A child is complete only when its repaired connection is merged into its parent;
-   the recursive path is complete only when the root main line is coherent again.
-6. Close the root with an end-to-end learner explanation or concrete application
-   when closure would help. Otherwise continue the conversation without manufacturing
-   a test.
+5. When the learner makes the deepest missing connection available, return only to
+   that child's immediate parent Return Point. Keep the child incomplete while
+   rewriting or continuing the parent sentence with the repaired mechanism visible
+   in causal reading order. Only after that integration remove the child from the
+   Active Path, mark it `[已回填]`, and mark its parent `[当前]`. Restore that parent's
+   saved blocking reason as `当前阻塞` when it is itself a child. Make this integration
+   visible in the response and Markdown before considering the next ancestor; never
+   pop several levels as one unexplained jump.
+   Removing a returned child from the Active Path never removes it from Question
+   Lineage: retain every actually pursued descendant as `[已回填]` through later
+   returns and root closure.
+   A child is complete only after this merge. Repeat the same operation upward, one
+   saved Return Point at a time, until another gap appears or the Root Question is
+   coherent.
+6. When all children have been integrated and the Root Question is coherent, ask one
+   end-to-end Completion Check: have the learner reconstruct the important cause,
+   mechanism, consequence, and any material limitation needed by the explanation, or
+   apply the chain once. Generated prose, a saved document, or completed child checks
+   are not evidence for root closure. Ask one check at a time and wait for the
+   learner's answer.
 
-Let questions emerge from real confusion or a broken causal arrow. Keep side questions
-that do not block the explanation conversational and preserve the current main line.
+Let questions emerge from real confusion or a broken causal arrow. Do not turn a
+brief bridge into structure merely because it has a name, and do not collapse a
+learner-stated unresolved dependency into an inline answer merely because the source
+contains a short result. Keep side questions durable without letting them steal the
+main line.
 
 ## Maintain one living document
 
@@ -108,6 +141,11 @@ checkpoint is one of:
 
 At a checkpoint, make at most one direct Markdown edit that integrates all stable
 changes from the turn. Do not write merely because an assistant message was sent.
+If the learner stops, declines a check, or asks to continue later, that is a pause
+checkpoint: set `状态：暂停`, preserve the complete Active Path with every per-level
+blocking reason and Return Point, and keep the deepest question current. Do not mark
+any unreconnected child or the Root Question complete. An explicit continuation may
+set the status back to `学习中` and advance the same deepest question.
 
 While the thread is active, keep this small, human-readable routing section near the
 top and overwrite it as the path changes:
@@ -119,12 +157,21 @@ top and overwrite it as the path changes:
 - 资源范围：<agreed readable sources>
 - 活动路径：
   1. <Root Question>
-  2. <child question>（回到：<exact parent sentence or connection>）
+  2. <child question>
+     - 阻塞：<why this question prevents its immediate parent connection>
+     - 回到：<exact parent sentence or causal arrow>
+  3. <deepest child question>
+     - 阻塞：<why this question prevents its immediate parent connection>
+     - 回到：<exact parent sentence or causal arrow>
 - 当前阻塞：为什么最深问题阻塞它的父层
 ```
 
-Record the entire active path and every level's return point in order. When no child
-is active, keep only the numbered Root Question, omit `当前阻塞`, and record
+Record the entire active path and each non-root level's own blocking reason and Return
+Point in order. `当前阻塞` summarizes only the deepest pair; it does not replace the
+per-level records. The Root Question is the path origin, so never give its numbered
+item a blocking reason or Return Point. Keep `当前阻塞` as a routing field after the
+whole numbered list, not nested under one item. When no child is active, keep only the
+numbered Root Question, omit `当前阻塞`, and record
 `下一连接：<the next causal connection being developed>`; do not invent a synthetic
 child. A fresh session must be able to identify the Root Question, current position,
 Source Boundary, and supporting Source Fragments from this Markdown alone.
@@ -133,8 +180,10 @@ Keep the three views separate:
 
 - `当前学习位置` / Active Path says where learning is now and where a child returns.
 - `问题脉络` / Question Lineage keeps only accepted questions the learner actually
-  pursued. Add the accepted Root Question at the first checkpoint; never add broad-
-  scope candidates or manufacture a question tree.
+  pursued. Add the accepted Root Question at the first checkpoint and each child when
+  it is actually opened; use compact states such as `[暂停]`, `[当前]`, and
+  `[已回填]` to distinguish suspended ancestors from the one deepest question.
+  Never add broad-scope candidates or manufacture a question tree.
 - `核心因果链` / Causal Chain is a mechanism-oriented sequence of complete
   propositions. For each important edge, name how the cause produces the consequence
   and place its Source Fragment beside it. It is not a transcript, outline, or copy of
@@ -143,12 +192,54 @@ Keep the three views separate:
 Every stable checkpoint includes `来源` as the low-resolution Source Boundary
 inventory; it does not replace the local Source Fragments in the explanation or
 Causal Chain. Remove optional empty sections instead of filling them with placeholders.
+When Pending Questions exist, keep this separate durable section outside routing and
+causal prose:
+
+```markdown
+## 待探索
+
+- <question in learner language>（<where it arose; optionally what it may extend>）
+```
+
+Pending Questions have no prerequisites, priority tree, schedule, or automatic
+promotion. Omit the section when it is empty.
 
 Before an orientation choice is accepted, do not create or update a Living Learning
 Document. Candidate questions remain only in the conversation. Once the learner
 accepts or delegates exactly one Root Question, establish its one-item Active Path,
 add only that pursued question to Question Lineage, record the agreed Source Boundary,
 and begin the first useful causal connection before the first checkpoint write.
+
+## Complete the root
+
+Interpret the root Completion Check by the essential connection, not exact wording.
+If the answer is incomplete, keep the Root Question active, identify the smallest
+missing part, repair it inline or open one Blocking Gap, and check again only at the
+next natural boundary. If the learner declines or stops, use the pause contract.
+
+Close only when no child remains, the article has a coherent end-to-end answer, the
+learner has completed that root check, and remaining uncertainty is visible. At the
+closing checkpoint:
+
+- replace `当前学习位置` with `学习结果`; do not retain an Active Path or current
+  Blocking Gap;
+- record `状态：已完成`, the Root Question, and one concise `完成依据` describing what
+  causal chain or application the learner demonstrated;
+- mark the Root Question `[已完成]` and retain pursued children as `[已回填]` in
+  Question Lineage;
+- keep the integrated Causal Chain in explanatory order and preserve Pending Questions
+  or material uncertainty.
+
+The Completion Basis is not a score, mastery claim, or test transcript. Use this
+human-readable shape and omit empty optional lines:
+
+```markdown
+## 学习结果
+- 状态：已完成
+- 主问题：<resolved Root Question>
+- 完成依据：<concise learner reconstruction or small application>
+- 保留的不确定性：<only when material>
+```
 
 ## Finish
 
