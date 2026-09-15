@@ -1,6 +1,6 @@
 # Learning V5 Product Specification
 
-> Status: In progress; memory promotion and resume contracts accepted
+> Status: In progress; minimal Review Queue accepted
 > Wayfinder map: [Define a small question-led personal learning V5](https://github.com/200166shang/learning-skill/issues/110)
 
 ## 1. Product sentence
@@ -509,8 +509,83 @@ At one checkpoint, propose no more than three targets. Prefer revising or mergin
 existing equivalent target over adding a duplicate. A later correction to the source
 explanation must mark the target for revision before further review.
 
-The exact Review Queue representation, due selection, and rescheduling policy remain
-open in [Prototype the minimal Markdown Review Queue](https://github.com/200166shang/learning-skill/issues/117).
+The proposed Review Queue representation, due selection, and rescheduling policy are
+specified below for learner review in
+[Prototype the minimal Markdown Review Queue](https://github.com/200166shang/learning-skill/issues/117).
+
+### 7.2 Minimal Review Queue
+
+Each learner workspace has at most one `REVIEW.md`. It contains only accepted Memory
+Targets and the minimum state needed to select a due item and space its next review.
+The file is readable and directly editable; it is not an event ledger.
+
+```markdown
+# Review Queue
+
+## 为什么测量电流超过目标时，控制器会降低 PWM 占空比？
+- 状态：active
+- 来源线程：[电流限制](./motor-current-limit.md#限流闭环)
+- 目标类型：mechanism
+- 期待连接：测量值形成负向误差，限幅分支降低占空比请求，平均电压下降使电流回落。
+- 阶段：3d
+- 下次复习：2026-09-18
+- 上次结果：2026-09-15，顺利想起
+```
+
+The heading prompt is the target identity within this personal queue. V5 does not
+introduce opaque target IDs. Equivalent prompts are merged, and renamed prompts keep
+their source link and schedule.
+
+#### Schedule
+
+Use one transparent interval ladder:
+
+```text
+1d → 3d → 7d → 14d → 30d → 90d
+```
+
+New targets begin at `1d` and are due the next local calendar day. A review has three
+learning outcomes plus one maintenance state:
+
+| Result | Meaning | Next action |
+|---|---|---|
+| 未想起 | The essential connection could not be reconstructed | Repair it now, reset to `1d`, review next day |
+| 费力想起 | The connection was correct but fragile or needed a substantial cue | Keep the same stage and schedule that interval again |
+| 顺利想起 | The essential connection was reconstructed without a substantial cue | Advance one ladder stage and schedule that interval |
+| 需要修订 | The prompt or expected connection is stale, ambiguous, or contradicted | Exclude from due review until repaired from its source thread |
+
+At `90d`, another `顺利想起` remains at `90d`. The learner may explicitly retire a
+target at any time; retirement moves it to an archive section or marks it `retired`
+without deleting its relationship to the source thread.
+
+Dates use `YYYY-MM-DD` in the learner's local timezone. V5 has no time-of-day queue,
+ease factor, streak, score, overdue penalty, or hidden scheduling parameters.
+
+#### Review interaction
+
+When the learner invokes review, Learning:
+
+1. reads only active targets whose `下次复习` is today or earlier;
+2. selects the oldest due target, preserving file order for ties;
+3. presents only its prompt and any context needed to answer;
+4. lets the learner reconstruct the answer before showing the expected connection;
+5. compares the response to the essential connection, not exact wording;
+6. gives one concise repair when needed and assigns the matching result in learner
+   language;
+7. updates `阶段`, `下次复习`, and `上次结果` in one direct Markdown edit;
+8. offers the next due target without manufacturing extra practice.
+
+The learner may request a particular target or a bounded number of due targets. A
+normal invocation handles one at a time and stops whenever the learner stops. If no
+target is due, Learning reports the next date and does not create filler questions.
+
+A failed review updates the Review Queue, not the Learning Thread. Reopen the source
+thread only when review reveals that the stored explanation or expected connection is
+wrong, rather than merely forgotten.
+
+Automatic reminders remain outside the V5 core. A calendar, Codex automation, or
+Obsidian reminder may point the learner to `REVIEW.md`, but it never owns scheduling
+state.
 
 ## 8. Resume, correction, and recovery
 
@@ -606,4 +681,6 @@ The first frontier is accepted: document shape, orientation, recursive inquiry,
 Question Lineage, Causal Chain, one public skill, and the external media handoff are
 normative. The next specification pass must decide:
 
-1. Prototype and decide the minimal Review Queue.
+1. Decide discovery for independently reusable Concept documents.
+2. Define the V4-to-V5 migration and release boundary.
+3. Define the representative end-to-end acceptance scenarios.
