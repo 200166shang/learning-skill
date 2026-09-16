@@ -1,17 +1,29 @@
 # Learning V6: Chat First
 
-A small user-invoked Codex skill for learning through normal high-quality conversation
-while preserving useful explanations and a lightweight graph of the questions the
-learner actually pursued.
+A small set of explicit Codex learning Skills built around normal high-quality
+conversation and lightweight durable Learning Threads.
 
 > **Teach first. Record second.**
 
-The model's normal teaching ability is the primary learning experience. The skill does
-not impose a curriculum or learning state machine on the answer. Durable structure is
-added after useful teaching so the learning can be resumed and projected into tools
-such as Obsidian without making that structure control the conversation.
+`learning-learn` is the core. The model teaches naturally first, then preserves useful
+explanations and a lightweight graph of the questions the learner actually pursued.
+Review and Practice consume those saved artifacts without becoming part of the core
+teaching state.
 
-## Use it
+## Workflows
+
+```text
+$learning-learn     understand something and preserve useful explanations
+$learning-review    retrieve and reconstruct saved understanding
+$learning-practice  apply saved understanding in one concrete task
+$learning           tell me which explicit workflow fits
+```
+
+All four Skills are deliberately user-invoked. `$learning` recommends a workflow when
+you are unsure which one fits; it does not auto-run the other Skills. Direct invocation
+of Learn, Review, or Practice remains first-class.
+
+## Learn
 
 Ask a concrete question, optionally with source material:
 
@@ -20,7 +32,7 @@ $learning-learn Using src/object_track.cpp, explain how camera intrinsics K and
 projection appear in this code.
 ```
 
-The skill answers the question directly. When source material matters, source-specific
+The Skill answers the question directly. When source material matters, source-specific
 claims are grounded in it while ordinary background knowledge can still be used to
 teach the concept clearly.
 
@@ -33,6 +45,26 @@ I still do not understand why fx changes the pixel x coordinate.
 The follow-up may deepen the previous explanation, apply it to code, move to a related
 question, or return to an older question. There is no mandatory Blocking Gap, Return
 Point, Active Path, or completion ceremony.
+
+For source-heavy questions that require broad multi-file tracing, Learn may isolate the
+investigation in a temporary worker when the host supports it. This is optional; the
+main agent still owns the learner-facing explanation and the same request must work
+without multi-agent capability.
+
+## Review
+
+Use `$learning-review` with an existing Learning Thread when you want to retrieve saved
+understanding. Review asks you to reconstruct the important mechanism before revealing
+or comparing against the saved explanation. Ordinary Review does not move the current
+Question, rewrite notes, or store review scores/schedules in the thread.
+
+## Practice
+
+Use `$learning-practice` with an existing Learning Thread when you want to apply saved
+understanding. Practice presents one concrete application task at a time, lets you
+attempt it before showing the solution, and explains the mechanism-level gap in the
+attempt. Ordinary Practice does not add exercise state, scores, or practice nodes to
+the thread.
 
 ## Durable output
 
@@ -47,9 +79,8 @@ A Learning Thread uses this minimal shape:
     └── ...
 ```
 
-`questions/*.md` preserve the useful explanatory substance of the conversation.
-`thread.yaml` stores only the lightweight graph needed to locate those notes and resume
-later:
+`questions/*.md` preserve useful explanatory substance for relearning. `thread.yaml`
+stores only the lightweight graph needed to locate those notes and resume later:
 
 ```yaml
 version: 1
@@ -79,39 +110,31 @@ edges:
     type: applies
 ```
 
-V6 intentionally starts with only three relation types:
-
-- `deepens`: digs further into understanding an earlier question;
-- `applies`: applies earlier understanding to code, an example, or a concrete case;
-- `related`: arose from the same learning context without being a simple deepening or
-  application.
-
+V6 intentionally has only three relation types: `deepens`, `applies`, and `related`.
 The YAML is the single source of truth for question relationships and current position.
-Markdown is for readable explanations. A renderer may derive an Obsidian/Tauri graph
-from these files, but the projection does not own learning state.
+Markdown is for readable explanations. The graph records learning that happened; it
+does not determine what must be learned next.
 
 ## Resume
 
-Resume is deliberately small:
+Resume remains deliberately small:
 
 1. read `thread.current`;
-2. read that question note;
-3. follow relations to only the earlier notes needed for the learner's new message;
+2. read that Question note;
+3. follow relations only to the earlier notes needed for the new message;
 4. continue normal conversation.
 
-The graph is a projection of learning that happened, not a plan that determines what
-must happen next.
+Do not reconstruct a hidden workflow state machine from the graph.
 
-## What V6 removes from the core
+## Boundaries
 
-V6 does not maintain Active Path, Blocking Gap, Return Point, Question Lineage,
-Completion Check/Basis, Memory Targets, Concept promotion, review scheduling, or V4/V5
-migration state. Git history preserves the old implementation; the new core does not
-carry compatibility machinery into every learning turn.
+V6 does not maintain Active Path, Blocking Gap, Return Point, Completion Check/Basis,
+Memory Targets, review scheduling, practice state, mastery scores, generated
+prerequisites, or a workflow runtime.
 
-Review, spaced repetition, reusable concept extraction, Obsidian export, and viewers
-may be added as separate explicit workflows that consume V6's saved notes and graph.
-They are not part of `$learning-learn`.
+Review and Practice are downstream explicit workflows. They consume Learning Threads
+but do not own canonical learning state. No persistent Custom Agent is required by this
+repository.
 
 ## Install or update
 
@@ -119,22 +142,30 @@ They are not part of `$learning-learn`.
 ./install.sh
 ```
 
-By default this installs `learning-learn` to
-`${CODEX_HOME:-$HOME/.codex}/skills`. Pass a skills directory as the first argument to
-install elsewhere:
+By default this installs exactly these four Skills into
+`${CODEX_HOME:-$HOME/.codex}/skills`:
+
+```text
+learning
+learning-learn
+learning-review
+learning-practice
+```
+
+Pass a skills directory as the first argument to install elsewhere:
 
 ```bash
 ./install.sh /tmp/codex-skills
 ```
 
-The installed skill contains `SKILL.md`, interface metadata, and the lightweight
-recording contract. It has no runtime service, viewer, review scheduler, or hidden
-learning database.
+The installation contains Skill instructions and interface metadata only. There is no
+runtime service, viewer, review scheduler, hidden learning database, or Custom Agent
+framework.
 
 ## Acceptance principle
 
-Compare the same real learning question with and without the skill. If the skill makes
-the explanation materially less clear, less complete, or less natural, simplify the
-skill rather than adding more teaching protocol.
+Compare ordinary `$learning-learn` behavior with normal high-quality ChatGPT/Codex
+teaching. If the Skill makes the explanation materially less clear, less complete, or
+less natural, simplify the Skill rather than adding more teaching protocol.
 
 Be deterministic about recording. Let the model teach.

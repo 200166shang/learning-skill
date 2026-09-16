@@ -1,8 +1,8 @@
 # Personal Learning
 
 A small chat-first learning practice. The model teaches naturally; durable structure
-records what the learner actually explored so later sessions and renderers can recover
-it without controlling the conversation.
+records what the learner actually explored so later sessions and downstream workflows
+can reuse it without controlling the conversation.
 
 ## Design rule
 
@@ -10,6 +10,20 @@ it without controlling the conversation.
 
 The conversation is primary. The graph is a projection of learning that already
 happened. Structure records learning; structure does not control learning.
+
+## Public workflows
+
+- `learning-learn` owns learner-facing teaching and durable Learning Thread updates.
+- `learning-review` retrieves and reconstructs saved understanding without ordinary
+  mutation of the Learning Thread.
+- `learning-practice` applies saved understanding in one concrete task without ordinary
+  mutation of the Learning Thread.
+- `learning` is a tiny explicit router that recommends one of the three workflows and
+  stops; it does not invoke them automatically.
+
+All four are user-invoked. A source-heavy Learn turn may use a temporary explorer when
+the host supports it, but the main agent remains the teaching owner and no persistent
+Custom Agent is part of the product.
 
 ## Language
 
@@ -29,7 +43,7 @@ summary.
 _Avoid_: transcript, graph state, terse knowledge record
 
 **Relation**:
-A lightweight recorded connection between two pursued Questions. V6 starts with only
+A lightweight recorded connection between two pursued Questions. V6 uses only
 `deepens`, `applies`, and `related`.
 _Avoid_: complete ontology, prerequisite tree, learning route
 
@@ -39,16 +53,16 @@ instruction about what the learner must study next.
 _Avoid_: active workflow state, mandatory frontier
 
 **Learning Projection**:
-A read-only view derived from `thread.yaml` and Learning Notes, such as an Obsidian or
-Tauri graph. A projection never owns or modifies canonical learning state.
+A read-only view derived from `thread.yaml` and Learning Notes. A projection never owns
+or modifies canonical learning state.
 _Avoid_: second state store, routing authority
 
 ## Storage boundary
 
 `thread.yaml` is the single source of truth for the thread title, root/current question,
 question-note locations, and relations. Markdown Learning Notes contain explanations
-and useful evidence, not duplicate routing metadata.
+and useful source evidence, not duplicate routing metadata.
 
-Review, spaced repetition, reusable concept extraction, viewers, and other downstream
-features are separate workflows. They may consume this durable learning output but do
-not belong to the core teaching path.
+Review and Practice consume these artifacts but do not add review/practice state to
+them. Spaced repetition, viewers, reusable concept extraction, mastery models, and
+other downstream features remain outside this release.
