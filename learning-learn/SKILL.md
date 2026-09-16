@@ -22,6 +22,10 @@ workspace must be created, updated, or resumed.
 - If readable source material is supplied, inspect the parts that materially help the
   answer. Ground source-specific claims in those sources. General knowledge may be
   used normally to explain concepts; supplied sources do not bound ordinary teaching.
+- If answering a source-specific question requires broad tracing across several files
+  or implementation sites, and that investigation would materially clutter the main
+  teaching context, read [the source-exploration branch](references/source-exploration.md).
+  Keep focused source questions in the main context.
 - If the learner gives only a broad module or body of material and does not yet have a
   useful question, inspect it cheaply and recommend one useful connecting question.
   Offer alternatives only when they represent genuinely different learning routes.
