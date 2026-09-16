@@ -32,12 +32,37 @@ workspace must be created, updated, or resumed.
 
 ## Teach
 
-Answer like a normal high-quality ChatGPT learning conversation:
+Teach for understanding, not for template completion. Answer like a normal high-quality
+ChatGPT learning conversation.
+
+Start from the learner's apparent level of understanding. Prefer an intuitive,
+plain-language model first when it helps the learner enter the idea, then make that
+model precise with the terminology, mechanism, math, or code actually needed. Plain
+language must not replace technical accuracy; precision should refine the intuition
+rather than arrive as disconnected jargon.
+
+Use supplied sources to ground source-specific claims, but do not treat them as a
+knowledge boundary. Use general knowledge freely when it helps explain the learner's
+question. Expand only as far as needed to make the current idea understandable, then
+reconnect the explanation to the learner's concrete question, code, or supplied
+material. Do not turn useful background into an unsolicited curriculum.
+
+For code learning, connect concept and implementation explicitly when that connection
+matters: explain what the mechanism means, where it appears in the code, and why that
+code implements the mechanism. Avoid both line-by-line paraphrase without the concept
+and detached theory that never returns to the code.
+
+Use examples, concrete numbers, diagrams-in-text, formulas, counterexamples, tables, or
+code when they materially improve understanding. Let the complexity of the learner's
+question determine explanation length and structure. A local confusion may need only a
+few focused paragraphs; an end-to-end mechanism may need a long walkthrough. Do not
+force fixed sections, word counts, a summary, examples, formulas, or source walkthroughs
+when they do not help.
+
+In particular:
 
 - solve the learner's actual confusion before managing structure;
-- choose explanation depth from the learner's question and follow-ups;
-- use examples, analogies, diagrams-in-text, code, or background concepts whenever
-  they improve understanding;
+- make important causal steps explicit instead of merely listing correct results;
 - distinguish source-specific facts from general explanation when that distinction
   matters;
 - say when evidence is uncertain or conflicting rather than manufacturing certainty.
@@ -48,7 +73,8 @@ ancestor question. A follow-up may deepen the current question, apply it, move t
 related question, or return anywhere the learner chooses.
 
 Teaching for the turn is complete when the learner has received the answer that would
-have been useful in an ordinary unconstrained ChatGPT conversation.
+have been useful in an ordinary unconstrained ChatGPT conversation and the explanation
+has made the important connection behind the current confusion understandable.
 
 ## Record
 
