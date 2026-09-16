@@ -3,10 +3,13 @@ set -euo pipefail
 
 SKILLS_DIR="${1:-${CODEX_HOME:-$HOME/.codex}/skills}"
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TARGET="$SKILLS_DIR/learning-learn"
 
 mkdir -p "$SKILLS_DIR"
-rm -rf "$TARGET"
-cp -R "$REPO_DIR/learning-learn" "$TARGET"
 
-echo "Installed learning-learn V6 to $TARGET"
+for skill in learning-learn learning-review; do
+  TARGET="$SKILLS_DIR/$skill"
+  rm -rf "$TARGET"
+  cp -R "$REPO_DIR/$skill" "$TARGET"
+done
+
+echo "Installed learning-learn and learning-review V6 skills to $SKILLS_DIR"
