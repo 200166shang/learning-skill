@@ -90,27 +90,55 @@ For a later pursued question:
 When the learner explicitly returns to an existing question, set `current` to that
 existing node instead of creating a duplicate node.
 
-## Preserve the explanation
+## Build a note for relearning
 
-A question note exists to preserve what was useful to learn, not to normalize it into
-a database record.
+A Question note is a reconstructed explanation optimized for **relearning**. It is not
+a chat transcript and not a terse knowledge summary. Conversation may discover ideas
+in a messy order; the note may reorganize them into the order that best rebuilds the
+understanding later.
 
-Use this lightweight shape:
+Use this minimum shape, without forcing any additional section template:
 
 ```markdown
 # <question>
 
-<the useful explanation from the conversation, edited only as needed to read well on
-its own>
+<a self-contained explanation organized for understanding this question again>
 ```
 
-Preserve important reasoning, examples, code explanations, analogies, caveats, and
-source references that made the conversational answer useful. Do not replace them with
-a terse summary merely because the question has been answered.
+Preserve **learning value, not wording**. When integrating or restructuring a note,
+retain the parts that made the idea understandable: important `why` reasoning, useful
+mental models, intermediate mechanism, connections to prior concepts, concrete
+examples or counterexamples, concept-to-code mappings, material caveats, and source
+references. Rewrite wording, reorder sections, merge repetition, and remove chat-only
+transitions when that makes the explanation better.
 
-When a later turn materially improves the same explanation, integrate the improvement
-into that question note in readable order. Do not append raw chat transcripts or
-assistant/user labels.
+**Compress redundancy, not reasoning.** Do not turn a rich explanation into a list of
+correct conclusions by deleting the intermediate reasoning that lets the learner
+reconstruct why those conclusions follow.
+
+When later turns improve the same Question, integrate the new understanding into the
+existing note. Prefer local integration when the article remains coherent; restructure
+the whole note when accumulated additions, corrections, or changed understanding make
+a different explanatory order substantially clearer. Do not preserve conversation
+chronology merely because it happened first.
+
+Let the question determine the shape of the note:
+
+- For a standalone concept, make the explanation self-contained. Explain the concept,
+  motivation, mechanism, useful example, distinctions, or boundaries only as they help
+  understanding; do not invent project context.
+- For a source- or project-specific question, anchor source-specific claims in the
+  supplied material and explicitly connect the general concept to the relevant code,
+  data, or project behavior. General knowledge may still be used to make the mechanism
+  understandable.
+- For an end-to-end system question, establish the overall mental model and organize
+  the stages in causal order, using concrete data or code where it helps the learner
+  see how one stage produces the next.
+
+These are quality guides, not mandatory Markdown sections. Do not manufacture
+`Background`, `Principle`, `Example`, `Source`, `Common mistakes`, or `Summary`
+sections when the question does not benefit from them. Let complexity determine the
+length and structure.
 
 ## Sources
 
@@ -144,5 +172,5 @@ Be deterministic about persistence:
 - every node file exists;
 - Markdown contains no second copy of graph routing state.
 
-Be flexible about teaching. The recorder must adapt to a good explanation; the
-explanation must not adapt to the recorder.
+Be flexible about teaching and note composition. The recorder may improve explanatory
+structure, but it must preserve the learning value that made the understanding useful.
