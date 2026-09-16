@@ -1,50 +1,117 @@
-# Learning V5: Learn
+# Learning V6: Chat First
 
-A single user-invoked Codex skill for starting or continuing one source-grounded
-**Learning Thread**. Each thread has one **Root Question**, one **Active Path**, an
-agreed **Source Boundary**, and one **Living Learning Document**.
+A small user-invoked Codex skill for learning through normal high-quality conversation
+while preserving useful explanations and a lightweight graph of the questions the
+learner actually pursued.
+
+> **Teach first. Record second.**
+
+The model's normal teaching ability is the primary learning experience. The skill does
+not impose a curriculum or learning state machine on the answer. Durable structure is
+added after useful teaching so the learning can be resumed and projected into tools
+such as Obsidian without making that structure control the conversation.
 
 ## Use it
 
-Ask a concrete question with its sources:
+Ask a concrete question, optionally with source material:
 
 ```text
-$learning-learn Using src/motor.ts and docs/control.md, why does this controller
-reduce duty cycle when the measured current rises?
+$learning-learn Using src/object_track.cpp, explain how camera intrinsics K and
+projection appear in this code.
 ```
 
-The skill begins with the relevant causal explanation. Important causal edges cite
-precise headings, PDF pages, prepared-video chapters and timestamps, or repository
-symbols. Material inference, uncertainty, and source conflict remain visible. The
-skill does not initialize a runtime, create learning IDs, or generate a curriculum.
+The skill answers the question directly. When source material matters, source-specific
+claims are grounded in it while ordinary background knowledge can still be used to
+teach the concept clearly.
 
-Or provide a broad module and let the skill orient you:
+Follow-up questions remain normal conversation:
 
 ```text
-$learning-learn Help me learn the MCU module from src/mcu and the linked design
-notes. I do not yet know which question will connect it end to end.
+I still do not understand why fx changes the pixel x coordinate.
 ```
 
-The skill recommends one connecting Root Question and may offer up to two genuinely
-different alternatives. Candidates stay conversational until the learner accepts or
-delegates one. At a stable checkpoint, the Living Learning Document keeps Active Path,
-Question Lineage, and Causal Chain as visibly separate views, plus a low-resolution
-source inventory and precise local Source Fragments.
+The follow-up may deepen the previous explanation, apply it to code, move to a related
+question, or return to an older question. There is no mandatory Blocking Gap, Return
+Point, Active Path, or completion ceremony.
 
-The same `$learning-learn` entry resumes or corrects a thread, reuses an independent
-Markdown Concept when appropriate, selectively promotes stable understanding into one
-human-readable `REVIEW.md`, and reviews one due Memory Target at a time on explicit
-request. Review uses the visible `1d → 3d → 7d → 14d → 30d → 90d` ladder; it has no
-background scheduler or hidden state.
+## Durable output
 
-### Existing V4 documents
+A Learning Thread uses this minimal shape:
 
-V4 Markdown remains readable and is never bulk-migrated. An active arrow-path document
-is upgraded only when that document is resumed, corrected, or substantively edited.
-The upgrade preserves its prose, converts only an unambiguous active route, and does
-not invent completed Question Lineage, sources, causal claims, completion evidence,
-Concepts, or Memory Targets. A completed V4 document stays byte-for-byte unchanged
-until a correction actually reopens it.
+```text
+<thread>/
+├── thread.yaml
+└── questions/
+    ├── q001.md
+    ├── q002.md
+    └── ...
+```
+
+`questions/*.md` preserve the useful explanatory substance of the conversation.
+`thread.yaml` stores only the lightweight graph needed to locate those notes and resume
+later:
+
+```yaml
+version: 1
+
+thread:
+  title: Camera projection
+  root: q001
+  current: q003
+
+nodes:
+  q001:
+    title: How does a 3D camera point become a 2D pixel?
+    file: questions/q001.md
+  q002:
+    title: What does camera intrinsic matrix K mean?
+    file: questions/q002.md
+  q003:
+    title: Where does K appear in object_track.cpp?
+    file: questions/q003.md
+
+edges:
+  - from: q001
+    to: q002
+    type: deepens
+  - from: q002
+    to: q003
+    type: applies
+```
+
+V6 intentionally starts with only three relation types:
+
+- `deepens`: digs further into understanding an earlier question;
+- `applies`: applies earlier understanding to code, an example, or a concrete case;
+- `related`: arose from the same learning context without being a simple deepening or
+  application.
+
+The YAML is the single source of truth for question relationships and current position.
+Markdown is for readable explanations. A renderer may derive an Obsidian/Tauri graph
+from these files, but the projection does not own learning state.
+
+## Resume
+
+Resume is deliberately small:
+
+1. read `thread.current`;
+2. read that question note;
+3. follow relations to only the earlier notes needed for the learner's new message;
+4. continue normal conversation.
+
+The graph is a projection of learning that happened, not a plan that determines what
+must happen next.
+
+## What V6 removes from the core
+
+V6 does not maintain Active Path, Blocking Gap, Return Point, Question Lineage,
+Completion Check/Basis, Memory Targets, Concept promotion, review scheduling, or V4/V5
+migration state. Git history preserves the old implementation; the new core does not
+carry compatibility machinery into every learning turn.
+
+Review, spaced repetition, reusable concept extraction, Obsidian export, and viewers
+may be added as separate explicit workflows that consume V6's saved notes and graph.
+They are not part of `$learning-learn`.
 
 ## Install or update
 
@@ -52,22 +119,22 @@ until a correction actually reopens it.
 ./install.sh
 ```
 
-By default this installs the one public `learning-learn` skill to
-`${CODEX_HOME:-$HOME/.codex}/skills`. Pass a skills directory as the first argument
-to install elsewhere:
+By default this installs `learning-learn` to
+`${CODEX_HOME:-$HOME/.codex}/skills`. Pass a skills directory as the first argument to
+install elsewhere:
 
 ```bash
 ./install.sh /tmp/codex-skills
 ```
 
-The installed package contains only `SKILL.md`, its interface metadata, and the
-`learning-thread.md` and `review.md` instruction references. Installation does not
-search for or alter learner Markdown, an Obsidian vault, Concepts, or `REVIEW.md`.
+The installed skill contains `SKILL.md`, interface metadata, and the lightweight
+recording contract. It has no runtime service, viewer, review scheduler, or hidden
+learning database.
 
-The repository intentionally contains no learning runtime, hidden workspace schema,
-viewer, review scheduler, practice tracker, migration program, package dependency, or
-compatibility alias. Updating from Learning Suite V3 removes only its identified four
-retired public skills, packaged viewer, installation manifest, and its own identified
-`_shared` runtime directory. Media download, transcription, subtitle extraction, and
-OCR stay upstream; Obsidian may render Markdown as a read-only projection but never
-owns learning or review state.
+## Acceptance principle
+
+Compare the same real learning question with and without the skill. If the skill makes
+the explanation materially less clear, less complete, or less natural, simplify the
+skill rather than adding more teaching protocol.
+
+Be deterministic about recording. Let the model teach.

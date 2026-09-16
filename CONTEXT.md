@@ -1,73 +1,54 @@
 # Personal Learning
 
-This context describes a small, question-led personal learning practice that connects supplied sources, recursive inquiry, durable understanding, and selective review.
+A small chat-first learning practice. The model teaches naturally; durable structure
+records what the learner actually explored so later sessions and renderers can recover
+it without controlling the conversation.
+
+## Design rule
+
+**Teach first. Record second.**
+
+The conversation is primary. The graph is a projection of learning that already
+happened. Structure records learning; structure does not control learning.
 
 ## Language
 
 **Learning Thread**:
-The smallest resumable learning whole: one root question, its source boundary, its current inquiry path, and its living learning document.
-_Avoid_: Course, curriculum, knowledge base, learning project
+A resumable group of related learner questions, their readable notes, and lightweight
+relationship metadata.
+_Avoid_: course, curriculum, workflow state machine
 
-**Root Question**:
-The connecting question a Learning Thread is trying to resolve end to end.
-_Avoid_: Topic, goal, root intent
+**Question**:
+A question the learner actually pursued and received a useful explanation for.
+_Avoid_: generated prerequisite, planned curriculum item, synthetic gap
 
-**Active Path**:
-The currently pursued chain from the Root Question through any unresolved child questions.
-_Avoid_: Question tree, curriculum
+**Learning Note**:
+The independently readable Markdown explanation saved for a Question. It preserves the
+useful substance of the conversational answer rather than reducing it to a canonical
+summary.
+_Avoid_: transcript, graph state, terse knowledge record
 
-**Blocking Gap**:
-The smallest missing connection that prevents the current explanation from continuing coherently.
-_Avoid_: Interesting tangent, prerequisite list
+**Relation**:
+A lightweight recorded connection between two pursued Questions. V6 starts with only
+`deepens`, `applies`, and `related`.
+_Avoid_: complete ontology, prerequisite tree, learning route
 
-**Return Point**:
-The exact parent connection where learning resumes after a Blocking Gap is repaired.
-_Avoid_: Previous step, parent ID
-
-**Living Learning Document**:
-The readable explanation that is revised as stable understanding develops within a Learning Thread.
-_Avoid_: Transcript, chat log, knowledge dump
-
-**Source Fragment**:
-The smallest addressable part of a supplied source that supports a specific explanation, such as a page, chapter, timestamp, section, or code location.
-_Avoid_: Whole-resource attachment, duplicated excerpt
-
-**Source Boundary**:
-The collection of readable sources the learner has agreed may ground a Learning Thread.
-_Avoid_: Everything the agent knows, silently discovered material
-
-**Pending Question**:
-A non-blocking question preserved for later without joining the Active Path.
-_Avoid_: Active branch, generated curriculum item
-
-**Question Lineage**:
-The compact durable parent-child history of questions the learner actually pursued within a Learning Thread.
-_Avoid_: Generated question tree, curriculum, Active Path
-
-**Causal Chain**:
-An ordered explanation of how conditions, mechanisms, and consequences connect the propositions that resolve a question.
-_Avoid_: Question hierarchy, table of contents, topic list
-
-**Concept**:
-An independently readable, source-supported explanation with a reusable boundary, stored as ordinary Markdown and linked from Learning Threads.
-_Avoid_: Every child question, learning-progress container, graph node
+**Current Question**:
+The Question the learner is presently pursuing. It is a resume pointer, not an
+instruction about what the learner must study next.
+_Avoid_: active workflow state, mandatory frontier
 
 **Learning Projection**:
-A read-only rendering derived from canonical learning Markdown, such as an Obsidian mind map of Question Lineage.
-_Avoid_: Second state store, routing authority
+A read-only view derived from `thread.yaml` and Learning Notes, such as an Obsidian or
+Tauri graph. A projection never owns or modifies canonical learning state.
+_Avoid_: second state store, routing authority
 
-**Completion Check**:
-A small demonstration that the learner can reconstruct the important causal connection or apply it once.
-_Avoid_: Content generated, notes saved, all sources consumed
+## Storage boundary
 
-**Completion Basis**:
-The concise record of the learner demonstration that justified closing a Root Question.
-_Avoid_: Score, full test transcript, permanent mastery claim
+`thread.yaml` is the single source of truth for the thread title, root/current question,
+question-note locations, and relations. Markdown Learning Notes contain explanations
+and useful evidence, not duplicate routing metadata.
 
-**Memory Target**:
-A selectively promoted idea that is worth retrieving over time, is likely to be forgotten, and can be checked independently.
-_Avoid_: Every note, every answered question, flashcard by default
-
-**Review Queue**:
-A small collection of due Memory Targets used for learner-invoked spaced review.
-_Avoid_: Full learning history, automatic curriculum
+Review, spaced repetition, reusable concept extraction, viewers, and other downstream
+features are separate workflows. They may consume this durable learning output but do
+not belong to the core teaching path.
