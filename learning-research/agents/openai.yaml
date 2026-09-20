@@ -1,6 +1,0 @@
-interface:
-  display_name: "Learning Research"
-  short_description: "Find trusted sources for current learning context"
-  default_prompt: "Use $learning-research to find a small set of high-value sources for my current Question or Topic and identify useful learning gaps."
-policy:
-  allow_implicit_invocation: false

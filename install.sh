@@ -1,19 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SKILLS_DIR="${1:-${CODEX_HOME:-$HOME/.codex}/skills}"
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CODEX_SKILLS_DIR="${CODEX_HOME:-$HOME/.codex}/skills"
-mkdir -p "$CODEX_SKILLS_DIR"
 
-for old in learning-flow learning-route learning-teach learning-verify learning-note learning-synthesis learning-curate learning-observe; do
-  rm -rf "$CODEX_SKILLS_DIR/$old"
+mkdir -p "$SKILLS_DIR"
+
+for skill in learning learning-learn learning-review learning-practice; do
+  TARGET="$SKILLS_DIR/$skill"
+  rm -rf "$TARGET"
+  cp -R "$REPO_DIR/$skill" "$TARGET"
 done
-rm -rf "$CODEX_SKILLS_DIR/learning" "$CODEX_SKILLS_DIR/learning-organize" "$CODEX_SKILLS_DIR/learning-research" "$CODEX_SKILLS_DIR/_shared" "$CODEX_SKILLS_DIR/web"
-cp -R "$REPO_DIR/learning" "$CODEX_SKILLS_DIR/learning"
-cp -R "$REPO_DIR/learning-organize" "$CODEX_SKILLS_DIR/learning-organize"
-cp -R "$REPO_DIR/learning-research" "$CODEX_SKILLS_DIR/learning-research"
-cp -R "$REPO_DIR/_shared" "$CODEX_SKILLS_DIR/_shared"
-rm -rf "$CODEX_SKILLS_DIR/_shared/node_modules"
-npm install --omit=dev --no-audit --no-fund --prefix "$CODEX_SKILLS_DIR/_shared"
-echo "Installed learning V7, learning-research, and learning-organize."
-echo "Restart or start a new Codex turn to reload skills."
+
+echo "Installed learning, learning-learn, learning-review, and learning-practice V6 skills to $SKILLS_DIR"
