@@ -1,140 +1,12 @@
-# Learning V6: Chat First
+# Learning Skills V7
 
-A small set of explicit Codex learning Skills built around normal high-quality
-conversation and lightweight durable Learning Threads.
-
-> **Teach first. Record second.**
-
-`learning-learn` is the core. The model teaches naturally first, then preserves useful
-explanations and a lightweight graph of the questions the learner actually pursued.
-Review and Practice consume those saved artifacts without becoming part of the core
-teaching state.
-
-## Workflows
+A small, evidence-backed recursive learning system for Codex, exposed as `$learning`, with explicit `$learning-research` and `$learning-organize` companion workflows.
 
 ```text
-$learning-learn     understand something and preserve useful explanations
-$learning-review    retrieve and reconstruct saved understanding
-$learning-practice  apply saved understanding in one concrete task
-$learning           tell me which explicit workflow fits
+learner question → Episode → PUSH / LEARN / VERIFY / POP / RESUME
+                                  ↓
+                         root teach-back → CLOSED → IDLE
 ```
-
-All four Skills are deliberately user-invoked. `$learning` recommends a workflow when
-you are unsure which one fits; it does not auto-run the other Skills. Direct invocation
-of Learn, Review, or Practice remains first-class.
-
-## Learn
-
-Ask a concrete question, optionally with source material:
-
-```text
-$learning-learn Using src/object_track.cpp, explain how camera intrinsics K and
-projection appear in this code.
-```
-
-The Skill answers the question directly. When source material matters, source-specific
-claims are grounded in it while ordinary background knowledge can still be used to
-teach the concept clearly.
-
-Follow-up questions remain normal conversation:
-
-```text
-I still do not understand why fx changes the pixel x coordinate.
-```
-
-The follow-up may deepen the previous explanation, apply it to code, move to a related
-question, or return to an older question. There is no mandatory Blocking Gap, Return
-Point, Active Path, or completion ceremony.
-
-For source-heavy questions that require broad multi-file tracing, Learn may isolate the
-investigation in a temporary worker when the host supports it. This is optional; the
-main agent still owns the learner-facing explanation and the same request must work
-without multi-agent capability.
-
-## Review
-
-Use `$learning-review` with an existing Learning Thread when you want to retrieve saved
-understanding. Review asks you to reconstruct the important mechanism before revealing
-or comparing against the saved explanation. Ordinary Review does not move the current
-Question, rewrite notes, or store review scores/schedules in the thread.
-
-## Practice
-
-Use `$learning-practice` with an existing Learning Thread when you want to apply saved
-understanding. Practice presents one concrete application task at a time, lets you
-attempt it before showing the solution, and explains the mechanism-level gap in the
-attempt. Ordinary Practice does not add exercise state, scores, or practice nodes to
-the thread.
-
-## Durable output
-
-A Learning Thread uses this minimal shape:
-
-```text
-<thread>/
-├── thread.yaml
-└── questions/
-    ├── q001.md
-    ├── q002.md
-    └── ...
-```
-
-`questions/*.md` preserve useful explanatory substance for relearning. `thread.yaml`
-stores only the lightweight graph needed to locate those notes and resume later:
-
-```yaml
-version: 1
-
-thread:
-  title: Camera projection
-  root: q001
-  current: q003
-
-nodes:
-  q001:
-    title: How does a 3D camera point become a 2D pixel?
-    file: questions/q001.md
-  q002:
-    title: What does camera intrinsic matrix K mean?
-    file: questions/q002.md
-  q003:
-    title: Where does K appear in object_track.cpp?
-    file: questions/q003.md
-
-edges:
-  - from: q001
-    to: q002
-    type: deepens
-  - from: q002
-    to: q003
-    type: applies
-```
-
-V6 intentionally has only three relation types: `deepens`, `applies`, and `related`.
-The YAML is the single source of truth for question relationships and current position.
-Markdown is for readable explanations. The graph records learning that happened; it
-does not determine what must be learned next.
-
-## Resume
-
-Resume remains deliberately small:
-
-1. read `thread.current`;
-2. read that Question note;
-3. follow relations only to the earlier notes needed for the new message;
-4. continue normal conversation.
-
-Do not reconstruct a hidden workflow state machine from the graph.
-
-## Boundaries
-
-V6 does not maintain Active Path, Blocking Gap, Return Point, Completion Check/Basis,
-Memory Targets, review scheduling, practice state, mastery scores, generated
-prerequisites, or a workflow runtime.
-
-Review and Practice are downstream explicit workflows. They consume Learning Threads
-but do not own canonical learning state. No persistent Custom Agent is required by this
-repository.
 
 ## Install or update
 
@@ -142,30 +14,52 @@ repository.
 ./install.sh
 ```
 
-By default this installs exactly these four Skills into
-`${CODEX_HOME:-$HOME/.codex}/skills`:
+## Workspace
 
 ```text
-learning
-learning-learn
-learning-review
-learning-practice
+.learning/
+  workspace.yaml   schema version
+  journey.yaml     finite Episodes and pursued questions
+  evidence.yaml    verification and misconception evidence
+  state.yaml       active Episode and focus ID stack, or IDLE
+notes/*.md         reusable knowledge
+OVERVIEW.md        optional whole-picture projection
+research/*.md      optional external-source research notes
+organized/         optional replaceable Topic projection
 ```
 
-Pass a skills directory as the first argument to install elsewhere:
+Only questions the learner asks or accepts are durable. A question closes only with passing verification evidence. A root pass closes the Episode and returns the workspace to IDLE. OVERVIEW may describe knowledge boundaries but cannot start or route learning.
+
+`_shared/knowledge-note.md` is the single current KnowledgeNote contract. Journey owns learning provenance, Evidence owns demonstrated understanding, and notes never prove mastery or route the next question.
+
+V7 intentionally has no Web observer, generated learning map, database, automatic review scheduler, or numeric mastery model.
+
+## Research from current understanding
+
+Invoke `$learning-research` with the current Question, selected Question IDs, or an Organized Topic. It finds a small set of high-value external sources, explains what to inspect and why it matters now, and identifies potential learning gaps. In a durable workspace it saves a reusable `research/rNNN.md` unless asked not to.
+
+Research suggestions are not Questions. They enter Journey only if the learner later chooses to pursue them through `$learning`; research never changes State, Evidence, Notes, or Organized Topics.
+
+## Organize completed learning
+
+Invoke `$learning-organize` when many pursued questions should be merged, reordered, and rewritten as a few coherent long-form Topics. It first proposes the Topic structure and writes `organized/` only after learner approval.
+
+Journey questions record the durable exploration. Organized Topics are the replaceable current explanation; they do not replace questions, Notes, Evidence, or runtime State. If the current Topics are unsatisfactory, run `$learning-organize` again: it rereads the learning sources and current Topics, proposes a complete replacement, and overwrites the projection after approval rather than creating another layer or version directory.
+
+Each Topic must answer one larger question, show its overall mental model early, preserve the causal reasoning spine, connect concepts to implementation when relevant, and remain understandable without the original Question history.
+
+The public workflows are:
+
+```text
+$learning           learn, resume, review, or curate
+$learning-research  find external sources and potential gaps
+$learning-organize  rebuild the current long-form Topic explanation
+```
+
+## Commands
 
 ```bash
-./install.sh /tmp/codex-skills
+node _shared/scripts/upgrade-learning-workspace.mjs <workspace>
+node _shared/scripts/learning-status.mjs <workspace>
+npm test --prefix _shared
 ```
-
-The installation contains Skill instructions and interface metadata only. There is no
-runtime service, viewer, review scheduler, hidden learning database, or Custom Agent
-framework.
-
-## Acceptance principle
-
-Compare ordinary `$learning-learn` behavior with normal high-quality ChatGPT/Codex
-teaching. If the Skill makes the explanation materially less clear, less complete, or
-less natural, simplify the Skill rather than adding more teaching protocol.
-
-Be deterministic about recording. Let the model teach.
