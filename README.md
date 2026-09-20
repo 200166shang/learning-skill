@@ -167,14 +167,7 @@ unset. Pass a custom skills directory when needed:
 npx learning-skill /tmp/codex-skills
 ```
 
-To install from a local clone instead:
-
-```bash
-./install.sh
-```
-
-By default this installs exactly these six Skills into
-`${CODEX_HOME:-$HOME/.codex}/skills`:
+The command installs exactly these six Skills:
 
 ```text
 learning
@@ -183,12 +176,6 @@ learning-review
 learning-practice
 learning-resources
 learning-organize
-```
-
-Pass a skills directory as the first argument to install elsewhere:
-
-```bash
-./install.sh /tmp/codex-skills
 ```
 
 The installation contains Skill instructions and interface metadata only. There is no
