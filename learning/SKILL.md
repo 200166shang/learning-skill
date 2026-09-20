@@ -38,3 +38,5 @@ Only learner-asked or learner-accepted questions enter Journey; recommendations 
 - For manual review or “test me,” read [review](references/review.md).
 - For a requested whole-picture recap or OVERVIEW refresh, read [overview](references/overview.md).
 - For approved note maintenance, read [curate](references/curate.md).
+- When the learner explicitly wants many pursued questions merged and reordered into long-form Topic articles, recommend `$learning-organize`. It is a separate user-invoked workflow; do not run it or generate Topics automatically.
+- When the learner explicitly wants external sources, official documentation or code, high-quality tutorials, or research-backed gaps for a current Question or Topic, recommend `$learning-research`. It is a separate user-invoked workflow; do not run research or persist its suggestions as Questions automatically.
