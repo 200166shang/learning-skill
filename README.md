@@ -154,6 +154,21 @@ learning state. No persistent Custom Agent is required by this repository.
 
 ## Install or update
 
+Install all six Skills with npm:
+
+```bash
+npx learning-skill
+```
+
+This installs to `${CODEX_HOME}/skills`, or `~/.codex/skills` when `CODEX_HOME` is
+unset. Pass a custom skills directory when needed:
+
+```bash
+npx learning-skill /tmp/codex-skills
+```
+
+To install from a local clone instead:
+
 ```bash
 ./install.sh
 ```
