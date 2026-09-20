@@ -18,10 +18,14 @@ happened. Structure records learning; structure does not control learning.
   mutation of the Learning Thread.
 - `learning-practice` applies saved understanding in one concrete task without ordinary
   mutation of the Learning Thread.
-- `learning` is a tiny explicit router that recommends one of the three workflows and
+- `learning-resources` curates a small verified set of external materials worth
+  inspecting without writing research reports or changing the Learning Thread.
+- `learning-organize` derives replaceable Topic articles from pursued Questions after
+  the learner approves a proposed structure.
+- `learning` is a tiny explicit router that recommends one of the five workflows and
   stops; it does not invoke them automatically.
 
-All four are user-invoked. A source-heavy Learn turn may use a temporary explorer when
+All six are user-invoked. A source-heavy Learn turn may use a temporary explorer when
 the host supports it, but the main agent remains the teaching owner and no persistent
 Custom Agent is part of the product.
 
@@ -57,12 +61,18 @@ A read-only view derived from `thread.yaml` and Learning Notes. A projection nev
 or modifies canonical learning state.
 _Avoid_: second state store, routing authority
 
+**Organized Topic**:
+A replaceable long-form explanation derived from pursued Question notes. Topics preserve
+the current best way to explain learned material; Questions remain the durable history.
+_Avoid_: permanent knowledge node, Topic-of-Topics hierarchy, second canonical store
+
 ## Storage boundary
 
 `thread.yaml` is the single source of truth for the thread title, root/current question,
 question-note locations, and relations. Markdown Learning Notes contain explanations
 and useful source evidence, not duplicate routing metadata.
 
-Review and Practice consume these artifacts but do not add review/practice state to
-them. Spaced repetition, viewers, reusable concept extraction, mastery models, and
-other downstream features remain outside this release.
+Review, Practice, Resources, and Organize consume these artifacts without adding
+workflow state to them. Only Learn updates the canonical Question graph. Spaced
+repetition, viewers, reusable concept extraction, mastery models, and other downstream
+features remain outside this release.
