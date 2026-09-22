@@ -35,3 +35,31 @@ test("CLI installs the six public skills and removes the retired research skill"
     await rm(target, { recursive: true, force: true });
   }
 });
+
+test("installed skills share the multi-Root question and cross-Root topic contract", async () => {
+  const target = await mkdtemp(join(tmpdir(), "learning-skill-contract-"));
+
+  try {
+    await execFileAsync(process.execPath, ["bin/install.mjs", target], {
+      cwd: new URL("..", import.meta.url),
+    });
+
+    const recording = await readFile(
+      join(target, "learning-learn", "references", "recording.md"),
+      "utf8",
+    );
+    const organize = await readFile(
+      join(target, "learning-organize", "SKILL.md"),
+      "utf8",
+    );
+
+    assert.match(recording, /root-compass\.yaml/);
+    assert.match(recording, /r003-q003/);
+    assert.match(recording, /candidate has no `path`/);
+    assert.match(organize, /source_snapshot:\n  roots:/);
+    assert.match(organize, /sources:\n      - r001-q004/);
+    assert.doesNotMatch(organize, /source_snapshot:\n  questions:/);
+  } finally {
+    await rm(target, { recursive: true, force: true });
+  }
+});

@@ -12,20 +12,21 @@ investigation report or replacement textbook.
 
 Use this Skill for official documentation, tutorials, source code, demos, example
 projects, technical articles, talks, videos, or courses. The context may be a free-form
-subject, the current or named Question in a V6 Learning Thread, or an Organized Topic.
+subject, the current or named Question in a multi-Root workspace, or an Organized Topic.
 
 ## Understand the context
 
 Determine what the learner is studying, what they already understand, the material
 types they want, and the appropriate depth. Do not assume beginner level.
 
-When a Learning Thread is available, read only enough context to curate relevant
+When a learning workspace is available, read only enough context to curate relevant
 materials:
 
-- for the current Question, read `thread.yaml`, its `thread.current` note, and only the
-  earlier connected Questions materially needed;
-- for named Questions, read those `questions/qNNN.md` files;
-- for an Organized Topic, read `organized/organize.yaml`, the named Topic, and its
+- for the current Question, read `root-compass.yaml`, the active Root's `thread.yaml`,
+  its current note, and only the parent Questions materially needed;
+- for named Questions, resolve Root-qualified IDs such as `r003-q002` through their
+  Root-local thread; a local `qNNN` requires a clear Root context;
+- for an Organized Topic, read `organized/compass.yaml`, the named Topic, and its
   contributing Question notes only when needed.
 
 A durable workspace is optional. Ask one concise direction question only when two

@@ -1,14 +1,14 @@
 ---
 name: learning-organize
-description: "Create, refresh, approve, and execute a Topic Compass over a durable Learning Question graph."
+description: "Create, refresh, approve, and execute a cross-Root Topic Compass over durable Learning Questions."
 disable-model-invocation: true
 ---
 
 # Learning: Organize
 
-Questions preserve the learner's real recursive exploration. Topics preserve the
-current best way to explain what was learned. Never reshape the Question graph to make
-the Topic structure prettier.
+Roots preserve distinct exploration views. Questions preserve the learner's real
+recursive paths. Topics preserve the current best explanation across one or many Roots.
+Never reshape or deduplicate the Question layer to make the Topic structure prettier.
 
 Separate exploration, structural judgment, and article generation:
 
@@ -44,11 +44,16 @@ organized/
 
 If an older workspace has `organized/organize.yaml` but no `compass.yaml`, treat it as
 the current Compass and migrate it to `compass.yaml` on the next planning mutation.
+If an older workspace has one top-level `thread.yaml` and flat `questions/`, preserve
+its IDs and notes while migrating it to Root `r001` on the next Learn or Organize
+mutation. Do not silently mix flat and Root-qualified IDs in one Compass.
 
 ## Create the first Compass
 
-Read `thread.yaml` and every scoped `questions/*.md` note in full. Titles alone are
-insufficient. If scope is materially ambiguous, ask one focused question.
+Read `root-compass.yaml`, every `thread.yaml` belonging to an `active` or `explored`
+Root, and all notes in those Roots. Ignore candidate Roots: they are navigation ideas,
+not learned material. Titles alone are insufficient. If scope is materially ambiguous,
+ask one focused question.
 
 Derive the smallest coherent set of Topics supported by the Questions:
 
@@ -76,17 +81,18 @@ version: 1
 revision: 1
 status: draft
 source_snapshot:
-  questions:
-    - q001
-    - q002
+  roots:
+    r001: r001-q004
+    r003: r003-q002
 organization:
   title: <human-readable title>
 topics:
   t001:
     title: <Topic title>
     purpose: <larger question or learning goal>
-    questions:
-      - q001
+    sources:
+      - r001-q004
+      - r003-q002
     include:
       - <required mechanism or connection>
     exclude:
@@ -103,10 +109,12 @@ change_set:
   removed: []
 ```
 
-The snapshot lists the Question IDs considered by this revision. Question IDs remain
-stable and global to the Learning Thread. A Question may support multiple Topics.
-Important scoped Questions should normally appear at least once; explicitly explain
-any omission.
+The snapshot records the highest local Question considered in each activated or
+explored Root. Root-qualified Question IDs remain stable. A Topic may cite Questions
+from several Roots, and one Question may support several Topics. Important scoped
+Questions should normally appear at least once; explicitly explain any omission.
+Never assign a Topic to one Root with `root:` and never add `same_as` or canonical
+Question metadata. Cross-Root semantic deduplication belongs only in Topic contracts.
 
 Present the complete Compass in the conversation and stop for review. On feedback,
 update only `compass.md` and `compass.yaml`; do not write Topic articles. Increase the
@@ -116,8 +124,14 @@ Compass revision for each accepted structural revision and keep both files consi
 
 Refresh never redesigns the whole Organization by default.
 
-1. Read `thread.yaml`, the current Compass, and calculate the Question IDs absent from
-   `source_snapshot.questions`.
+For low-reasoning execution, use the durable state as authority: read the existing
+contracts, calculate the new per-Root Question delta, apply the smallest justified
+change, save it, and stop. An approved Compass outranks a temporary alternative
+organization the model might prefer.
+
+1. Read `root-compass.yaml`, all activated Root threads, and the current Compass.
+   Calculate the Root-qualified Question IDs newer than `source_snapshot.roots`, plus
+   all Questions in a Root activated since the snapshot.
 2. If there are no new Questions, report that the Compass is current and change no
    files.
 3. Read the new Question notes. Read existing source Questions or Topic articles only
@@ -156,7 +170,8 @@ or `all` against `order`; reject unknown IDs instead of inventing Topics.
 Before writing, read the complete [Topic quality contract](references/topic-quality.md).
 For each requested Topic independently:
 
-1. Read only its Compass contract and full referenced Question notes.
+1. Read only its Compass contract and the full notes named by `sources`. Resolve each
+   Root-qualified ID through that Root's `thread.yaml`.
 2. Cover every material `include` item and do not expand the `exclude` items.
 3. Use another Question only for a small bridge needed for coherence.
 4. Briefly reference neighboring Topics when useful, without duplicating their detail.
@@ -184,7 +199,7 @@ After Compass creation, refresh, or approval, confirm:
 
 - `compass.yaml` parses and agrees with `compass.md`;
 - the snapshot contains every Question considered by this revision;
-- every `order` entry has a complete contract and every cited Question exists;
+- every `order` entry has a complete contract and every cited Root-qualified Question exists;
 - the change set exactly describes changed, added, removed, and preserved Topics;
 - important scoped Questions are covered or their omission is explained;
 - draft operations did not modify Topic articles.

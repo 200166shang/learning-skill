@@ -1,24 +1,26 @@
 ---
 name: learning-review
-description: "Review an existing Learning Thread by reconstructing the important mechanism before seeing the saved explanation."
+description: "Review an existing learning workspace by reconstructing the important mechanism before seeing the saved explanation."
 disable-model-invocation: true
 ---
 
 # Learning: Review
 
-Use this Skill only for explicit review of an existing V6 Learning Thread.
+Use this Skill only for explicit review of an existing multi-Root learning workspace.
 
 Review consumes saved learning; it does not own learning state. Do not create a thread,
 change its graph, or record review status merely because review happened.
 
 ## Resolve
 
-- Use the Learning Thread supplied or clearly identified by the learner.
-- If no valid `thread.yaml` exists, say that durable review material is unavailable and
+- Use the workspace and Root supplied or clearly identified by the learner.
+- If no valid `root-compass.yaml` and activated Root thread exist, say that durable review material is unavailable and
   stop. Do not invent questions or create a thread.
-- If the learner names a Question, review that Question.
-- Otherwise use `thread.current` and state which Question is being reviewed.
-- Read the selected Question note first. Read only the minimum connected notes needed
+- If the learner names a Root-qualified Question, resolve it through that Root's
+  `thread.yaml`. If they name a local `qNNN`, require a clear Root context.
+- Otherwise use the active Root and its `current`; if no Root is active, ask which
+  explored Root to review.
+- Read the selected Question note first. Read only the minimum parent notes needed
   to understand the mechanism being reviewed.
 
 ## Retrieve before reveal
@@ -50,10 +52,10 @@ Do not infer permanent mastery from one successful response.
 Stop after the learner's requested review scope. Do not silently generate a curriculum,
 review queue, schedule, or additional quiz set.
 
-Ordinary review is read-only with respect to the Learning Thread:
+Ordinary review is read-only with respect to the learning workspace:
 
-- do not change `thread.root` or `thread.current`;
-- do not add, remove, or rewrite nodes or edges;
+- do not change Root status or a Root's `current`;
+- do not add, remove, or rewrite nodes or parent links;
 - do not store scores, mastery, due dates, intervals, streaks, review status, or attempt
   history in `thread.yaml`;
 - do not rewrite Question notes simply to record a review result.
