@@ -1,0 +1,28 @@
+{
+  "name": "learning-skill",
+  "version": "1.0.0",
+  "description": "Explicit, composable Codex skills for learning, review, practice, resources, and organization.",
+  "type": "module",
+  "bin": {
+    "learning-skill": "bin/install.mjs"
+  },
+  "files": [
+    "bin/",
+    "learning/",
+    "learning-learn/",
+    "learning-review/",
+    "learning-practice/",
+    "learning-resources/",
+    "learning-organize/",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

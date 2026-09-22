@@ -4,7 +4,7 @@ description: "Choose the explicit Learning workflow that best matches the learne
 disable-model-invocation: true
 ---
 
-# Learning
+# Learning: Router
 
 Use this Skill only when the learner is unsure which explicit Learning workflow fits.
 Recommend one primary Skill and stop.
@@ -15,11 +15,15 @@ Recommend one primary Skill and stop.
   recommend `learning-review`.
 - Apply saved understanding in an exercise, code task, trace, prediction, or reasoning
   problem -> recommend `learning-practice`.
+- Find external documentation, source code, demos, articles, talks, videos, courses, or
+  other learning materials -> recommend `learning-resources`.
+- Merge, reorder, or rewrite many pursued Questions into coherent Topic articles ->
+  recommend `learning-organize`.
 
 When the request genuinely mixes two intentions, name the primary Skill first and one
 alternative only if the distinction helps the learner choose.
 
-Do not teach the topic, perform review, generate practice, inspect a large source tree,
-read or mutate Learning Thread state for ordinary routing, or auto-invoke a downstream
-Skill. Learn, Review, and Practice are intentionally explicit user-invoked workflows.
-If the learner already invoked one of them directly, no router hop is required.
+Do not perform the downstream work, inspect a large source tree, read or mutate Learning
+Thread state for ordinary routing, or auto-invoke another Skill. All downstream Skills
+are explicitly user-invoked. If the learner already invoked one directly, no router hop
+is required.

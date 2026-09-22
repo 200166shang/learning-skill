@@ -7,8 +7,8 @@ conversation and lightweight durable Learning Threads.
 
 `learning-learn` is the core. The model teaches naturally first, then preserves useful
 explanations and a lightweight graph of the questions the learner actually pursued.
-Review and Practice consume those saved artifacts without becoming part of the core
-teaching state.
+Review, Practice, Resources, and Organize consume those saved artifacts without
+becoming part of the core teaching state.
 
 ## Workflows
 
@@ -16,12 +16,14 @@ teaching state.
 $learning-learn     understand something and preserve useful explanations
 $learning-review    retrieve and reconstruct saved understanding
 $learning-practice  apply saved understanding in one concrete task
+$learning-resources find high-quality external materials worth inspecting
+$learning-organize  turn pursued Questions into coherent Topic articles
 $learning           tell me which explicit workflow fits
 ```
 
-All four Skills are deliberately user-invoked. `$learning` recommends a workflow when
+All six Skills are deliberately user-invoked. `$learning` recommends a workflow when
 you are unsure which one fits; it does not auto-run the other Skills. Direct invocation
-of Learn, Review, or Practice remains first-class.
+of any downstream Skill remains first-class.
 
 ## Learn
 
@@ -65,6 +67,21 @@ understanding. Practice presents one concrete application task at a time, lets y
 attempt it before showing the solution, and explains the mechanism-level gap in the
 attempt. Ordinary Practice does not add exercise state, scores, or practice nodes to
 the thread.
+
+## Resources
+
+Use `$learning-resources` when you want a small, verified set of official docs, source
+code, demos, articles, talks, videos, or courses to inspect yourself. It may use a
+Question, an Organized Topic, or a free-form technical subject as context. It returns
+curated links and precise entry points; it does not write a research report, create
+Questions, or persist research notes.
+
+## Organize
+
+Use `$learning-organize` to reconstruct many pursued Questions as a coherent set of
+long-form Topic articles. It first proposes the Topic boundaries and reading order and
+stops. Only after approval does it write the replaceable `organized/` projection.
+Questions remain the durable learning history; Topics are the current best explanation.
 
 ## Durable output
 
@@ -132,30 +149,33 @@ V6 does not maintain Active Path, Blocking Gap, Return Point, Completion Check/B
 Memory Targets, review scheduling, practice state, mastery scores, generated
 prerequisites, or a workflow runtime.
 
-Review and Practice are downstream explicit workflows. They consume Learning Threads
-but do not own canonical learning state. No persistent Custom Agent is required by this
-repository.
+The downstream explicit workflows consume Learning Threads but do not own canonical
+learning state. No persistent Custom Agent is required by this repository.
 
 ## Install or update
 
+Install all six Skills with npm:
+
 ```bash
-./install.sh
+npx learning-skill
 ```
 
-By default this installs exactly these four Skills into
-`${CODEX_HOME:-$HOME/.codex}/skills`:
+This installs to `${CODEX_HOME}/skills`, or `~/.codex/skills` when `CODEX_HOME` is
+unset. Pass a custom skills directory when needed:
+
+```bash
+npx learning-skill /tmp/codex-skills
+```
+
+The command installs exactly these six Skills:
 
 ```text
 learning
 learning-learn
 learning-review
 learning-practice
-```
-
-Pass a skills directory as the first argument to install elsewhere:
-
-```bash
-./install.sh /tmp/codex-skills
+learning-resources
+learning-organize
 ```
 
 The installation contains Skill instructions and interface metadata only. There is no
