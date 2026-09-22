@@ -1,6 +1,6 @@
 interface:
   display_name: "Learning: Organize"
-  short_description: "Build or rebuild coherent Topics from learned questions"
-  default_prompt: "Use $learning-organize to propose a better replacement Topic structure for my completed learning, then wait for my approval before writing it."
+  short_description: "Plan, approve, and generate coherent learning Topics"
+  default_prompt: "Use $learning-organize to build a Topic Compass from my pursued Questions, wait for my review and approval, then generate only the Topics I request."
 policy:
   allow_implicit_invocation: false

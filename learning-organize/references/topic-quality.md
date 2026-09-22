@@ -59,3 +59,8 @@ Revise a Topic before finishing when any material answer below is no:
 - Does it provide more integrated understanding than reading the source Questions separately?
 
 Then review the Organization as a whole. Fix clear cases where Topics substantially duplicate one another, appear in an order that hides prerequisites, should be merged into one mechanism, should be split to recover a clear spine, or omit an important scoped Question.
+
+When generation is governed by an approved Topic Compass, this review must not silently
+change Topic boundaries, order, Question placement, includes, or exclusions. Complete
+the requested Topic when the defect can be repaired within its contract. Otherwise stop,
+report the specific Compass defect, and recommend returning to the planning stage.
