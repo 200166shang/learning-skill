@@ -66,6 +66,12 @@ A replaceable long-form explanation derived from pursued Question notes. Topics 
 the current best way to explain learned material; Questions remain the durable history.
 _Avoid_: permanent knowledge node, Topic-of-Topics hierarchy, second canonical store
 
+**Topic Compass**:
+The learner-reviewed and approved plan that fixes each Topic's purpose, source Questions,
+required content, exclusions, and reading order before article generation. Generation
+executes the Compass and never silently replans it.
+_Avoid_: title-only outline, hidden temporary grouping, generated curriculum
+
 ## Storage boundary
 
 `thread.yaml` is the single source of truth for the thread title, root/current question,

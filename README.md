@@ -79,9 +79,11 @@ Questions, or persist research notes.
 ## Organize
 
 Use `$learning-organize` to reconstruct many pursued Questions as a coherent set of
-long-form Topic articles. It first proposes the Topic boundaries and reading order and
-stops. Only after approval does it write the replaceable `organized/` projection.
-Questions remain the durable learning history; Topics are the current best explanation.
+long-form Topic articles. It first writes a Topic Compass that fixes each Topic's
+purpose, Question sources, required content, exclusions, and reading order. You can
+review and revise the Compass before approving it. After approval, generate one Topic,
+a range, or all Topics without re-planning their boundaries. Questions remain the
+durable learning history; Topics are the current best explanation.
 
 ## Durable output
 
