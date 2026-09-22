@@ -40,6 +40,10 @@ _Avoid_: course, curriculum, workflow state machine
 A question the learner actually pursued and received a useful explanation for.
 _Avoid_: generated prerequisite, planned curriculum item, synthetic gap
 
+Questions retain this one meaning before and after Topic organization. Root Questions
+may grow through unbounded follow-up exploration; there is no separate Topic-local
+Question type.
+
 **Learning Note**:
 The independently readable Markdown explanation saved for a Question. It preserves the
 useful substance of the conversational answer rather than reducing it to a canonical
@@ -71,6 +75,12 @@ The learner-reviewed and approved plan that fixes each Topic's purpose, source Q
 required content, exclusions, and reading order before article generation. Generation
 executes the Compass and never silently replans it.
 _Avoid_: title-only outline, hidden temporary grouping, generated curriculum
+
+**Compass Snapshot**:
+The set of Question IDs considered by one Compass revision. New Questions remain in the
+canonical Learning Thread until an explicit refresh proposes the smallest affected
+Topic change.
+_Avoid_: frozen Learning Thread, automatic Topic mutation, second Question graph
 
 ## Storage boundary
 

@@ -76,6 +76,12 @@ Blocking Gap, Return Point, Active Path, Completion Check, or forced return to a
 ancestor question. A follow-up may deepen the current question, apply it, move to a
 related question, or return anywhere the learner chooses.
 
+The learner may begin with one broad Root Question and recurse through follow-ups for
+as long as the exploration remains useful. Every genuinely pursued follow-up remains an
+ordinary Question in the same graph. Do not split Questions into “exploration” and
+“Topic-local” types, renumber them under Topics, or force the learner to stop exploring
+after a Topic Compass exists.
+
 Teaching for the turn is complete when the learner has received the answer that would
 have been useful in an ordinary unconstrained ChatGPT conversation and the explanation
 has made the important connection behind the current confusion understandable.
@@ -101,6 +107,11 @@ relationship to prior pursued questions. The initial relation vocabulary is:
 
 Do not invent a curriculum, prerequisite tree, mastery state, causal ontology, or
 future questions.
+
+An existing Topic Compass is downstream organization, not a recording boundary. New
+Questions continue to receive normal global `qNNN` IDs and relations. Do not attach
+them directly to Topics or update the Compass during Learn; `$learning-organize refresh`
+handles that explicit projection step later.
 
 Recording for the turn is complete when the note preserves the useful explanation and
 `thread.yaml` can identify the root question, current question, question notes, and
