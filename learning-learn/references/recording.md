@@ -90,6 +90,19 @@ For a later pursued question:
 When the learner explicitly returns to an existing question, set `current` to that
 existing node instead of creating a duplicate node.
 
+## Recursive exploration and downstream Topics
+
+A Root Question may lead to an arbitrarily deep sequence of genuine follow-up
+Questions. Keep recording each pursued Question with the immediate conversational
+parent when clear. Do not flatten the graph merely because several Questions may later
+be summarized by one Topic, and do not introduce separate Topic-local Question IDs.
+
+Topic organization never closes or replaces the Learning Thread. If `organized/`
+exists, continue assigning normal thread-local `qNNN` IDs and updating only
+`thread.yaml` and the relevant Question notes. Do not mutate a Topic Compass or Topic
+article during Learn. A later explicit `$learning-organize refresh` compares the
+Compass snapshot with the expanded Question graph.
+
 ## Build a note for relearning
 
 A Question note is a reconstructed explanation optimized for **relearning**. It is not

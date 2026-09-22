@@ -17,8 +17,8 @@ Recommend one primary Skill and stop.
   problem -> recommend `learning-practice`.
 - Find external documentation, source code, demos, articles, talks, videos, courses, or
   other learning materials -> recommend `learning-resources`.
-- Merge, reorder, or rewrite many pursued Questions into coherent Topic articles ->
-  recommend `learning-organize`.
+- Snapshot or refresh a Question graph into a Topic Compass, or generate coherent Topic
+  articles from an approved Compass -> recommend `learning-organize`.
 
 When the request genuinely mixes two intentions, name the primary Skill first and one
 alternative only if the distinction helps the learner choose.

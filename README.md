@@ -48,6 +48,11 @@ The follow-up may deepen the previous explanation, apply it to code, move to a r
 question, or return to an older question. There is no mandatory Blocking Gap, Return
 Point, Active Path, or completion ceremony.
 
+A broad Root Question can grow into an arbitrarily deep Question graph. Topic creation
+does not end or replace that exploration: later follow-ups remain normal globally
+numbered Questions, and an explicit Organize refresh decides whether they change the
+Topic Compass.
+
 For source-heavy questions that require broad multi-file tracing, Learn may isolate the
 investigation in a temporary worker when the host supports it. This is optional; the
 main agent still owns the learner-facing explanation and the same request must work
@@ -82,8 +87,10 @@ Use `$learning-organize` to reconstruct many pursued Questions as a coherent set
 long-form Topic articles. It first writes a Topic Compass that fixes each Topic's
 purpose, Question sources, required content, exclusions, and reading order. You can
 review and revise the Compass before approving it. After approval, generate one Topic,
-a range, or all Topics without re-planning their boundaries. Questions remain the
-durable learning history; Topics are the current best explanation.
+a range, or all Topics without re-planning their boundaries. As learning continues,
+`refresh` compares new Questions with the Compass snapshot and proposes a minimal diff,
+preserving unaffected Topic articles. Questions remain the durable learning history;
+Topics are the current best explanation.
 
 ## Durable output
 

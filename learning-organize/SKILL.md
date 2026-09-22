@@ -1,82 +1,84 @@
 ---
 name: learning-organize
-description: "Plan, review, approve, and generate coherent Topic articles from pursued Learning Questions."
+description: "Create, refresh, approve, and execute a Topic Compass over a durable Learning Question graph."
 disable-model-invocation: true
 ---
 
 # Learning: Organize
 
-Questions preserve how learning happened. Topics preserve the current best way to
-explain what was learned. Preserve the reasoning spine; remove conversational
-redundancy.
+Questions preserve the learner's real recursive exploration. Topics preserve the
+current best way to explain what was learned. Never reshape the Question graph to make
+the Topic structure prettier.
 
-Use a Topic Compass to separate structural judgment from article generation:
+Separate exploration, structural judgment, and article generation:
 
-`Questions → PLAN → REVIEW → APPROVE → GENERATE`
+`Question Graph → SNAPSHOT → COMPASS → REVIEW → APPROVE → GENERATE`
 
-The approved Compass is the content contract for every generated Topic. Generation may
-execute that contract in small batches, but must not silently re-plan it.
+The approved Compass is the content contract for generation. New Questions continue
+to accumulate normally; they affect Topics only through an explicit refresh.
 
-## Choose the operation
+## Choose one operation
 
-- `plan`: create or revise a Topic Compass from the scoped Questions. Use this when no
-  approved Compass exists, the learner wants different boundaries, or new Questions
-  should change the organization.
-- `approve`: freeze the reviewed Compass for generation. Clear approval such as “这个
-  规划可以” is sufficient; do not ask for a second confirmation.
-- `generate all`, `generate t004`, or `generate t001-t003`: generate only the requested
-  Topics from an approved Compass.
+- `compass`: take the first snapshot and create a draft Topic Compass. Use `plan` as a
+  compatibility alias.
+- `refresh`: compare the current Question graph with the last snapshot and propose the
+  smallest Compass change that accounts for new Questions.
+- `approve`: freeze the reviewed draft for generation.
+- `generate all`, `generate t004`, `generate t001-t003`, or an explicit ID list:
+  generate only those Topics from an approved Compass.
 
-If the learner invokes `$learning-organize` without naming an operation, continue the
-obvious unfinished stage. Otherwise start with `plan`. Never plan and generate articles
-in the same turn.
+If no operation is named, continue the obvious unfinished stage. Otherwise start with
+`compass`. Never combine Compass planning or refresh with article generation in one
+turn.
 
-## Plan and review the Compass
-
-Read `thread.yaml` and the full content of every scoped `questions/*.md` note. Titles
-alone are insufficient. If the intended Questions are materially ambiguous, ask one
-focused scope question.
-
-When an Organization exists, also read `organized/organize.yaml`,
-`organized/compass.md`, and relevant current Topics. Use this source priority:
-
-1. the learner's current instruction;
-2. original Question notes;
-3. the existing Compass and Topics.
-
-Existing Topics are a replaceable previous explanation, never a new source-of-truth
-layer.
-
-Discover Topic boundaries from explanatory coherence: one mechanism viewed from
-several angles, concept-to-implementation, input-to-output, cause-to-result, an
-end-to-end chain, or later learning that repairs earlier understanding. Prefer causal
-reading order over Question ID or conversation chronology. Recommend the number of
-Topics supported by these boundaries; do not target an arbitrary count.
-
-Create or revise only these planning artifacts:
+The durable Organization is:
 
 ```text
 organized/
   compass.md
-  organize.yaml
+  compass.yaml
+  topics/
+    t001.md
+    t002.md
 ```
 
-Write `compass.md` as the learner-facing map. Show `Status: draft` or
-`Status: approved`, then the proposed Topic count and main organizing rationale. For
-every Topic show:
+If an older workspace has `organized/organize.yaml` but no `compass.yaml`, treat it as
+the current Compass and migrate it to `compass.yaml` on the next planning mutation.
 
-- provisional `tNNN` ID and title;
-- the larger question or learning purpose;
+## Create the first Compass
+
+Read `thread.yaml` and every scoped `questions/*.md` note in full. Titles alone are
+insufficient. If scope is materially ambiguous, ask one focused question.
+
+Derive the smallest coherent set of Topics supported by the Questions:
+
+- do not invent a subject that the learner never explored;
+- merge semantically repeated Questions;
+- give each Topic one stable larger question or mechanism;
+- prefer fewer Topics, but never force distinct mechanisms into one article;
+- prefer causal reading order over Question chronology;
+- define required content and explicit exclusions for every Topic.
+
+Write `compass.md` as the complete learner-facing map. Show its draft status, revision,
+source snapshot, proposed Topic count, organizing rationale, and for every Topic:
+
+- provisional ID and title;
+- purpose or larger question;
 - source Question IDs;
-- content that must be included;
-- content that is explicitly excluded or deferred;
-- how it connects to neighboring Topics.
+- required content;
+- excluded or deferred content;
+- relationship to neighboring Topics.
 
-Write the same boundaries as the machine-readable execution plan:
+Write the same contract to `compass.yaml`:
 
 ```yaml
 version: 1
+revision: 1
 status: draft
+source_snapshot:
+  questions:
+    - q001
+    - q002
 organization:
   title: <human-readable title>
 topics:
@@ -85,86 +87,119 @@ topics:
     purpose: <larger question or learning goal>
     questions:
       - q001
-      - q004
     include:
       - <required mechanism or connection>
     exclude:
       - <boundary delegated elsewhere or intentionally omitted>
+    contract_revision: 1
     file: topics/t001.md
 order:
   - t001
+change_set:
+  unchanged: []
+  regenerate: []
+  added:
+    - t001
+  removed: []
 ```
 
-Topic IDs are fresh and sequential in proposed reading order. A Question may support
-multiple Topics. Important scoped Questions should normally appear at least once;
-explicitly identify any omission and why it does not contribute.
+The snapshot lists the Question IDs considered by this revision. Question IDs remain
+stable and global to the Learning Thread. A Question may support multiple Topics.
+Important scoped Questions should normally appear at least once; explicitly explain
+any omission.
 
-Present the complete Compass in the conversation and ask the learner to review the
-count, grouping, names, order, Question placement, includes, and exclusions. Stop after
-planning. On feedback, update the draft Compass and execution plan only; do not create
-or rewrite Topic articles.
+Present the complete Compass in the conversation and stop for review. On feedback,
+update only `compass.md` and `compass.yaml`; do not write Topic articles. Increase the
+Compass revision for each accepted structural revision and keep both files consistent.
+
+## Refresh from new Questions
+
+Refresh never redesigns the whole Organization by default.
+
+1. Read `thread.yaml`, the current Compass, and calculate the Question IDs absent from
+   `source_snapshot.questions`.
+2. If there are no new Questions, report that the Compass is current and change no
+   files.
+3. Read the new Question notes. Read existing source Questions or Topic articles only
+   where needed to decide which current boundary is affected.
+4. Propose a minimal diff: extend an existing Topic, add a new Topic for a genuinely new
+   stable cluster, or rarely merge/split when the new material proves the old boundary
+   wrong. Preserve unrelated Topics exactly.
+5. Update the snapshot to include all Questions considered, increment the Compass
+   revision, set `status: draft`, and record the exact `change_set`.
+
+For an unchanged Topic, preserve its ID, contract, and `contract_revision`. For a changed
+Topic, increment `contract_revision` and list it under `regenerate`. New Topics begin at
+`contract_revision: 1` and appear under `added`; retired IDs appear under `removed`.
+
+Show the Question delta and proposed Compass delta to the learner, then stop for review.
+Do not modify existing Topic articles during refresh.
 
 ## Approve and freeze
 
-Approval changes `status` from `draft` to `approved` and makes `compass.md` agree with
-the final plan. Treat the approved `organize.yaml` as the sole structural authority for
-generation.
+Clear approval changes `status` from `draft` to `approved`; do not request a second
+confirmation. Make `compass.md` agree with the approved machine plan.
 
-When approval replaces an older Organization, remove the old `organized/topics/`
-articles so files from incompatible Compass boundaries cannot remain current. Report
-that the approved Compass is ready and show the available generation scopes. Do not
-generate a Topic unless the learner also makes a separate generation request.
+On approval, preserve article files for `change_set.unchanged`. Remove article files for
+`change_set.regenerate` and `change_set.removed` so stale content cannot appear current.
+New Topics have no article until generated. Report which Topics remain valid and which
+must be generated.
+
+Approval freezes structural judgment. Generation cannot change Topic boundaries,
+Question placement, includes, exclusions, order, or contract revisions.
 
 ## Generate from the approved Compass
 
-Refuse to generate while `status` is not `approved`; direct the learner back to review
-or approval. Resolve `all`, one ID, a range, or an explicit ID list against `order`.
-Reject unknown IDs instead of inventing Topics.
+Refuse generation unless `status` is `approved`. Resolve the requested ID, range, list,
+or `all` against `order`; reject unknown IDs instead of inventing Topics.
 
-Before writing, read and apply the complete [Topic quality
-contract](references/topic-quality.md). For each requested Topic independently:
+Before writing, read the complete [Topic quality contract](references/topic-quality.md).
+For each requested Topic independently:
 
-1. Read its `title`, `purpose`, `questions`, `include`, `exclude`, and `file` from the
-   approved plan.
-2. Read the full referenced Question notes. Use them as the primary source; read another
-   Question only for a small bridge that is necessary to make the article coherent.
-3. Write one independently readable article that covers every material `include` item
-   and does not expand the `exclude` items.
-4. It may briefly reference another Topic, but must not duplicate that Topic's detailed
-   explanation.
-5. Do not change the Compass, move Questions, alter Topic boundaries, add Topics, or
-   redesign the Organization during generation. If the contract is genuinely flawed,
-   stop and recommend returning to `plan`.
+1. Read only its Compass contract and full referenced Question notes.
+2. Cover every material `include` item and do not expand the `exclude` items.
+3. Use another Question only for a small bridge needed for coherence.
+4. Briefly reference neighboring Topics when useful, without duplicating their detail.
+5. If source material is insufficient, report the gap; do not expand the curriculum or
+   silently change the contract.
+6. Do not modify any other Topic or Compass field.
 
-Write only the requested files under `organized/topics/`. Existing files generated from
-the same approved Compass may remain. This makes `generate t004`, `generate t001-t003`,
-and `generate all` safe, repeatable execution units suitable for a lower-reasoning
-model.
+Start each generated article with provenance frontmatter:
+
+```yaml
+---
+topic: t001
+compass_revision: 3
+contract_revision: 2
+---
+```
+
+`contract_revision` determines freshness. A Topic remains valid across later Compass
+revisions when its contract revision did not change. This lets `refresh` preserve
+unaffected articles and regenerate only the delta.
 
 ## Validate
 
-After planning or approval, confirm:
+After Compass creation, refresh, or approval, confirm:
 
-- `organize.yaml` parses and matches `compass.md`;
-- every `order` entry has a complete Topic contract;
-- every cited Question exists in `thread.yaml`;
+- `compass.yaml` parses and agrees with `compass.md`;
+- the snapshot contains every Question considered by this revision;
+- every `order` entry has a complete contract and every cited Question exists;
+- the change set exactly describes changed, added, removed, and preserved Topics;
 - important scoped Questions are covered or their omission is explained;
-- Topic boundaries have no clear merge, split, ordering, or duplication defect.
+- draft operations did not modify Topic articles.
 
 After generation, additionally confirm:
 
-- every requested Topic file exists at the planned path;
-- its required `include` items are materially covered and `exclude` items are not
-  expanded;
-- the article passes the Topic quality contract;
-- generated Topics do not substantially duplicate one another;
-- `organize.yaml`, `compass.md`, `thread.yaml`, and `questions/*.md` are semantically
-  unchanged during generation.
+- every requested file exists at its planned path;
+- its provenance matches the approved Compass and Topic contract revisions;
+- required content is covered and excluded content is not expanded;
+- the article passes the Topic quality contract without duplicating neighboring Topics;
+- the Compass, Question graph, Question notes, and unrequested Topic files are unchanged.
 
-Topics are replaceable projections, not permanent knowledge nodes. Re-planning always
-returns to the durable Questions and produces one new current Compass; never create
-Topic groups, meta-Topics, archives, version fields, or `organized-v2/`. Git provides
-history.
+Topics are replaceable projections. Reorganization always returns to durable Questions;
+never create Topic groups, Topic-local Question systems, meta-Topics, archives, or
+`organized-v2/`. Git provides history.
 
 Learn naturally first. Organize understanding later. Synthesize learned understanding;
 do not invent a curriculum.
